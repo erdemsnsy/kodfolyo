@@ -1,0 +1,70 @@
+import { NextResponse } from 'next/server';
+import { auth } from '../../../../lib/auth';
+import { upsertProfile, getProfileByUsername, updateRepoVisibility } from '../../../../lib/supabase/server';
+import { CustomLink, ThemeType } from '../../../../types';
+
+export async function POST(request: Request) {
+  try {
+    const session = await auth();
+    const body = await request.json();
+
+    const username = body.username || session?.user?.username;
+
+    if (!username) {
+      return NextResponse.json(
+        { success: false, error: 'Kullanıcı oturumu açılmamış.' },
+        { status: 401 }
+      );
+    }
+
+    const currentProfile = await getProfileByUsername(username);
+    if (!currentProfile) {
+      return NextResponse.json(
+        { success: false, error: 'Profil bulunamadı.' },
+        { status: 404 }
+      );
+    }
+
+    // 1. Repo Görünürlüğü Güncelleme (Repo Toggle)
+    if (typeof body.githubRepoId === 'number' && typeof body.isVisible === 'boolean') {
+      await updateRepoVisibility(currentProfile, body.githubRepoId, body.isVisible);
+      return NextResponse.json({ success: true, message: 'Repo görünürlüğü güncellendi.' });
+    }
+
+    // 2. Profil Ayarları Güncelleme (Bio, Tema, Özel Bağlantılar, İletişim Bilgileri)
+    const customBio: string | null = typeof body.custom_bio !== 'undefined' ? body.custom_bio : currentProfile.custom_bio;
+    const theme: ThemeType = body.theme || currentProfile.theme;
+    const customLinks: CustomLink[] = body.custom_links || currentProfile.custom_links;
+    const name: string | null = typeof body.name !== 'undefined' ? body.name : currentProfile.name;
+    const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
+    const location: string | null = typeof body.location !== 'undefined' ? body.location : currentProfile.location;
+    const blog: string | null = typeof body.blog !== 'undefined' ? body.blog : currentProfile.blog;
+
+    const updated = await upsertProfile({
+      github_id: currentProfile.github_id,
+      username: currentProfile.username,
+      name,
+      avatar_url: currentProfile.avatar_url,
+      bio: currentProfile.bio,
+      custom_bio: customBio,
+      company,
+      location,
+      email: currentProfile.email,
+      blog,
+      theme,
+      custom_links: customLinks,
+    });
+
+    return NextResponse.json({
+      success: true,
+      profile: updated,
+      message: 'Profil ayarları başarıyla kaydedildi.',
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Profil güncellenirken hata oluştu.' },
+      { status: 500 }
+    );
+  }
+}
