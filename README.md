@@ -89,6 +89,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 ---
 
-## 📄 Lisans
+📄 Telif Hakkı
 
-Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır.
+Tüm hakları saklıdır. Bu projenin kodları ve içeriği izinsiz kopyalanamaz veya ticari amaçla kullanılamaz.
