@@ -52,7 +52,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   };
 
   return (
-    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
         <div style={{ fontSize: 16, fontWeight: 700 }}>Temel bilgiler</div>
         <button

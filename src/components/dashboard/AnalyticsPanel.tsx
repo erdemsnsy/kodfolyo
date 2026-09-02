@@ -8,7 +8,7 @@ interface AnalyticsPanelProps {
   username: string;
 }
 
-const cardStyle: React.CSSProperties = { padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' };
+const cardStyle: React.CSSProperties = { padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' };
 
 export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);

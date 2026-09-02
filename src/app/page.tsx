@@ -45,9 +45,11 @@ export default function LandingPage() {
             <KodfolyoLogo size={22} />
             <span style={{ fontSize: 14, color: '#6B6675' }}>© {new Date().getFullYear()} Kodfolyo</span>
           </div>
-          <div style={{ display: 'flex', gap: 22, fontSize: 14 }}>
+          <div style={{ display: 'flex', gap: 22, fontSize: 14, flexWrap: 'wrap' }}>
             <a href="#ozellikler" style={{ color: '#6B6675' }}>Özellikler</a>
             <a href="#onizleme" style={{ color: '#6B6675' }}>Örnekler</a>
+            <Link href="/kesfet" style={{ color: '#6B6675' }}>Keşfet</Link>
+            <Link href="/temalar" style={{ color: '#6B6675' }}>Temalar</Link>
           </div>
         </div>
       </footer>

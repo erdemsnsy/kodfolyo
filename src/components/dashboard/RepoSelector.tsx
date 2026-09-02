@@ -43,7 +43,7 @@ export default function RepoSelector({ repos, onToggleVisibility, onSetFeatured 
   const visibleCount = localRepos.filter((r) => r.is_visible !== false).length;
 
   return (
-    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 6 }}>
         <div>
           <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Görünür repolar</div>

@@ -12,7 +12,7 @@ export default function ThemeSelector({ currentTheme, onSelectTheme }: ThemeSele
   const t = themes[currentTheme] || themes.gece;
 
   return (
-    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
       <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Tema</div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>

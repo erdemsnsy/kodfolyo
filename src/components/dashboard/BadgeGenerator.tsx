@@ -46,7 +46,7 @@ export default function BadgeGenerator({ username, defaultTheme }: BadgeGenerato
   const markdownCode = `[![${username} Kodfolyo](${badgeUrl})](${portfolioUrl})`;
 
   return (
-    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
       <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Gömülebilir Rozet</div>
       <div style={{ fontSize: 13.5, color: '#6B6675', marginBottom: 18 }}>README&apos;ine veya sitene ekleyebileceğin, canlı verinle güncellenen bir rozet.</div>
 
