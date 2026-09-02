@@ -335,3 +335,47 @@ export async function updateFeaturedRepo(userProfile: UserProfile, githubRepoId:
   memoryReposStore.set(normalizedUser, updated);
   return true;
 }
+
+/**
+ * Portfolyoyu yayından kaldırır / tekrar yayınlar. Profil verisi silinmez.
+ */
+export async function setProfilePublished(userProfile: UserProfile, isPublished: boolean): Promise<boolean> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ is_published: isPublished })
+        .eq('id', userProfile.id);
+    } catch (err) {
+      console.warn('Supabase setProfilePublished error:', err);
+    }
+  }
+
+  const existing = memoryProfilesStore.get(normalizedUser);
+  if (existing) {
+    memoryProfilesStore.set(normalizedUser, { ...existing, is_published: isPublished });
+  }
+  return true;
+}
+
+/**
+ * Hesabı kalıcı olarak siler: profil satırı ve önbelleğe alınmış tüm repolar.
+ */
+export async function deleteProfile(userProfile: UserProfile): Promise<boolean> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin.from('cached_repos').delete().eq('user_id', userProfile.id);
+      await supabaseAdmin.from('profiles').delete().eq('id', userProfile.id);
+    } catch (err) {
+      console.warn('Supabase deleteProfile error:', err);
+    }
+  }
+
+  memoryProfilesStore.delete(normalizedUser);
+  memoryReposStore.delete(normalizedUser);
+  return true;
+}

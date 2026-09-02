@@ -45,6 +45,7 @@ export interface UserProfile {
   custom_links: CustomLink[];
   experience: ExperienceEntry[];
   section_visibility: SectionVisibility;
+  is_published?: boolean;
   created_at?: string;
   updated_at?: string;
 }

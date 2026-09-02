@@ -3,6 +3,7 @@
 import { useState, Suspense, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import RepoSelector from '@/components/dashboard/RepoSelector';
 import CustomLinksManager from '@/components/dashboard/CustomLinksManager';
@@ -14,7 +15,7 @@ import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
@@ -273,6 +274,12 @@ function DashboardContent() {
               {n.label}
             </a>
           ))}
+          <Link
+            href={`/settings?username=${encodeURIComponent(activeUsername)}`}
+            style={{ fontSize: 14, fontWeight: 500, padding: '9px 12px', borderRadius: 9, color: '#6B6675', textDecoration: 'none', minHeight: 44, display: 'flex', alignItems: 'center', gap: 8 }}
+          >
+            <Settings className="w-3.5 h-3.5" /> Ayarlar
+          </Link>
         </div>
         <div style={{ marginTop: 'auto', padding: 14, borderRadius: 13, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797', marginBottom: 6 }}>SON SENKRON</div>
@@ -294,6 +301,13 @@ function DashboardContent() {
             </a>
           );
         })}
+        <Link
+          href={`/settings?username=${encodeURIComponent(activeUsername)}`}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, minWidth: 60, minHeight: 48, color: '#6B6675', textDecoration: 'none', fontSize: 10, flexShrink: 0, padding: '4px 6px' }}
+        >
+          <Settings className="w-5 h-5" />
+          Ayarlar
+        </Link>
       </nav>
 
       {/* Mobil sabit kaydet çubuğu */}

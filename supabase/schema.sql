@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     custom_links JSONB DEFAULT '[]'::jsonb,
     experience JSONB DEFAULT '[]'::jsonb,
     section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb,
+    is_published BOOLEAN DEFAULT true,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -27,6 +28,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_accent TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS experience JSONB DEFAULT '[]'::jsonb;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true;
 
 -- Index'ler (Hızlı sorgulama için)
 CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);

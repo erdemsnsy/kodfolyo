@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
-import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo } from '../../../../lib/supabase/server';
+import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo, setProfilePublished, deleteProfile } from '../../../../lib/supabase/server';
 import { CustomLink, ThemeType, ExperienceEntry, SectionVisibility } from '../../../../types';
 
 export async function POST(request: Request) {
@@ -35,6 +35,18 @@ export async function POST(request: Request) {
     if (typeof body.setFeaturedRepoId === 'number') {
       await updateFeaturedRepo(currentProfile, body.setFeaturedRepoId);
       return NextResponse.json({ success: true, message: 'Vitrin projesi güncellendi.' });
+    }
+
+    // 1c. Yayın durumu (yayından kaldır / tekrar yayınla)
+    if (typeof body.isPublished === 'boolean') {
+      await setProfilePublished(currentProfile, body.isPublished);
+      return NextResponse.json({ success: true, message: body.isPublished ? 'Portfolyo tekrar yayında.' : 'Portfolyo yayından kaldırıldı.' });
+    }
+
+    // 1d. Hesabı kalıcı olarak sil (geri alınamaz)
+    if (body.deleteAccount === true) {
+      await deleteProfile(currentProfile);
+      return NextResponse.json({ success: true, message: 'Hesap silindi.' });
     }
 
     // 2. Profil Ayarları Güncelleme (Bio, Tema, Özel Bağlantılar, İletişim Bilgileri)
