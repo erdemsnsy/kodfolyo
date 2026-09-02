@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Eye, Users, MousePointerClick, TrendingUp } from 'lucide-react';
+import { Eye, Users, MousePointerClick, FileDown } from 'lucide-react';
 import type { AnalyticsSummary } from '@/lib/supabase/server';
 
 interface AnalyticsPanelProps {
@@ -37,10 +37,10 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
   const maxDaily = Math.max(1, ...summary.dailyViews.map((d) => d.count));
 
   const metrics = [
-    { label: 'Toplam Görüntülenme', value: summary.totalViews, icon: Eye },
-    { label: 'Son 30 Gün Görüntülenme', value: summary.views30d, icon: TrendingUp },
+    { label: 'Görüntülenme', value: summary.totalViews, icon: Eye },
     { label: 'Tekil Ziyaretçi (30 gün)', value: summary.uniqueVisitors30d, icon: Users },
     { label: 'Link Tıklaması', value: summary.totalLinkClicks, icon: MousePointerClick },
+    { label: 'PDF İndirme', value: summary.totalPdfDownloads, icon: FileDown },
   ];
 
   return (

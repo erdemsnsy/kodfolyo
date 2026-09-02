@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
-import { getProfileByUsername, recordPageView, recordLinkClick } from '@/lib/supabase/server';
+import { getProfileByUsername, recordPageView, recordLinkClick, recordPdfDownload } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +26,7 @@ function extractHost(url: string | null): string | null {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { username, type } = body as { username?: string; type?: 'view' | 'link_click'; referrer?: string; label?: string; url?: string };
+    const { username, type } = body as { username?: string; type?: 'view' | 'link_click' | 'pdf_download'; referrer?: string; label?: string; url?: string };
 
     if (!username || !type) {
       return NextResponse.json({ success: false, error: 'Eksik parametre.' }, { status: 400 });
@@ -42,6 +42,8 @@ export async function POST(request: NextRequest) {
       await recordPageView(profile.id, profile.username, referrerHost, hashVisitor(request));
     } else if (type === 'link_click' && typeof body.url === 'string') {
       await recordLinkClick(profile.id, profile.username, body.label || null, body.url);
+    } else if (type === 'pdf_download') {
+      await recordPdfDownload(profile.id, profile.username);
     } else {
       return NextResponse.json({ success: false, error: 'Geçersiz olay.' }, { status: 400 });
     }

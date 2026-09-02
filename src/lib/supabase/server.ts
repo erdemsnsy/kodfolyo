@@ -24,6 +24,7 @@ declare global {
   var _kodfolyo_repos: Map<string, Repository[]> | undefined;
   var _kodfolyo_page_views: Map<string, { referrerHost: string | null; visitorHash: string; createdAt: string }[]> | undefined;
   var _kodfolyo_link_clicks: Map<string, { label: string | null; url: string; createdAt: string }[]> | undefined;
+  var _kodfolyo_pdf_downloads: Map<string, { createdAt: string }[]> | undefined;
 }
 
 const memoryProfilesStore: Map<string, UserProfile> =
@@ -37,6 +38,9 @@ const memoryPageViewsStore: Map<string, { referrerHost: string | null; visitorHa
 
 const memoryLinkClicksStore: Map<string, { label: string | null; url: string; createdAt: string }[]> =
   globalThis._kodfolyo_link_clicks ?? (globalThis._kodfolyo_link_clicks = new Map());
+
+const memoryPdfDownloadsStore: Map<string, { createdAt: string }[]> =
+  globalThis._kodfolyo_pdf_downloads ?? (globalThis._kodfolyo_pdf_downloads = new Map());
 
 function normalizeProfile(data: Record<string, unknown>): UserProfile {
   return {
@@ -422,11 +426,28 @@ export async function recordLinkClick(profileId: string, username: string, label
   memoryLinkClicksStore.set(normalizedUser, list);
 }
 
+export async function recordPdfDownload(profileId: string, username: string): Promise<void> {
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin.from('pdf_downloads').insert({ profile_id: profileId });
+      return;
+    } catch (err) {
+      console.warn('Supabase recordPdfDownload error:', err);
+    }
+  }
+
+  const normalizedUser = sanitizeUsername(username);
+  const list = memoryPdfDownloadsStore.get(normalizedUser) || [];
+  list.push({ createdAt: new Date().toISOString() });
+  memoryPdfDownloadsStore.set(normalizedUser, list);
+}
+
 export interface AnalyticsSummary {
   totalViews: number;
   views30d: number;
   uniqueVisitors30d: number;
   totalLinkClicks: number;
+  totalPdfDownloads: number;
   dailyViews: { date: string; count: number }[];
   topReferrers: { host: string; count: number }[];
   topLinks: { label: string; url: string; count: number }[];
@@ -434,7 +455,8 @@ export interface AnalyticsSummary {
 
 function buildAnalyticsSummary(
   views: { referrerHost: string | null; visitorHash: string; createdAt: string }[],
-  clicks: { label: string | null; url: string; createdAt: string }[]
+  clicks: { label: string | null; url: string; createdAt: string }[],
+  pdfDownloads: { createdAt: string }[]
 ): AnalyticsSummary {
   const now = Date.now();
   const cutoff30d = now - 30 * 24 * 60 * 60 * 1000;
@@ -474,6 +496,7 @@ function buildAnalyticsSummary(
     views30d: views30d.length,
     uniqueVisitors30d,
     totalLinkClicks: clicks.length,
+    totalPdfDownloads: pdfDownloads.length,
     dailyViews: Array.from(dailyMap.entries()).map(([date, count]) => ({ date, count })),
     topReferrers: Array.from(referrerCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([host, count]) => ({ host, count })),
     topLinks: Array.from(linkCounts.values()).sort((a, b) => b.count - a.count).slice(0, 8),
@@ -485,15 +508,17 @@ export async function getAnalyticsSummary(userProfile: UserProfile): Promise<Ana
 
   if (supabaseAdmin) {
     try {
-      const [viewsRes, clicksRes] = await Promise.all([
+      const [viewsRes, clicksRes, pdfRes] = await Promise.all([
         supabaseAdmin.from('page_views').select('referrer_host,visitor_hash,created_at').eq('profile_id', userProfile.id),
         supabaseAdmin.from('link_clicks').select('label,url,created_at').eq('profile_id', userProfile.id),
+        supabaseAdmin.from('pdf_downloads').select('created_at').eq('profile_id', userProfile.id),
       ]);
 
-      if (!viewsRes.error && !clicksRes.error) {
+      if (!viewsRes.error && !clicksRes.error && !pdfRes.error) {
         const views = (viewsRes.data || []).map((v) => ({ referrerHost: v.referrer_host as string | null, visitorHash: v.visitor_hash as string, createdAt: v.created_at as string }));
         const clicks = (clicksRes.data || []).map((c) => ({ label: c.label as string | null, url: c.url as string, createdAt: c.created_at as string }));
-        return buildAnalyticsSummary(views, clicks);
+        const pdfDownloads = (pdfRes.data || []).map((p) => ({ createdAt: p.created_at as string }));
+        return buildAnalyticsSummary(views, clicks, pdfDownloads);
       }
     } catch (err) {
       console.warn('Supabase getAnalyticsSummary error:', err);
@@ -502,5 +527,6 @@ export async function getAnalyticsSummary(userProfile: UserProfile): Promise<Ana
 
   const views = memoryPageViewsStore.get(normalizedUser) || [];
   const clicks = memoryLinkClicksStore.get(normalizedUser) || [];
-  return buildAnalyticsSummary(views, clicks);
+  const pdfDownloads = memoryPdfDownloadsStore.get(normalizedUser) || [];
+  return buildAnalyticsSummary(views, clicks, pdfDownloads);
 }

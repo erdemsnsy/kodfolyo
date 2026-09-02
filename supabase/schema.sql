@@ -86,6 +86,15 @@ CREATE TABLE IF NOT EXISTS public.link_clicks (
 
 CREATE INDEX IF NOT EXISTS idx_link_clicks_profile_id ON public.link_clicks(profile_id);
 
+-- 5. PDF İndirme Kayıtları ("PDF indir" butonu -> window.print())
+CREATE TABLE IF NOT EXISTS public.pdf_downloads (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    profile_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_pdf_downloads_profile_id ON public.pdf_downloads(profile_id);
+
 -- RLS (Row Level Security) Ayarları
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cached_repos ENABLE ROW LEVEL SECURITY;

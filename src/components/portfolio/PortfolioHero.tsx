@@ -94,7 +94,17 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
               {!isDemo && (
                 <>
                   <button onClick={() => setShowShareModal(true)} style={secondaryBtn}><Share2 className="w-3.5 h-3.5" />Paylaş</button>
-                  <button onClick={() => typeof window !== 'undefined' && window.print()} style={secondaryBtn}><Printer className="w-3.5 h-3.5" />PDF indir</button>
+                  <button
+                    onClick={() => {
+                      if (typeof window === 'undefined') return;
+                      const body = JSON.stringify({ username: profile.username, type: 'pdf_download' });
+                      if (navigator.sendBeacon) navigator.sendBeacon('/api/analytics/track', new Blob([body], { type: 'application/json' }));
+                      window.print();
+                    }}
+                    style={secondaryBtn}
+                  >
+                    <Printer className="w-3.5 h-3.5" />PDF indir
+                  </button>
                 </>
               )}
 
