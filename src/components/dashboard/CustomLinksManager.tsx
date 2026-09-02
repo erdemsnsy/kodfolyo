@@ -65,7 +65,7 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
               <div style={{ fontSize: 13, fontWeight: 600 }}>{link.label}</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#8C8797', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link.url}</div>
             </div>
-            <button onClick={() => handleRemoveLink(link.id)} style={{ fontSize: 15, color: '#A09BA8', background: 'transparent', border: 0, cursor: 'pointer' }}>×</button>
+            <button onClick={() => handleRemoveLink(link.id)} style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#A09BA8', background: 'transparent', border: 0, cursor: 'pointer' }}>×</button>
           </div>
         ))}
 

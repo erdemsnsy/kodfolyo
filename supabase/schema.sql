@@ -14,15 +14,19 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     location TEXT,
     email TEXT,
     blog TEXT,
-    theme TEXT DEFAULT 'corporate-dark',
+    theme TEXT DEFAULT 'gece',
     custom_accent TEXT,
     custom_links JSONB DEFAULT '[]'::jsonb,
+    experience JSONB DEFAULT '[]'::jsonb,
+    section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Var olan veritabanlarında kolon eksikse ekler (yeni kurulumlarda no-op)
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_accent TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS experience JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb;
 
 -- Index'ler (Hızlı sorgulama için)
 CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
@@ -37,15 +41,21 @@ CREATE TABLE IF NOT EXISTS public.cached_repos (
     full_name TEXT NOT NULL,
     description TEXT,
     html_url TEXT NOT NULL,
+    homepage TEXT,
     stargazers_count INT DEFAULT 0,
     forks_count INT DEFAULT 0,
     language TEXT,
     languages JSONB DEFAULT '{}'::jsonb,
     topics TEXT[] DEFAULT '{}',
     is_visible BOOLEAN DEFAULT true,
+    is_featured BOOLEAN DEFAULT false,
     updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(user_id, github_repo_id)
 );
+
+-- Var olan veritabanlarında kolon eksikse ekler
+ALTER TABLE public.cached_repos ADD COLUMN IF NOT EXISTS homepage TEXT;
+ALTER TABLE public.cached_repos ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false;
 
 -- Index'ler
 CREATE INDEX IF NOT EXISTS idx_cached_repos_user_id ON public.cached_repos(user_id);

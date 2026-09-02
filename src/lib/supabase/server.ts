@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
-import { UserProfile, Repository } from '@/types';
+import { UserProfile, Repository, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { fetchGitHubUserData, fetchTopStarredRepos, getMockGitHubUserData, getMockRepositories, sanitizeUsername, isValidGitHubUsername } from '@/lib/github/fetcher';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
 export const isSupabaseServerConfigured = Boolean(
-  supabaseUrl && 
-  serviceRoleKey && 
+  supabaseUrl &&
+  serviceRoleKey &&
   !supabaseUrl.includes('your-project-id')
 );
 
@@ -30,6 +30,17 @@ const memoryProfilesStore: Map<string, UserProfile> =
 const memoryReposStore: Map<string, Repository[]> =
   globalThis._kodfolyo_repos ?? (globalThis._kodfolyo_repos = new Map<string, Repository[]>());
 
+function normalizeProfile(data: Record<string, unknown>): UserProfile {
+  return {
+    ...data,
+    custom_links: typeof data.custom_links === 'string' ? JSON.parse(data.custom_links) : (data.custom_links || []),
+    experience: typeof data.experience === 'string' ? JSON.parse(data.experience) : (data.experience || []),
+    section_visibility: typeof data.section_visibility === 'string'
+      ? JSON.parse(data.section_visibility)
+      : (data.section_visibility || DEFAULT_SECTION_VISIBILITY),
+  } as UserProfile;
+}
+
 /**
  * Kullanıcı profilini getirir. Gerçekten GitHub'da yoksa NULL döndürür.
  */
@@ -47,10 +58,7 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
         .single();
 
       if (data && !error) {
-        return {
-          ...data,
-          custom_links: typeof data.custom_links === 'string' ? JSON.parse(data.custom_links) : (data.custom_links || []),
-        } as UserProfile;
+        return normalizeProfile(data);
       }
     } catch (err) {
       console.warn(`Supabase getProfileByUsername error for ${username}:`, err);
@@ -79,6 +87,8 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       blog: mockUser.blog,
       theme: 'gece',
       custom_links: [],
+      experience: [],
+      section_visibility: DEFAULT_SECTION_VISIBILITY,
     };
     memoryProfilesStore.set(normalizedUser, mockProfile);
     return mockProfile;
@@ -106,6 +116,8 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       blog: realGithubUser.blog,
       theme: 'gece',
       custom_links: [],
+      experience: [],
+      section_visibility: DEFAULT_SECTION_VISIBILITY,
     };
     memoryProfilesStore.set(normalizedUser, profile);
     return profile;
@@ -138,6 +150,8 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
             blog: profile.blog,
             theme: profile.theme || 'gece',
             custom_links: profile.custom_links || [],
+            experience: profile.experience || [],
+            section_visibility: profile.section_visibility || DEFAULT_SECTION_VISIBILITY,
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'github_id' }
@@ -146,10 +160,7 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
         .single();
 
       if (data && !error) {
-        const result = {
-          ...data,
-          custom_links: typeof data.custom_links === 'string' ? JSON.parse(data.custom_links) : (data.custom_links || []),
-        } as UserProfile;
+        const result = normalizeProfile(data);
         memoryProfilesStore.set(normalizedUser, result);
         return result;
       }
@@ -173,6 +184,8 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
     blog: profile.blog ?? existing?.blog ?? null,
     theme: profile.theme || existing?.theme || 'gece',
     custom_links: profile.custom_links || existing?.custom_links || [],
+    experience: profile.experience || existing?.experience || [],
+    section_visibility: profile.section_visibility || existing?.section_visibility || DEFAULT_SECTION_VISIBILITY,
   };
   memoryProfilesStore.set(normalizedUser, updatedProfile);
   return updatedProfile;
@@ -243,12 +256,14 @@ export async function saveCachedRepos(userProfile: UserProfile, repos: Repositor
         full_name: repo.full_name,
         description: repo.description,
         html_url: repo.html_url,
+        homepage: repo.homepage || null,
         stargazers_count: repo.stargazers_count,
         forks_count: repo.forks_count,
         language: repo.language,
         languages: repo.languages || {},
         topics: repo.topics || [],
         is_visible: repo.is_visible !== false,
+        is_featured: repo.is_featured === true,
         updated_at: new Date().toISOString(),
       }));
 
@@ -289,6 +304,34 @@ export async function updateRepoVisibility(userProfile: UserProfile, githubRepoI
 
   const repos = await getCachedReposByUsername(normalizedUser);
   const updated = repos.map((r) => (r.github_repo_id === githubRepoId ? { ...r, is_visible: isVisible } : r));
+  memoryReposStore.set(normalizedUser, updated);
+  return true;
+}
+
+/**
+ * Vitrin (öne çıkan) repoyu ayarlar — kullanıcı başına yalnızca bir tane olabilir.
+ */
+export async function updateFeaturedRepo(userProfile: UserProfile, githubRepoId: number): Promise<boolean> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin
+        .from('cached_repos')
+        .update({ is_featured: false })
+        .eq('user_id', userProfile.id);
+      await supabaseAdmin
+        .from('cached_repos')
+        .update({ is_featured: true })
+        .eq('user_id', userProfile.id)
+        .eq('github_repo_id', githubRepoId);
+    } catch (err) {
+      console.warn('Supabase updateFeaturedRepo error:', err);
+    }
+  }
+
+  const repos = await getCachedReposByUsername(normalizedUser);
+  const updated = repos.map((r) => ({ ...r, is_featured: r.github_repo_id === githubRepoId }));
   memoryReposStore.set(normalizedUser, updated);
   return true;
 }

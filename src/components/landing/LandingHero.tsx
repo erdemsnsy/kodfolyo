@@ -73,6 +73,11 @@ export default function LandingHero() {
             </span>
           </h1>
 
+          {/* Mobilde: küçük maskot başlığın hemen altında (masaüstünde gizli) */}
+          <div className="mascot-mobile-only" style={{ display: 'none', justifyContent: 'center', margin: '18px 0' }}>
+            <Kodi size={110} />
+          </div>
+
           <p style={{ margin: '22px 0 30px', fontSize: 17, lineHeight: 1.55, color: '#56515F', maxWidth: 520 }}>
             GitHub kullanıcı adını yaz; profilin, biyografin, en çok yıldız alan projelerin ve dil dağılımın canlı bir portfolyo sayfasına dönüşsün. Kod yazmadan, tasarım yapmadan.
           </p>
@@ -124,8 +129,8 @@ export default function LandingHero() {
           </div>
         </div>
 
-        {/* Maskot */}
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 380 }}>
+        {/* Maskot — masaüstü versiyonu */}
+        <div className="mascot-desktop-only" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 380 }}>
           <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(31,58,232,.18), transparent 70%)' }} />
           <div style={{ position: 'absolute', width: 340, height: 340, border: '1px dashed rgba(25,23,32,.12)', borderRadius: '50%' }} />
           <Kodi size={220} />
@@ -141,6 +146,8 @@ export default function LandingHero() {
       <style>{`
         @media (max-width: 860px) {
           .hero-grid { grid-template-columns: 1fr !important; }
+          .mascot-desktop-only { display: none !important; }
+          .mascot-mobile-only { display: flex !important; }
         }
       `}</style>
     </div>

@@ -7,6 +7,28 @@ export interface CustomLink {
   iconName?: string;
 }
 
+export interface ExperienceEntry {
+  id: string;
+  role: string;
+  organization: string;
+  dateRange: string;
+  description: string;
+}
+
+export interface SectionVisibility {
+  techStack: boolean;
+  featuredProject: boolean;
+  projects: boolean;
+  experience: boolean;
+}
+
+export const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
+  techStack: true,
+  featuredProject: true,
+  projects: true,
+  experience: true,
+};
+
 export interface UserProfile {
   id: string;
   github_id: string;
@@ -21,6 +43,8 @@ export interface UserProfile {
   blog: string | null;
   theme: ThemeType;
   custom_links: CustomLink[];
+  experience: ExperienceEntry[];
+  section_visibility: SectionVisibility;
   created_at?: string;
   updated_at?: string;
 }
@@ -33,12 +57,14 @@ export interface Repository {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage?: string | null;
   stargazers_count: number;
   forks_count: number;
   language: string | null;
   languages?: Record<string, number>;
   topics?: string[];
   is_visible: boolean;
+  is_featured?: boolean;
   updated_at?: string;
 }
 
@@ -64,6 +90,7 @@ export interface GitHubRepoData {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage?: string | null;
   stargazers_count: number;
   forks_count: number;
   language: string | null;

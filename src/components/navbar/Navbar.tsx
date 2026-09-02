@@ -113,7 +113,7 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
 
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              style={{ display: 'flex', alignItems: 'center', color: theme.muted, background: 'transparent', border: 0, cursor: 'pointer' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, color: theme.muted, background: 'transparent', border: 0, cursor: 'pointer' }}
               title="Çıkış Yap"
             >
               <LogOut className="h-4 w-4" />

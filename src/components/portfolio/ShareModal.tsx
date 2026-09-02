@@ -55,7 +55,7 @@ export default function ShareModal({ username, themeType, onClose }: ShareModalP
               <div style={{ fontSize: 12.5, color: theme.muted }}>@{username} adresine özel QR kod ve bağlantı</div>
             </div>
           </div>
-          <button onClick={onClose} style={{ padding: 6, borderRadius: 9, border: `1px solid ${theme.border}`, background: '#FFFFFF', color: theme.muted, cursor: 'pointer' }}>
+          <button onClick={onClose} style={{ width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 9, border: `1px solid ${theme.border}`, background: '#FFFFFF', color: theme.muted, cursor: 'pointer' }}>
             <X className="w-4 h-4" />
           </button>
         </div>

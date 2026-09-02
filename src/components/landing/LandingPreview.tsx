@@ -4,7 +4,7 @@ import { getMockGitHubUserData, getMockRepositories } from '@/lib/github/fetcher
 import PortfolioHero from '@/components/portfolio/PortfolioHero';
 import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
-import { UserProfile } from '@/types';
+import { UserProfile, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { ShieldCheck } from 'lucide-react';
 
 export default function LandingPreview() {
@@ -26,6 +26,10 @@ export default function LandingPreview() {
     blog: mockUser.blog,
     theme: 'gece',
     custom_links: [],
+    experience: [
+      { id: 'e1', role: 'Full-stack Geliştirici Stajyeri', organization: 'Kodfolyo Tech', dateRange: '2025 — Günümüz', description: 'Next.js ve Supabase üzerinde üretim özellikleri geliştiriyorum.' },
+    ],
+    section_visibility: DEFAULT_SECTION_VISIBILITY,
   };
 
   return (

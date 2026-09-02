@@ -133,12 +133,14 @@ export async function fetchTopStarredRepos(
         full_name: repo.full_name,
         description: repo.description || null,
         html_url: repo.html_url,
+        homepage: repo.homepage || null,
         stargazers_count: repo.stargazers_count,
         forks_count: repo.forks_count,
         language: repo.language || (Object.keys(languages)[0] ?? 'Code'),
         languages,
         topics: repo.topics || [],
         is_visible: true,
+        is_featured: false,
       } as Repository;
     });
 
@@ -180,12 +182,14 @@ export function getMockRepositories(username: string): Repository[] {
       full_name: `${user}/kodfolyo-app`,
       description: 'GitHub profil verilerinden otomatik modern tek sayfa portföy oluşturan web uygulaması.',
       html_url: `https://github.com/${user}/kodfolyo-app`,
+      homepage: 'https://kodfolyo.dev',
       stargazers_count: 42,
       forks_count: 8,
       language: 'TypeScript',
       languages: { TypeScript: 15400, CSS: 2300, HTML: 1200 },
       topics: ['nextjs', 'react', 'tailwind', 'supabase', 'portfolio'],
       is_visible: true,
+      is_featured: true,
     },
     {
       github_repo_id: 102,

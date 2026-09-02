@@ -11,14 +11,14 @@ import SyncButton from '@/components/dashboard/SyncButton';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2 } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2 } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { label: 'Genel bakış', href: '#genel' },
-  { label: 'Profil', href: '#profil' },
-  { label: 'Repolar', href: '#repolar' },
-  { label: 'Tema', href: '#tema' },
-  { label: 'Bağlantılar', href: '#baglantilar' },
+  { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
+  { label: 'Profil', href: '#profil', icon: User },
+  { label: 'Repolar', href: '#repolar', icon: FolderGit2 },
+  { label: 'Tema', href: '#tema', icon: Palette },
+  { label: 'Bağlantılar', href: '#baglantilar', icon: Link2 },
 ];
 
 function DashboardContent() {
@@ -229,16 +229,16 @@ function DashboardContent() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '236px minmax(0,1fr)', minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
-      {/* Yan menü */}
-      <div style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 26 }}>
+    <div className="dash-root" style={{ display: 'grid', gridTemplateColumns: '236px minmax(0,1fr)', minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
+      {/* Yan menü — mobilde gizlenir, alt tab bar devreye girer */}
+      <div className="dash-sidebar" style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 26 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <KodfolyoLogo size={26} />
           <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           {NAV_ITEMS.map((n) => (
-            <a key={n.label} href={n.href} style={{ fontSize: 14, fontWeight: 500, padding: '9px 12px', borderRadius: 9, color: '#6B6675', textDecoration: 'none' }}>
+            <a key={n.label} href={n.href} style={{ fontSize: 14, fontWeight: 500, padding: '9px 12px', borderRadius: 9, color: '#6B6675', textDecoration: 'none', minHeight: 44, display: 'flex', alignItems: 'center' }}>
               {n.label}
             </a>
           ))}
@@ -252,8 +252,37 @@ function DashboardContent() {
         </div>
       </div>
 
+      {/* Mobil alt tab bar */}
+      <nav className="dash-tabbar" style={{ display: 'none' }}>
+        {NAV_ITEMS.map((n) => {
+          const Icon = n.icon;
+          return (
+            <a key={n.label} href={n.href} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, minWidth: 60, minHeight: 48, color: '#6B6675', textDecoration: 'none', fontSize: 10, flexShrink: 0, padding: '4px 6px' }}>
+              <Icon className="w-5 h-5" />
+              {n.label}
+            </a>
+          );
+        })}
+      </nav>
+
+      {/* Mobil sabit kaydet çubuğu */}
+      {hasPendingChanges && (
+        <div className="dash-savebar" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 16px' }}>
+          <span style={{ fontSize: 12.5, color: '#3A3644', fontWeight: 600 }}>Kaydedilmemiş değişiklikler</span>
+          <button
+            type="button"
+            onClick={handleSaveAll}
+            disabled={isSavingAll}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 10, padding: '10px 16px', minHeight: 44, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
+          >
+            {isSavingAll ? <CheckCircle2 className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
+            Kaydet
+          </button>
+        </div>
+      )}
+
       {/* İçerik */}
-      <div style={{ padding: '26px 34px 110px', background: 'radial-gradient(ellipse at 100% 0%, rgba(0,166,118,.09), transparent 50%)' }}>
+      <div className="dash-content" style={{ padding: '26px 34px 110px', background: 'radial-gradient(ellipse at 100% 0%, rgba(0,166,118,.09), transparent 50%)' }}>
         <div id="genel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 26 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 27, fontWeight: 800, letterSpacing: '-.035em', color: '#191720' }}>Profilini düzenle</h1>
@@ -274,10 +303,11 @@ function DashboardContent() {
               type="button"
               onClick={handleSaveAll}
               disabled={isSavingAll || !hasPendingChanges}
+              className="dash-savebtn-desktop"
               style={{
                 display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 700,
                 color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
-                whiteSpace: 'nowrap', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1,
+                whiteSpace: 'nowrap', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1, minHeight: 44,
               }}
             >
               {isSavingAll ? <CheckCircle2 className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
@@ -326,6 +356,20 @@ function DashboardContent() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 860px) {
+          .dash-root { grid-template-columns: 1fr !important; }
+          .dash-sidebar { display: none !important; }
+          .dash-content { padding: 20px 16px 90px !important; }
+          .dash-tabbar {
+            display: flex !important; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+            background: #EBE7DD; border-top: 1px solid rgba(25,23,32,.1); overflow-x: auto;
+          }
+          .dash-savebar { display: flex !important; position: fixed; left: 0; right: 0; bottom: 64px; z-index: 51; background: rgba(244,241,234,.97); backdrop-filter: blur(10px); border-top: 1px solid rgba(25,23,32,.1); }
+          .dash-savebtn-desktop { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
