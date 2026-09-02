@@ -63,6 +63,29 @@ ALTER TABLE public.cached_repos ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEF
 CREATE INDEX IF NOT EXISTS idx_cached_repos_user_id ON public.cached_repos(user_id);
 CREATE INDEX IF NOT EXISTS idx_cached_repos_stars ON public.cached_repos(stargazers_count DESC);
 
+-- 3. Sayfa Görüntülenme Kayıtları (gerçek analytics için)
+CREATE TABLE IF NOT EXISTS public.page_views (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    profile_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    referrer_host TEXT,
+    visitor_hash TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_page_views_profile_id ON public.page_views(profile_id);
+CREATE INDEX IF NOT EXISTS idx_page_views_created_at ON public.page_views(created_at);
+
+-- 4. Link Tıklama Kayıtları
+CREATE TABLE IF NOT EXISTS public.link_clicks (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    profile_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    label TEXT,
+    url TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_link_clicks_profile_id ON public.link_clicks(profile_id);
+
 -- RLS (Row Level Security) Ayarları
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cached_repos ENABLE ROW LEVEL SECURITY;

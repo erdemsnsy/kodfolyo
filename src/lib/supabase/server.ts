@@ -22,6 +22,8 @@ export const supabaseAdmin = isSupabaseServerConfigured
 declare global {
   var _kodfolyo_profiles: Map<string, UserProfile> | undefined;
   var _kodfolyo_repos: Map<string, Repository[]> | undefined;
+  var _kodfolyo_page_views: Map<string, { referrerHost: string | null; visitorHash: string; createdAt: string }[]> | undefined;
+  var _kodfolyo_link_clicks: Map<string, { label: string | null; url: string; createdAt: string }[]> | undefined;
 }
 
 const memoryProfilesStore: Map<string, UserProfile> =
@@ -29,6 +31,12 @@ const memoryProfilesStore: Map<string, UserProfile> =
 
 const memoryReposStore: Map<string, Repository[]> =
   globalThis._kodfolyo_repos ?? (globalThis._kodfolyo_repos = new Map<string, Repository[]>());
+
+const memoryPageViewsStore: Map<string, { referrerHost: string | null; visitorHash: string; createdAt: string }[]> =
+  globalThis._kodfolyo_page_views ?? (globalThis._kodfolyo_page_views = new Map());
+
+const memoryLinkClicksStore: Map<string, { label: string | null; url: string; createdAt: string }[]> =
+  globalThis._kodfolyo_link_clicks ?? (globalThis._kodfolyo_link_clicks = new Map());
 
 function normalizeProfile(data: Record<string, unknown>): UserProfile {
   return {
@@ -378,4 +386,121 @@ export async function deleteProfile(userProfile: UserProfile): Promise<boolean> 
   memoryProfilesStore.delete(normalizedUser);
   memoryReposStore.delete(normalizedUser);
   return true;
+}
+
+// ─── Analytics: gerçek sayfa görüntülenme / link tıklama kayıtları ─────────
+
+export async function recordPageView(profileId: string, username: string, referrerHost: string | null, visitorHash: string): Promise<void> {
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin.from('page_views').insert({ profile_id: profileId, referrer_host: referrerHost, visitor_hash: visitorHash });
+      return;
+    } catch (err) {
+      console.warn('Supabase recordPageView error:', err);
+    }
+  }
+
+  const normalizedUser = sanitizeUsername(username);
+  const list = memoryPageViewsStore.get(normalizedUser) || [];
+  list.push({ referrerHost, visitorHash, createdAt: new Date().toISOString() });
+  memoryPageViewsStore.set(normalizedUser, list);
+}
+
+export async function recordLinkClick(profileId: string, username: string, label: string | null, url: string): Promise<void> {
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin.from('link_clicks').insert({ profile_id: profileId, label, url });
+      return;
+    } catch (err) {
+      console.warn('Supabase recordLinkClick error:', err);
+    }
+  }
+
+  const normalizedUser = sanitizeUsername(username);
+  const list = memoryLinkClicksStore.get(normalizedUser) || [];
+  list.push({ label, url, createdAt: new Date().toISOString() });
+  memoryLinkClicksStore.set(normalizedUser, list);
+}
+
+export interface AnalyticsSummary {
+  totalViews: number;
+  views30d: number;
+  uniqueVisitors30d: number;
+  totalLinkClicks: number;
+  dailyViews: { date: string; count: number }[];
+  topReferrers: { host: string; count: number }[];
+  topLinks: { label: string; url: string; count: number }[];
+}
+
+function buildAnalyticsSummary(
+  views: { referrerHost: string | null; visitorHash: string; createdAt: string }[],
+  clicks: { label: string | null; url: string; createdAt: string }[]
+): AnalyticsSummary {
+  const now = Date.now();
+  const cutoff30d = now - 30 * 24 * 60 * 60 * 1000;
+
+  const views30d = views.filter((v) => new Date(v.createdAt).getTime() >= cutoff30d);
+  const uniqueVisitors30d = new Set(views30d.map((v) => v.visitorHash)).size;
+
+  const dailyMap = new Map<string, number>();
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now - i * 24 * 60 * 60 * 1000);
+    dailyMap.set(d.toISOString().slice(0, 10), 0);
+  }
+  views30d.forEach((v) => {
+    const day = v.createdAt.slice(0, 10);
+    if (dailyMap.has(day)) dailyMap.set(day, (dailyMap.get(day) || 0) + 1);
+  });
+
+  const referrerCounts = new Map<string, number>();
+  views.forEach((v) => {
+    const host = v.referrerHost || 'Doğrudan';
+    referrerCounts.set(host, (referrerCounts.get(host) || 0) + 1);
+  });
+
+  const linkCounts = new Map<string, { label: string; url: string; count: number }>();
+  clicks.forEach((c) => {
+    const key = c.url;
+    const existing = linkCounts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      linkCounts.set(key, { label: c.label || c.url, url: c.url, count: 1 });
+    }
+  });
+
+  return {
+    totalViews: views.length,
+    views30d: views30d.length,
+    uniqueVisitors30d,
+    totalLinkClicks: clicks.length,
+    dailyViews: Array.from(dailyMap.entries()).map(([date, count]) => ({ date, count })),
+    topReferrers: Array.from(referrerCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([host, count]) => ({ host, count })),
+    topLinks: Array.from(linkCounts.values()).sort((a, b) => b.count - a.count).slice(0, 8),
+  };
+}
+
+export async function getAnalyticsSummary(userProfile: UserProfile): Promise<AnalyticsSummary> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+
+  if (supabaseAdmin) {
+    try {
+      const [viewsRes, clicksRes] = await Promise.all([
+        supabaseAdmin.from('page_views').select('referrer_host,visitor_hash,created_at').eq('profile_id', userProfile.id),
+        supabaseAdmin.from('link_clicks').select('label,url,created_at').eq('profile_id', userProfile.id),
+      ]);
+
+      if (!viewsRes.error && !clicksRes.error) {
+        const views = (viewsRes.data || []).map((v) => ({ referrerHost: v.referrer_host as string | null, visitorHash: v.visitor_hash as string, createdAt: v.created_at as string }));
+        const clicks = (clicksRes.data || []).map((c) => ({ label: c.label as string | null, url: c.url as string, createdAt: c.created_at as string }));
+        return buildAnalyticsSummary(views, clicks);
+      }
+    } catch (err) {
+      console.warn('Supabase getAnalyticsSummary error:', err);
+    }
+  }
+
+  const views = memoryPageViewsStore.get(normalizedUser) || [];
+  const clicks = memoryLinkClicksStore.get(normalizedUser) || [];
+  return buildAnalyticsSummary(views, clicks);
 }

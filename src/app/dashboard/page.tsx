@@ -12,10 +12,11 @@ import SyncButton from '@/components/dashboard/SyncButton';
 import ExperienceManager from '@/components/dashboard/ExperienceManager';
 import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityManager';
 import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
+import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings, BarChart3 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { label: 'Tema', href: '#tema', icon: Palette },
   { label: 'Bağlantılar', href: '#baglantilar', icon: Link2 },
   { label: 'Rozet', href: '#rozet', icon: BadgeCheck },
+  { label: 'Analytics', href: '#analytics', icon: BarChart3 },
 ];
 
 function DashboardContent() {
@@ -359,6 +361,10 @@ function DashboardContent() {
               Değişiklikleri kaydet
             </button>
           </div>
+        </div>
+
+        <div id="analytics" style={{ marginBottom: 18 }}>
+          <AnalyticsPanel username={activeUsername} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 18, alignItems: 'start' }}>

@@ -9,6 +9,7 @@ import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
+import AnalyticsBeacon from '@/components/portfolio/AnalyticsBeacon';
 import PortfolioFooter from '@/components/portfolio/PortfolioFooter';
 import Navbar from '@/components/navbar/Navbar';
 import Kodi from '@/components/mascot/Kodi';
@@ -121,6 +122,7 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
 
   return (
     <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', flexDirection: 'column' }}>
+      <AnalyticsBeacon username={profile.username} />
       <Navbar themeType={profile.theme} currentUsername={profile.username} />
 
       <main style={{ flex: 1 }}>
