@@ -40,14 +40,14 @@ export default function RepoSelector({ repos, onToggleVisibility }: RepoSelector
   };
 
   return (
-    <div className="rounded-2xl border border-[#23272e] bg-[#141619] p-6 sm:p-8 shadow-xl space-y-6">
+    <div className="rounded-3xl border border-[#3a2c22] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-white/5 text-white border border-white/10">
+        <div className="p-2.5 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
           <FolderGit2 className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-base font-bold text-white">Görünür Repolar Yönetimi</h2>
-          <p className="text-xs text-[#94a3b8]">
+          <h2 className="text-base font-bold text-[#fdf6ec]">Görünür Repolar Yönetimi</h2>
+          <p className="text-xs text-[#cbb9a0]">
             En çok yıldız alan 6 proje arasından hangilerinin portfolyoda listeleneceğini seçin
           </p>
         </div>
@@ -63,23 +63,23 @@ export default function RepoSelector({ repos, onToggleVisibility }: RepoSelector
               key={repo.github_repo_id || repo.name}
               className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                 isVisible
-                  ? 'border-[#23272e] bg-[#0c0d0e]'
-                  : 'border-[#1e212b] bg-[#0c0d0e]/40 opacity-50'
+                  ? 'border-[#3a2c22] bg-[#14110f]'
+                  : 'border-[#291f19] bg-[#14110f]/40 opacity-50'
               }`}
             >
               <div className="space-y-1 min-w-0 pr-3">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-bold text-white truncate">{repo.name}</h4>
+                  <h4 className="text-xs font-bold text-[#fdf6ec] truncate">{repo.name}</h4>
                   {repo.language && (
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#1e2229] text-slate-300 border border-[#2d323c]">
+                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#291f19] text-[#cbb9a0] border border-[#3a2c22]">
                       {repo.language}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#94a3b8] line-clamp-1">{repo.description || 'Açıklama yok'}</p>
-                <div className="flex items-center gap-3 text-[11px] text-[#64748b]">
+                <p className="text-xs text-[#cbb9a0] line-clamp-1">{repo.description || 'Açıklama yok'}</p>
+                <div className="flex items-center gap-3 text-[11px] text-[#8a7864]">
                   <span className="flex items-center gap-1">
-                    <Star className="w-3 h-3 text-slate-300 fill-slate-300/20" />
+                    <Star className="w-3 h-3 text-[#f5b83d] fill-[#f5b83d]/20" />
                     {repo.stargazers_count}
                   </span>
                   <span className="flex items-center gap-1">
@@ -95,8 +95,8 @@ export default function RepoSelector({ repos, onToggleVisibility }: RepoSelector
                 disabled={isLoading}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                   isVisible
-                    ? 'bg-white/10 text-white border border-white/20'
-                    : 'bg-[#1e2229] text-[#64748b] border border-[#2d323c]'
+                    ? 'bg-[#ff5a3c]/15 text-[#ff5a3c] border border-[#ff5a3c]/30'
+                    : 'bg-[#291f19] text-[#8a7864] border border-[#3a2c22]'
                 }`}
               >
                 {isVisible ? (

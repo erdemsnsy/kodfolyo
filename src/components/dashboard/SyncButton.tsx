@@ -29,14 +29,14 @@ export default function SyncButton({ onSync, lastSyncedAt }: SyncButtonProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl border border-[#23272e] bg-[#141619] text-xs">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] text-xs shadow-[5px_5px_0_0_#14110f]">
       <div className="flex items-center gap-3 text-center sm:text-left">
-        <div className="p-2.5 rounded-xl bg-white/5 text-white border border-white/10">
+        <div className="p-2.5 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
           <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
         </div>
         <div>
-          <h4 className="font-bold text-white">GitHub Verilerini Yenile</h4>
-          <p className="text-xs text-[#94a3b8]">
+          <h4 className="font-bold text-[#fdf6ec]">GitHub Verilerini Yenile</h4>
+          <p className="text-xs text-[#cbb9a0]">
             {lastSyncedAt
               ? `Son senkronizasyon: ${new Date(lastSyncedAt).toLocaleString('tr-TR')}`
               : 'GitHub REST API üzerinden verileri yeniler.'}
@@ -60,7 +60,7 @@ export default function SyncButton({ onSync, lastSyncedAt }: SyncButtonProps) {
           type="button"
           onClick={handleSync}
           disabled={isSyncing}
-          className="flex items-center gap-2 rounded-xl bg-white hover:bg-slate-200 px-4 py-2.5 font-bold text-slate-950 shadow transition active:scale-95 disabled:opacity-50"
+          className="flex items-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-4 py-2.5 font-bold text-[#14110f] shadow-[3px_3px_0_0_#14110f] transition active:scale-95 disabled:opacity-50"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
           <span>{isSyncing ? 'Senkronize Ediliyor...' : 'Yenile'}</span>
