@@ -7,9 +7,12 @@ import { getProfileByUsername, getCachedReposByUsername } from '@/lib/supabase/s
 import PortfolioHero from '@/components/portfolio/PortfolioHero';
 import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
+import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
+import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
 import PortfolioFooter from '@/components/portfolio/PortfolioFooter';
 import Navbar from '@/components/navbar/Navbar';
 import Kodi from '@/components/mascot/Kodi';
+import { DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { ArrowLeft } from 'lucide-react';
 
 interface PortfolioPageProps {
@@ -82,6 +85,9 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   const repos = await getCachedReposByUsername(decodedUsername);
   const visibleRepos = repos.filter((r) => r.is_visible !== false);
   const starCount = visibleRepos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+  const featuredRepo = visibleRepos.find((r) => r.is_featured === true) || null;
+  const gridRepos = featuredRepo ? repos.filter((r) => r.github_repo_id !== featuredRepo.github_repo_id) : repos;
+  const visibility = profile.section_visibility || DEFAULT_SECTION_VISIBILITY;
 
   return (
     <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', flexDirection: 'column' }}>
@@ -89,8 +95,10 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
 
       <main style={{ flex: 1 }}>
         <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} />
-        <TechStack repos={repos} themeType={profile.theme} />
-        <ProjectGrid repos={repos} themeType={profile.theme} />
+        {visibility.techStack !== false && <TechStack repos={repos} themeType={profile.theme} />}
+        {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
+        {visibility.projects !== false && <ProjectGrid repos={gridRepos} themeType={profile.theme} />}
+        {visibility.experience !== false && <ExperienceTimeline entries={profile.experience} themeType={profile.theme} />}
       </main>
 
       <PortfolioFooter username={profile.username} themeType={profile.theme} />

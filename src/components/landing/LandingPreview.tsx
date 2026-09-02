@@ -4,6 +4,7 @@ import { getMockGitHubUserData, getMockRepositories } from '@/lib/github/fetcher
 import PortfolioHero from '@/components/portfolio/PortfolioHero';
 import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
+import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import { UserProfile, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { ShieldCheck } from 'lucide-react';
 
@@ -11,6 +12,8 @@ export default function LandingPreview() {
   const mockUser = getMockGitHubUserData('ornek-ogrenci');
   const mockRepos = getMockRepositories('ornek-ogrenci');
   const starCount = mockRepos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
+  const featuredRepo = mockRepos.find((r) => r.is_featured === true) || null;
+  const gridRepos = (featuredRepo ? mockRepos.filter((r) => r.github_repo_id !== featuredRepo.github_repo_id) : mockRepos).slice(0, 4);
 
   const demoProfile: UserProfile = {
     id: 'demo-123',
@@ -60,7 +63,8 @@ export default function LandingPreview() {
           <div style={{ background: '#FFFFFF' }}>
             <PortfolioHero profile={demoProfile} repoCount={mockRepos.length} starCount={starCount} isDemo />
             <TechStack repos={mockRepos} themeType="gece" />
-            <ProjectGrid repos={mockRepos.slice(0, 4)} themeType="gece" />
+            {featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType="gece" />}
+            <ProjectGrid repos={gridRepos} themeType="gece" />
           </div>
         </div>
       </div>

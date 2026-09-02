@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
-import { upsertProfile, getProfileByUsername, updateRepoVisibility } from '../../../../lib/supabase/server';
-import { CustomLink, ThemeType } from '../../../../types';
+import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo } from '../../../../lib/supabase/server';
+import { CustomLink, ThemeType, ExperienceEntry, SectionVisibility } from '../../../../types';
 
 export async function POST(request: Request) {
   try {
@@ -31,10 +31,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, message: 'Repo görünürlüğü güncellendi.' });
     }
 
+    // 1b. Vitrin (öne çıkan) repo seçimi
+    if (typeof body.setFeaturedRepoId === 'number') {
+      await updateFeaturedRepo(currentProfile, body.setFeaturedRepoId);
+      return NextResponse.json({ success: true, message: 'Vitrin projesi güncellendi.' });
+    }
+
     // 2. Profil Ayarları Güncelleme (Bio, Tema, Özel Bağlantılar, İletişim Bilgileri)
     const customBio: string | null = typeof body.custom_bio !== 'undefined' ? body.custom_bio : currentProfile.custom_bio;
     const theme: ThemeType = body.theme || currentProfile.theme;
     const customLinks: CustomLink[] = body.custom_links || currentProfile.custom_links;
+    const experience: ExperienceEntry[] = body.experience || currentProfile.experience;
+    const sectionVisibility: SectionVisibility = body.section_visibility || currentProfile.section_visibility;
     const name: string | null = typeof body.name !== 'undefined' ? body.name : currentProfile.name;
     const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
     const location: string | null = typeof body.location !== 'undefined' ? body.location : currentProfile.location;
@@ -53,6 +61,8 @@ export async function POST(request: Request) {
       blog,
       theme,
       custom_links: customLinks,
+      experience,
+      section_visibility: sectionVisibility,
     });
 
     return NextResponse.json({

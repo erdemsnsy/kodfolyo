@@ -8,15 +8,19 @@ import RepoSelector from '@/components/dashboard/RepoSelector';
 import CustomLinksManager from '@/components/dashboard/CustomLinksManager';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import SyncButton from '@/components/dashboard/SyncButton';
+import ExperienceManager from '@/components/dashboard/ExperienceManager';
+import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityManager';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
-import { UserProfile, Repository, ThemeType, CustomLink } from '@/types';
+import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2 } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
   { label: 'Profil', href: '#profil', icon: User },
   { label: 'Repolar', href: '#repolar', icon: FolderGit2 },
+  { label: 'Deneyim', href: '#deneyim', icon: Briefcase },
+  { label: 'Bölümler', href: '#bolumler', icon: Rows3 },
   { label: 'Tema', href: '#tema', icon: Palette },
   { label: 'Bağlantılar', href: '#baglantilar', icon: Link2 },
 ];
@@ -38,6 +42,8 @@ function DashboardContent() {
   const [pendingCompany, setPendingCompany] = useState<string | null>(null);
   const [pendingBlog, setPendingBlog] = useState<string | null>(null);
   const [pendingCustomLinks, setPendingCustomLinks] = useState<CustomLink[] | null>(null);
+  const [pendingExperience, setPendingExperience] = useState<ExperienceEntry[] | null>(null);
+  const [pendingSectionVisibility, setPendingSectionVisibility] = useState<SectionVisibility | null>(null);
 
   const [isSavingAll, setIsSavingAll] = useState(false);
   const [saveAllSuccess, setSaveAllSuccess] = useState(false);
@@ -49,7 +55,9 @@ function DashboardContent() {
     pendingLocation !== null ||
     pendingCompany !== null ||
     pendingBlog !== null ||
-    pendingCustomLinks !== null;
+    pendingCustomLinks !== null ||
+    pendingExperience !== null ||
+    pendingSectionVisibility !== null;
 
   // Profili GitHub'dan çek - temayı ASLA sıfırlama
   const loadData = async (userToFetch: string) => {
@@ -149,6 +157,8 @@ function DashboardContent() {
     if (pendingCompany !== null) payload.company = pendingCompany;
     if (pendingBlog !== null) payload.blog = pendingBlog;
     if (pendingCustomLinks !== null) payload.custom_links = pendingCustomLinks;
+    if (pendingExperience !== null) payload.experience = pendingExperience;
+    if (pendingSectionVisibility !== null) payload.section_visibility = pendingSectionVisibility;
 
     try {
       const res = await fetch('/api/profile/update', {
@@ -171,6 +181,8 @@ function DashboardContent() {
             ...(pendingCompany !== null && { company: pendingCompany }),
             ...(pendingBlog !== null && { blog: pendingBlog }),
             ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
+            ...(pendingExperience !== null && { experience: pendingExperience }),
+            ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
           }));
         }
 
@@ -181,6 +193,8 @@ function DashboardContent() {
         setPendingCompany(null);
         setPendingBlog(null);
         setPendingCustomLinks(null);
+        setPendingExperience(null);
+        setPendingSectionVisibility(null);
         setSaveAllSuccess(true);
         setTimeout(() => setSaveAllSuccess(false), 5000);
       }
@@ -200,6 +214,19 @@ function DashboardContent() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: activeUsername, githubRepoId: repoId, isVisible }),
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSetFeaturedRepo = async (repoId: number) => {
+    setRepos((prev) => prev.map((r) => ({ ...r, is_featured: r.github_repo_id === repoId })));
+    try {
+      await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: activeUsername, setFeaturedRepoId: repoId }),
       });
     } catch (err) {
       console.error(err);
@@ -226,6 +253,8 @@ function DashboardContent() {
     ...(pendingCompany !== null && { company: pendingCompany }),
     ...(pendingBlog !== null && { blog: pendingBlog }),
     ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
+    ...(pendingExperience !== null && { experience: pendingExperience }),
+    ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
   };
 
   return (
@@ -330,11 +359,29 @@ function DashboardContent() {
               }}
             />
             <div id="repolar">
-              <RepoSelector repos={repos} onToggleVisibility={handleToggleRepoVisibility} />
+              <RepoSelector repos={repos} onToggleVisibility={handleToggleRepoVisibility} onSetFeatured={handleSetFeaturedRepo} />
+            </div>
+            <div id="deneyim">
+              <ExperienceManager
+                entries={displayProfile.experience}
+                onSaveEntries={(entries) => {
+                  setPendingExperience(entries);
+                  return Promise.resolve();
+                }}
+              />
             </div>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div id="bolumler">
+              <SectionVisibilityManager
+                visibility={displayProfile.section_visibility}
+                onChange={(visibility) => {
+                  setPendingSectionVisibility(visibility);
+                  return Promise.resolve();
+                }}
+              />
+            </div>
             <div id="tema">
               <ThemeSelector
                 currentTheme={displayProfile.theme}
