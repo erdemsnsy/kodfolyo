@@ -4,16 +4,21 @@
   :root {
     --font-mono: 'JetBrains Mono', monospace;
     --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-display: 'Space Grotesk', sans-serif;
   }
 
   body {
     font-family: var(--font-sans);
-    background-color: #0c0d0e;
-    color: #f8fafc;
+    background-color: #14110f;
+    color: #fdf6ec;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6, .font-mono-code {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+
+  .font-mono-code {
     font-family: var(--font-sans);
   }
 }

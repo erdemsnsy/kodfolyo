@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Plus_Jakarta_Sans } from 'next/font/google';
+import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
 
@@ -12,6 +12,13 @@ const jetbrainsMono = JetBrains_Mono({
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
+  display: 'swap',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['500', '700'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -34,8 +41,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${jetbrainsMono.variable} ${plusJakartaSans.variable}`}>
-      <body className="bg-[#0c0d0e] text-[#f8fafc] font-sans antialiased selection:bg-white selection:text-slate-950">
+    <html lang="tr" className={`${jetbrainsMono.variable} ${plusJakartaSans.variable} ${spaceGrotesk.variable}`}>
+      <body className="bg-[#14110f] text-[#fdf6ec] font-sans antialiased selection:bg-[#ff5a3c] selection:text-[#14110f]">
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
