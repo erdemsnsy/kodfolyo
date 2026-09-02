@@ -12,7 +12,7 @@ interface ThemeSelectorProps {
   onSelectAccent: (accent: string | null) => Promise<void>;
 }
 
-const ACCENT_SWATCHES = ['#ff5a3c', '#f5b83d', '#4fd8ff', '#10b981', '#ec4899', '#8b5cf6', '#f43f5e'];
+const ACCENT_SWATCHES = ['#ff5a3c', '#38bdf8', '#f5b83d', '#10b981', '#ec4899', '#8b5cf6', '#f43f5e'];
 
 export default function ThemeSelector({ currentTheme, currentAccent, onSelectTheme, onSelectAccent }: ThemeSelectorProps) {
   const currentIsLight = getTheme(currentTheme).isLight;
@@ -29,28 +29,28 @@ export default function ThemeSelector({ currentTheme, currentAccent, onSelectThe
   };
 
   return (
-    <div className="rounded-3xl border border-[#3a2c22] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-5">
-      <div className="flex items-center justify-between gap-4 border-b border-[#3a2c22] pb-5 flex-wrap">
+    <div className="rounded-3xl border border-[#3a3530] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-5">
+      <div className="flex items-center justify-between gap-4 border-b border-[#3a3530] pb-5 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
             <Palette className="w-5 h-5" />
           </div>
           <div>
             <h2 className="text-base font-bold text-[#fdf6ec]">Portfolyo Teması</h2>
-            <p className="text-xs text-[#cbb9a0]">
+            <p className="text-xs text-[#d6d0c7]">
               Bir tema seçin, isterseniz vurgu rengini özelleştirin — değişikliklerinizi en üstteki kaydet butonuyla uygulayın.
             </p>
           </div>
         </div>
 
-        <div className="flex bg-[#14110f] border border-[#3a2c22] rounded-full p-1 gap-0.5">
+        <div className="flex bg-[#14110f] border border-[#3a3530] rounded-full p-1 gap-0.5">
           {(['dark', 'light'] as const).map((g) => (
             <button
               key={g}
               type="button"
               onClick={() => setGroup(g)}
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
-                group === g ? 'bg-[#ff5a3c] text-[#14110f]' : 'text-[#cbb9a0]'
+                group === g ? 'bg-[#ff5a3c] text-[#14110f]' : 'text-[#d6d0c7]'
               }`}
             >
               {g === 'dark' ? 'Koyu' : 'Açık'}
@@ -72,7 +72,7 @@ export default function ThemeSelector({ currentTheme, currentAccent, onSelectThe
               className={`relative flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all duration-200 ${
                 isSelected
                   ? 'border-[#ff5a3c] bg-[#291f19] shadow-[3px_3px_0_0_#ff5a3c]'
-                  : 'border-[#3a2c22] bg-[#14110f] hover:border-[#8a7864]'
+                  : 'border-[#3a3530] bg-[#14110f] hover:border-[#9a948b]'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -111,11 +111,11 @@ export default function ThemeSelector({ currentTheme, currentAccent, onSelectThe
         })}
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-[#3a2c22] pt-5">
+      <div className="flex flex-col gap-3 border-t border-[#3a3530] pt-5">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <span className="text-[11px] font-bold text-[#cbb9a0] uppercase tracking-wide">Accent Rengi</span>
-            <p className="text-[11px] text-[#8a7864]">Opsiyonel — seçili temanın üzerine uygulanır.</p>
+            <span className="text-[11px] font-bold text-[#d6d0c7] uppercase tracking-wide">Accent Rengi</span>
+            <p className="text-[11px] text-[#9a948b]">Opsiyonel — seçili temanın üzerine uygulanır.</p>
           </div>
           <button
             type="button"
@@ -123,7 +123,7 @@ export default function ThemeSelector({ currentTheme, currentAccent, onSelectThe
               setHexInput('');
               onSelectAccent(null);
             }}
-            className="flex items-center gap-1.5 text-[11px] font-semibold text-[#cbb9a0] hover:text-[#fdf6ec] border border-[#3a2c22] bg-[#14110f] px-3 py-1.5 rounded-full transition"
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-[#d6d0c7] hover:text-[#fdf6ec] border border-[#3a3530] bg-[#14110f] px-3 py-1.5 rounded-full transition"
           >
             <RotateCcw className="w-3 h-3" />
             Sıfırla
@@ -150,13 +150,13 @@ export default function ThemeSelector({ currentTheme, currentAccent, onSelectThe
           ))}
 
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg border border-[#3a2c22]" style={{ backgroundColor: hexInput || '#14110f' }} />
+            <div className="w-8 h-8 rounded-lg border border-[#3a3530]" style={{ backgroundColor: hexInput || '#14110f' }} />
             <input
               type="text"
               value={hexInput}
               onChange={(e) => handleHexChange(e.target.value)}
               placeholder="#RRGGBB"
-              className="w-28 px-3 py-2 rounded-lg border border-[#3a2c22] bg-[#14110f] text-[#fdf6ec] font-mono text-xs focus:border-[#ff5a3c] focus:outline-none"
+              className="w-28 px-3 py-2 rounded-lg border border-[#3a3530] bg-[#14110f] text-[#fdf6ec] font-mono text-xs focus:border-[#ff5a3c] focus:outline-none"
             />
           </div>
         </div>

@@ -63,7 +63,7 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
   };
 
   return (
-    <div className="rounded-3xl border border-[#3a2c22] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-6">
+    <div className="rounded-3xl border border-[#3a3530] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2.5 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
@@ -71,7 +71,7 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
           </div>
           <div>
             <h2 className="text-base font-bold text-[#fdf6ec]">Özel Bağlantılar & CV Linki</h2>
-            <p className="text-xs text-[#cbb9a0]">
+            <p className="text-xs text-[#d6d0c7]">
               LinkedIn profilinizi, CV PDF veya kişisel blog bağlantınızı ekleyin
             </p>
           </div>
@@ -87,25 +87,25 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-xl border border-[#3a2c22] bg-[#14110f] text-xs">
+      <div className="flex flex-col sm:flex-row gap-3 p-4 rounded-xl border border-[#3a3530] bg-[#14110f] text-xs">
         <input
           type="text"
           placeholder="Etiket (LinkedIn, CV PDF)"
           value={newLabel}
           onChange={(e) => setNewLabel(e.target.value)}
-          className="flex-1 rounded-lg border border-[#3a2c22] bg-[#1f1a16] px-3.5 py-2 text-[#fdf6ec] placeholder-[#8a7864] focus:border-[#ff5a3c] focus:outline-none"
+          className="flex-1 rounded-lg border border-[#3a3530] bg-[#1f1a16] px-3.5 py-2 text-[#fdf6ec] placeholder-[#9a948b] focus:border-[#ff5a3c] focus:outline-none"
         />
         <input
           type="text"
           placeholder="URL (https://...)"
           value={newUrl}
           onChange={(e) => setNewUrl(e.target.value)}
-          className="flex-1 rounded-lg border border-[#3a2c22] bg-[#1f1a16] px-3.5 py-2 text-[#fdf6ec] placeholder-[#8a7864] focus:border-[#ff5a3c] focus:outline-none"
+          className="flex-1 rounded-lg border border-[#3a3530] bg-[#1f1a16] px-3.5 py-2 text-[#fdf6ec] placeholder-[#9a948b] focus:border-[#ff5a3c] focus:outline-none"
         />
         <select
           value={iconName}
           onChange={(e) => setIconName(e.target.value)}
-          className="rounded-lg border border-[#3a2c22] bg-[#1f1a16] px-3 py-2 text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none"
+          className="rounded-lg border border-[#3a3530] bg-[#1f1a16] px-3 py-2 text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none"
         >
           <option value="external-link">🔗 Bağlantı</option>
           <option value="linkedin">💼 LinkedIn</option>
@@ -126,7 +126,7 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
       </div>
 
       {links.length === 0 ? (
-        <p className="text-xs text-[#8a7864] italic text-center py-3">
+        <p className="text-xs text-[#9a948b] italic text-center py-3">
           Henüz özel bir bağlantı eklenmedi. (Kullanıcı eklemezse butonlar portfolyoda görünmez)
         </p>
       ) : (
@@ -134,13 +134,13 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
           {links.map((link) => (
             <div
               key={link.id}
-              className="flex items-center justify-between p-3 rounded-lg border border-[#3a2c22] bg-[#14110f] text-[#fdf6ec]"
+              className="flex items-center justify-between p-3 rounded-lg border border-[#3a3530] bg-[#14110f] text-[#fdf6ec]"
             >
               <div className="flex items-center gap-3">
-                <span className="font-bold text-[#fdf6ec] px-2.5 py-0.5 rounded bg-[#291f19] border border-[#3a2c22]">
+                <span className="font-bold text-[#fdf6ec] px-2.5 py-0.5 rounded bg-[#291f19] border border-[#3a3530]">
                   {link.label}
                 </span>
-                <span className="text-[#cbb9a0] truncate max-w-xs sm:max-w-md">{link.url}</span>
+                <span className="text-[#d6d0c7] truncate max-w-xs sm:max-w-md">{link.url}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -148,14 +148,14 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-1 rounded bg-[#1f1a16] text-[#cbb9a0] hover:text-[#fdf6ec] transition"
+                  className="p-1 rounded bg-[#1f1a16] text-[#d6d0c7] hover:text-[#fdf6ec] transition"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                 </a>
                 <button
                   type="button"
                   onClick={() => handleRemoveLink(link.id)}
-                  className="p-1 rounded bg-[#1f1a16] text-[#cbb9a0] hover:text-red-400 transition"
+                  className="p-1 rounded bg-[#1f1a16] text-[#d6d0c7] hover:text-red-400 transition"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>

@@ -79,7 +79,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b ${isAppShell ? 'border-[#3a2c22]' : theme.navBorder} transition-all duration-300`}
+      className={`sticky top-0 z-50 w-full border-b ${isAppShell ? 'border-[#3a3530]' : theme.navBorder} transition-all duration-300`}
       style={headerStyle || (isAppShell
         ? { backgroundColor: 'rgba(20, 17, 15, 0.9)', backdropFilter: 'blur(12px)' }
         : { backgroundColor: 'rgba(12, 13, 14, 0.9)', backdropFilter: 'blur(12px)' })}
@@ -97,7 +97,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
             </div>
           )}
           <span className={isAppShell ? 'text-[#fdf6ec] font-bold' : theme.navText}>
-            Kodfolyo<span className={isAppShell ? 'text-[#8a7864]' : (theme.isLight ? 'text-slate-500' : 'text-slate-400')}>.dev</span>
+            Kodfolyo<span className={isAppShell ? 'text-[#9a948b]' : (theme.isLight ? 'text-slate-500' : 'text-slate-400')}>.dev</span>
           </span>
         </Link>
 
@@ -108,7 +108,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
               <Link
                 href={`/${username}`}
                 className={isAppShell
-                  ? 'hidden sm:flex items-center gap-1.5 rounded-full border border-[#3a2c22] bg-[#1f1a16] px-3 py-1.5 text-xs font-medium text-[#cbb9a0] hover:text-[#fdf6ec] transition'
+                  ? 'hidden sm:flex items-center gap-1.5 rounded-full border border-[#3a3530] bg-[#1f1a16] px-3 py-1.5 text-xs font-medium text-[#d6d0c7] hover:text-[#fdf6ec] transition'
                   : `hidden sm:flex items-center gap-1.5 rounded-lg border ${theme.navBorder} ${theme.badge} px-3 py-1.5 text-xs font-medium ${theme.navMuted} transition`}
                 style={isAppShell ? undefined : theme.badgeStyle}
               >
@@ -131,7 +131,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
               <button
                 onClick={() => signOut({ callbackUrl: '/' })}
                 className={isAppShell
-                  ? 'flex items-center gap-1.5 rounded-full border border-[#3a2c22] bg-[#1f1a16] px-2.5 py-1.5 text-xs text-[#8a7864] hover:text-red-400 transition'
+                  ? 'flex items-center gap-1.5 rounded-full border border-[#3a3530] bg-[#1f1a16] px-2.5 py-1.5 text-xs text-[#9a948b] hover:text-red-400 transition'
                   : `flex items-center gap-1.5 rounded-lg border ${theme.navBorder} ${theme.badge} px-2.5 py-1.5 text-xs ${theme.textMuted} hover:text-red-500 transition`}
                 style={isAppShell ? undefined : theme.badgeStyle}
                 title="Çıkış Yap"
@@ -143,7 +143,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
             <div className="flex items-center gap-2">
               <Link
                 href="/ornek-ogrenci"
-                className={isAppShell ? 'text-xs font-semibold text-[#cbb9a0] hover:text-[#fdf6ec] px-2 py-1 transition' : `text-xs font-semibold ${theme.navMuted} px-2 py-1 transition`}
+                className={isAppShell ? 'text-xs font-semibold text-[#d6d0c7] hover:text-[#fdf6ec] px-2 py-1 transition' : `text-xs font-semibold ${theme.navMuted} px-2 py-1 transition`}
                 title="Canlı Örnek Portfolyoyu İncele"
               >
                 Örnek Portfolyo
@@ -182,7 +182,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
       {/* Hızlı Kullanıcı Adı Prompt Modalı */}
       {showPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#3a2c22] bg-[#1f1a16] p-6 shadow-2xl space-y-4">
+          <div className="w-full max-w-md rounded-3xl border border-[#3a3530] bg-[#1f1a16] p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm font-bold text-[#fdf6ec]">
                 <GithubIcon className="w-4 h-4" />
@@ -193,19 +193,19 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
                   setShowPrompt(false);
                   setErrorMsg(null);
                 }}
-                className="text-xs text-[#8a7864] hover:text-[#fdf6ec]"
+                className="text-xs text-[#9a948b] hover:text-[#fdf6ec]"
               >
                 Kapat
               </button>
             </div>
 
-            <p className="text-xs text-[#cbb9a0]">
+            <p className="text-xs text-[#d6d0c7]">
               Kendi GitHub kullanıcı adını yaz, profilini ve projelerini anında çekip portfolyonu hazırlayalım:
             </p>
 
             <form onSubmit={handleQuickLogin} className="space-y-3 text-xs">
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[#3a2c22] bg-[#14110f] text-[#fdf6ec]">
-                <span className="text-[#8a7864] font-bold">@</span>
+              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[#3a3530] bg-[#14110f] text-[#fdf6ec]">
+                <span className="text-[#9a948b] font-bold">@</span>
                 <input
                   type="text"
                   value={usernameInput}
@@ -214,7 +214,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
                     if (errorMsg) setErrorMsg(null);
                   }}
                   placeholder="github_kullanici_adi"
-                  className="w-full bg-transparent border-none outline-none placeholder-[#8a7864] text-xs sm:text-sm"
+                  className="w-full bg-transparent border-none outline-none placeholder-[#9a948b] text-xs sm:text-sm"
                   autoFocus
                 />
               </div>

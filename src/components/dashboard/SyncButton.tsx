@@ -29,14 +29,14 @@ export default function SyncButton({ onSync, lastSyncedAt }: SyncButtonProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] text-xs shadow-[5px_5px_0_0_#14110f]">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl border border-[#3a3530] bg-[#1f1a16] text-xs shadow-[5px_5px_0_0_#14110f]">
       <div className="flex items-center gap-3 text-center sm:text-left">
         <div className="p-2.5 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
           <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
         </div>
         <div>
           <h4 className="font-bold text-[#fdf6ec]">GitHub Verilerini Yenile</h4>
-          <p className="text-xs text-[#cbb9a0]">
+          <p className="text-xs text-[#d6d0c7]">
             {lastSyncedAt
               ? `Son senkronizasyon: ${new Date(lastSyncedAt).toLocaleString('tr-TR')}`
               : 'GitHub REST API üzerinden verileri yeniler.'}

@@ -42,7 +42,7 @@ const FEATURES = [
   },
 ];
 
-const CHIP_COLORS = ['#ff5a3c', '#f5b83d'];
+const CHIP_COLORS = ['#ff5a3c', '#38bdf8'];
 
 export default function LandingFeatures() {
   return (
@@ -52,9 +52,9 @@ export default function LandingFeatures() {
           <Kodi pose="idle" size={56} />
         </div>
         <h2 className="text-xl sm:text-3xl font-extrabold text-[#fdf6ec]">
-          Neden <span className="text-[#f5b83d]">Kodfolyo</span>?
+          Neden <span className="text-[#38bdf8]">Kodfolyo</span>?
         </h2>
-        <p className="text-xs sm:text-sm text-[#cbb9a0]">
+        <p className="text-xs sm:text-sm text-[#d6d0c7]">
           Geliştiriciler ve mühendisler için iş hayatında prestij sağlayan sade altyapı
         </p>
       </div>
@@ -66,7 +66,7 @@ export default function LandingFeatures() {
           return (
             <div
               key={feat.title}
-              className={`p-5 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] space-y-3 shadow-[4px_4px_0_0_#14110f] hover:-translate-y-0.5 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
+              className={`p-5 rounded-3xl border border-[#3a3530] bg-[#1f1a16] space-y-3 shadow-[4px_4px_0_0_#14110f] hover:-translate-y-0.5 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
             >
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center"
@@ -75,7 +75,7 @@ export default function LandingFeatures() {
                 <Icon className="w-4 h-4 text-[#14110f]" />
               </div>
               <div className="text-xs font-bold text-[#fdf6ec]">{feat.title}</div>
-              <p className="text-xs text-[#cbb9a0] leading-relaxed">{feat.desc}</p>
+              <p className="text-xs text-[#d6d0c7] leading-relaxed">{feat.desc}</p>
             </div>
           );
         })}

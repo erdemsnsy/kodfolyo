@@ -18,18 +18,18 @@ export default function LandingPage() {
 
         {/* CTA Bitiş Kutusu */}
         <section className="mx-auto max-w-4xl px-4 sm:px-6 my-16">
-          <div className="p-8 sm:p-10 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] text-center space-y-4 shadow-[6px_6px_0_0_#14110f]">
+          <div className="p-8 sm:p-10 rounded-3xl border border-[#3a3530] bg-[#1f1a16] text-center space-y-4 shadow-[6px_6px_0_0_#14110f]">
             <h2 className="text-xl sm:text-3xl font-extrabold text-[#fdf6ec]">
               Portfolyonu Bugün Yayınla
             </h2>
-            <p className="text-xs sm:text-sm text-[#cbb9a0] max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-[#d6d0c7] max-w-lg mx-auto">
               Sıfır kurulum yükü. GitHub kullanıcı adını gir, sade ve kurumsal portfolyon anında oluşturulsun.
             </p>
 
             <div className="pt-2">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-6 py-3 text-xs font-bold text-[#14110f] shadow-[4px_4px_0_0_#f5b83d] transition active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-6 py-3 text-xs font-bold text-[#14110f] shadow-[4px_4px_0_0_#38bdf8] transition active:scale-95"
               >
                 <GithubIcon className="w-4 h-4" />
                 <span>Hemen Başla (Ücretsiz)</span>
@@ -40,7 +40,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#3a2c22] bg-[#14110f] py-8 px-4 text-center text-xs text-[#8a7864]">
+      <footer className="border-t border-[#3a3530] bg-[#14110f] py-8 px-4 text-center text-xs text-[#9a948b]">
         <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#ff5a3c] text-[#14110f] font-bold">

@@ -240,7 +240,7 @@ function DashboardContent() {
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 border-2 border-[#ff5a3c] border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs text-[#cbb9a0]">@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
+            <p className="text-xs text-[#d6d0c7]">@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
           </div>
         </div>
       </div>
@@ -266,16 +266,16 @@ function DashboardContent() {
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 space-y-8">
         {/* Üst Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] shadow-[5px_5px_0_0_#14110f]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#3a3530] bg-[#1f1a16] shadow-[5px_5px_0_0_#14110f]">
           <div className="space-y-1 min-w-0 max-w-full">
-            <div className="text-xs text-[#cbb9a0] font-semibold flex items-center gap-1.5">
+            <div className="text-xs text-[#d6d0c7] font-semibold flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#ff5a3c]" />
               <span>Kontrol Paneli</span>
             </div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#fdf6ec] truncate">
-              Düzenlenen Profil: <span className="text-[#f5b83d]">@{displayProfile.username}</span>
+              Düzenlenen Profil: <span className="text-[#38bdf8]">@{displayProfile.username}</span>
             </h1>
-            <p className="text-xs text-[#cbb9a0]">
+            <p className="text-xs text-[#d6d0c7]">
               `/{displayProfile.username}` adresindeki portfolyonu buradan kişiselleştirebilirsin.
             </p>
           </div>
@@ -298,7 +298,7 @@ function DashboardContent() {
             <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl border shadow-[5px_5px_0_0_#14110f] transition-all duration-300 ${
               saveAllSuccess
                 ? 'border-emerald-500/50 bg-emerald-950/80 backdrop-blur-md'
-                : 'border-[#f5b83d]/50 bg-[#1f1a16]/90 backdrop-blur-md'
+                : 'border-[#38bdf8]/50 bg-[#1f1a16]/90 backdrop-blur-md'
             }`}>
               <div className="flex items-center gap-3 text-sm">
                 {saveAllSuccess ? (
