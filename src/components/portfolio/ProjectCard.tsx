@@ -7,10 +7,11 @@ import { Star, GitFork, ExternalLink, FolderGit2 } from 'lucide-react';
 interface ProjectCardProps {
   repo: Repository;
   themeType?: ThemeType;
+  customAccent?: string | null;
 }
 
-export default function ProjectCard({ repo, themeType }: ProjectCardProps) {
-  const theme = getTheme(themeType);
+export default function ProjectCard({ repo, themeType, customAccent }: ProjectCardProps) {
+  const theme = getTheme(themeType, customAccent);
 
   return (
     <div

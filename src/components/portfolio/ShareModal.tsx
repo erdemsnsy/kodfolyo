@@ -9,12 +9,13 @@ import { getTheme } from '@/lib/theme';
 interface ShareModalProps {
   username: string;
   themeType?: ThemeType;
+  customAccent?: string | null;
   onClose: () => void;
 }
 
-export default function ShareModal({ username, themeType, onClose }: ShareModalProps) {
+export default function ShareModal({ username, themeType, customAccent, onClose }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const theme = getTheme(themeType);
+  const theme = getTheme(themeType, customAccent);
 
   const portfolioUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/${username}`

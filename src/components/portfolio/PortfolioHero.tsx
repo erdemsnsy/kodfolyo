@@ -23,7 +23,7 @@ function renderLinkIcon(iconName?: string) {
 
 export default function PortfolioHero({ profile, isDemo: isDemoProp }: PortfolioHeroProps) {
   const [showShareModal, setShowShareModal] = useState(false);
-  const theme = getTheme(profile.theme);
+  const theme = getTheme(profile.theme, profile.custom_accent);
   const displayBio = profile.custom_bio || profile.bio || 'Yazılım geliştirme tutkunu geliştirici.';
 
   const isDemo = isDemoProp || profile.username === 'ornek-ogrenci' || profile.username === 'demo';
@@ -199,6 +199,7 @@ export default function PortfolioHero({ profile, isDemo: isDemoProp }: Portfolio
         <ShareModal
           username={profile.username}
           themeType={profile.theme}
+          customAccent={profile.custom_accent}
           onClose={() => setShowShareModal(false)}
         />
       )}

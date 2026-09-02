@@ -7,6 +7,7 @@ import { Code2 } from 'lucide-react';
 interface TechStackProps {
   repos: Repository[];
   themeType?: ThemeType;
+  customAccent?: string | null;
 }
 
 const LANGUAGE_COLORS: Record<string, string> = {
@@ -30,8 +31,8 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Shell: '#89e051',
 };
 
-export default function TechStack({ repos, themeType }: TechStackProps) {
-  const theme = getTheme(themeType);
+export default function TechStack({ repos, themeType, customAccent }: TechStackProps) {
+  const theme = getTheme(themeType, customAccent);
 
   const langCounts: Record<string, number> = {};
   let totalScore = 0;

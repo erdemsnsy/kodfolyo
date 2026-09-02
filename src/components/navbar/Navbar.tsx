@@ -15,9 +15,10 @@ interface NavbarProps {
   headerStyle?: React.CSSProperties;
   themeType?: ThemeType;
   currentUsername?: string;
+  customAccent?: string | null;
 }
 
-export default function Navbar({ headerStyle, themeType, currentUsername }: NavbarProps = {}) {
+export default function Navbar({ headerStyle, themeType, currentUsername, customAccent }: NavbarProps = {}) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [showPrompt, setShowPrompt] = useState(false);
@@ -33,7 +34,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername }: Navb
     }
   }, []);
 
-  const theme = getTheme(themeType);
+  const theme = getTheme(themeType, customAccent);
   const isAppShell = themeType === undefined;
 
   const handleQuickLogin = async (e: React.FormEvent) => {

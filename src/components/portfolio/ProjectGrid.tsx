@@ -8,10 +8,11 @@ import { FolderGit2 } from 'lucide-react';
 interface ProjectGridProps {
   repos: Repository[];
   themeType?: ThemeType;
+  customAccent?: string | null;
 }
 
-export default function ProjectGrid({ repos, themeType }: ProjectGridProps) {
-  const theme = getTheme(themeType);
+export default function ProjectGrid({ repos, themeType, customAccent }: ProjectGridProps) {
+  const theme = getTheme(themeType, customAccent);
   const visibleRepos = repos.filter((r) => r.is_visible !== false);
 
   if (visibleRepos.length === 0) {
@@ -42,7 +43,7 @@ export default function ProjectGrid({ repos, themeType }: ProjectGridProps) {
       {/* Grid Düzeni */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {visibleRepos.map((repo) => (
-          <ProjectCard key={repo.github_repo_id || repo.name} repo={repo} themeType={themeType} />
+          <ProjectCard key={repo.github_repo_id || repo.name} repo={repo} themeType={themeType} customAccent={customAccent} />
         ))}
       </div>
     </section>

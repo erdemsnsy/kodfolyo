@@ -86,22 +86,22 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   }
 
   const repos = await getCachedReposByUsername(decodedUsername);
-  const theme = getTheme(profile.theme);
+  const theme = getTheme(profile.theme, profile.custom_accent);
 
   return (
     <div
       className={`min-h-screen ${theme.bg} transition-all duration-300 flex flex-col`}
       style={theme.backgroundStyle}
     >
-      <Navbar headerStyle={theme.headerStyle} themeType={profile.theme} currentUsername={profile.username} />
+      <Navbar headerStyle={theme.headerStyle} themeType={profile.theme} currentUsername={profile.username} customAccent={profile.custom_accent} />
 
       <main className="flex-1">
         <PortfolioHero profile={profile} />
-        <TechStack repos={repos} themeType={profile.theme} />
-        <ProjectGrid repos={repos} themeType={profile.theme} />
+        <TechStack repos={repos} themeType={profile.theme} customAccent={profile.custom_accent} />
+        <ProjectGrid repos={repos} themeType={profile.theme} customAccent={profile.custom_accent} />
       </main>
 
-      <PortfolioFooter username={profile.username} themeType={profile.theme} />
+      <PortfolioFooter username={profile.username} themeType={profile.theme} customAccent={profile.custom_accent} />
     </div>
   );
 }

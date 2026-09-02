@@ -8,10 +8,11 @@ import { Code2 } from 'lucide-react';
 interface PortfolioFooterProps {
   themeType?: ThemeType;
   username: string;
+  customAccent?: string | null;
 }
 
-export default function PortfolioFooter({ themeType, username }: PortfolioFooterProps) {
-  const theme = getTheme(themeType);
+export default function PortfolioFooter({ themeType, username, customAccent }: PortfolioFooterProps) {
+  const theme = getTheme(themeType, customAccent);
 
   return (
     <footer
