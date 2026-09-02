@@ -15,6 +15,7 @@ import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityMa
 import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import CustomDomainManager from '@/components/dashboard/CustomDomainManager';
+import LivePortfolioPreview from '@/components/dashboard/LivePortfolioPreview';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
@@ -307,6 +308,9 @@ function DashboardContent() {
   const visibleRepoCount = repos.filter((r) => r.is_visible !== false).length;
   const starCount = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
   const activeItem = NAV_ITEMS.find((n) => n.id === activeTab)!;
+  // Rozet'in kendi önizlemesi var, Analytics ve Alan Adı görsel bir portfolyo
+  // değişikliği yapmıyor — canlı önizleme sadece anlamlı olan sekmelerde gösterilir.
+  const showLivePreview = !['rozet', 'analytics', 'alanadi'].includes(activeTab);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -544,12 +548,23 @@ function DashboardContent() {
           </div>
         </div>
 
-        <div style={{ maxWidth: 860 }}>
-          {renderTabContent()}
+        <div className={showLivePreview ? 'dash-split' : undefined} style={{ display: 'grid', gridTemplateColumns: showLivePreview ? 'minmax(0,1fr) 340px' : '1fr', gap: 28, alignItems: 'start' }}>
+          <div style={{ maxWidth: 720, minWidth: 0 }}>
+            {renderTabContent()}
+          </div>
+          {showLivePreview && (
+            <div className="dash-preview">
+              <LivePortfolioPreview profile={displayProfile} repos={repos} />
+            </div>
+          )}
         </div>
       </div>
 
       <style>{`
+        @media (max-width: 1240px) {
+          .dash-split { grid-template-columns: 1fr !important; }
+          .dash-preview { display: none !important; }
+        }
         @media (max-width: 860px) {
           .dash-root { grid-template-columns: 1fr !important; }
           .dash-sidebar { display: none !important; }
