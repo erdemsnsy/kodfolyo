@@ -10,10 +10,11 @@ import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import SyncButton from '@/components/dashboard/SyncButton';
 import ExperienceManager from '@/components/dashboard/ExperienceManager';
 import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityManager';
+import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3 } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { label: 'Bölümler', href: '#bolumler', icon: Rows3 },
   { label: 'Tema', href: '#tema', icon: Palette },
   { label: 'Bağlantılar', href: '#baglantilar', icon: Link2 },
+  { label: 'Rozet', href: '#rozet', icon: BadgeCheck },
 ];
 
 function DashboardContent() {
@@ -399,6 +401,9 @@ function DashboardContent() {
                   return Promise.resolve();
                 }}
               />
+            </div>
+            <div id="rozet">
+              <BadgeGenerator username={displayProfile.username} defaultTheme={displayProfile.theme} />
             </div>
           </div>
         </div>
