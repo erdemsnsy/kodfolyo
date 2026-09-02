@@ -16,34 +16,34 @@ Trigger: the project is about to be re-pushed to Vercel and re-shared publicly (
 - No new heavy animation dependency — `framer-motion` is already installed and unused; it covers everything needed here.
 - No test-suite introduction — the repo has none today; verification is manual via the `run` skill.
 
-## Brand kit (approved)
+## Brand kit (v2 — revised after review)
+
+v1 used violet-on-near-black with soft blurred glow shadows and a gradient-fill mascot body. User feedback: that specific combination (dark + violet + diffuse glow) reads as generic "AI startup" template, not as this product's own identity. Revised direction keeps the dark, developer-terminal base (that part wasn't the problem) and replaces the violet/glow signature with a warmer accent duo and hard, flat, offset shadows — closer to a cut-paper/sticker feel than a soft-glow one.
 
 **Palette** (hex, used directly in Tailwind arbitrary-value classes, matching the codebase's existing convention of inlined hex rather than CSS custom properties):
 
 | Token | Hex | Use |
 |---|---|---|
-| Ink (bg) | `#0a0a12` | page background |
-| Surface | `#15141f` | cards |
-| Surface 2 | `#1c1a29` | elevated/inset elements |
-| Border | `#2a2740` | borders |
-| Text primary | `#f5f3ff` | headings/body |
-| Text secondary | `#b8b3d1` | supporting text |
-| Text muted | `#78748f` | captions |
-| Accent violet (primary) | `#8b5cf6` / darker `#7c3aed` / outline `#5b21b6` | primary buttons, links, mascot body |
-| Accent coral (secondary) | `#ff6b57` | headline highlight word, secondary emphasis |
-| Accent lime (sparkle, used sparingly) | `#c6ff4a` | CTA glow ring, mascot antenna, success states only |
+| Ink (bg) | `#14110f` | page background (warm near-black, not cool blue-black) |
+| Surface | `#1f1a16` | cards |
+| Surface 2 | `#291f19` | elevated/inset elements |
+| Border | `#3a2c22` | borders |
+| Text primary | `#fdf6ec` | headings/body (warm cream) |
+| Text secondary | `#cbb9a0` | supporting text |
+| Text muted | `#8a7864` | captions |
+| Accent coral (primary) | `#ff5a3c` | primary buttons, links, mascot body |
+| Accent mustard (secondary) | `#f5b83d` | headline highlight word, secondary emphasis |
+| Accent sky (surprise sparkle, used sparingly) | `#4fd8ff` | sparkle-star particles, success states only — the one cool note against an otherwise warm palette |
 
-**Typography** — three fonts, all already-allowed Google Fonts, loaded via `next/font/google` in `layout.tsx`:
-- **Space Grotesk** (700/800) — new, for all display headlines (`h1`/`h2`/hero text). Added as `--font-display`.
-- **Plus Jakarta Sans** (400–800) — kept, body copy. Already wired as `--font-sans`.
-- **JetBrains Mono** (400/600/700) — kept, labels/badges/tags/code bits. Already wired as `--font-mono`.
+**Typography** — unchanged from v1 (fonts were never the issue): **Space Grotesk** (700/800, new, display headlines, `--font-display`), **Plus Jakarta Sans** (400–800, kept, body), **JetBrains Mono** (400/600/700, kept, labels/badges/tags).
 
 **Shape & motion tokens:**
 - Radius: cards 20–24px (up from 16px), buttons full pill (`rounded-full`), replacing the current `rounded-xl`/`rounded-2xl` mix.
-- Shadow: colored glow shadows (`box-shadow` using the element's own accent color at low alpha) instead of pure-black shadows.
-- Motion easing: one signature "bounce ease" `cubic-bezier(0.34, 1.56, 0.64, 1)` used via `framer-motion` `transition.ease` for button hover/press, card entrance, and all mascot motion.
+- Shadow: **flat, hard-edged offset shadows** in the ink color (e.g. `4px 4px 0 #14110f` on cards/buttons, no blur) — this replaces v1's blurred colored glow, which was the single biggest contributor to the generic-AI look.
+- Mascot fill: **flat solid color**, no gradient — a hard outline stroke does the shape work instead of a gradient doing the lighting work.
+- Motion easing: one signature "bounce ease" `cubic-bezier(0.34, 1.56, 0.64, 1)` used via `framer-motion` `transition.ease` for button hover/press, card entrance, and all mascot motion — unchanged from v1, motion wasn't the issue either.
 
-Full visual reference: brand kit canvas (published artifact, reviewed and approved) and the sections below.
+Full visual reference: brand kit v2 canvas (published artifact, pending re-review after this revision) and the sections below.
 
 ## Kodi, the mascot
 
@@ -54,7 +54,7 @@ Original single-blob character (rounded body via one large-radius rect), `</>` c
 - **wave** — one arm raised, waving. Reserved for empty/success states, optional for v1.
 - **wink** — reserved for empty/error states, optional for v1.
 
-Visual details already validated in the mockup: gradient body fill, glossy highlight ellipse, blush cheeks, double eye-sparkle, eyebrows on energetic poses, twinkle-star particles on jump, colored ambient glow behind the character, `drop-shadow` filter for a "sticker" pop.
+Visual details (revised for v2): flat coral body fill with a hard dark-maroon outline stroke (no gradient, no soft ambient glow halo — those read as generic-AI per the brand kit revision), glossy highlight ellipse, blush cheeks, double eye-sparkle, eyebrows on energetic poses, sky-blue twinkle-star particles on jump, a hard flat ground shadow (no blur) instead of a soft radial one.
 
 **Component:** `src/components/mascot/Kodi.tsx` — `<Kodi pose="jump" size={170} />`. Poses are separate render branches inside one component (shared `<defs>` gradients per instance to avoid SVG id collisions when multiple instances exist on a page — suffix gradient ids with a `useId()`-based key). Animation via `framer-motion`'s `animate` prop with `repeat: Infinity`, not raw CSS `@keyframes`, to match how the rest of the app will start using motion and to make the bounce easing token reusable in code (a shared `BOUNCE_EASE` constant exported from the component file or a small `src/lib/motion.ts`).
 
