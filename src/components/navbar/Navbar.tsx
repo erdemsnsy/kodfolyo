@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Check, Link2 } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { useState, useEffect } from 'react';
@@ -19,6 +19,7 @@ interface NavbarProps {
 export default function Navbar({ themeType, currentUsername }: NavbarProps = {}) {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const [showConsent, setShowConsent] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -137,7 +138,7 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
               </Link>
             ) : (
               <button
-                onClick={() => setShowPrompt(true)}
+                onClick={() => setShowConsent(true)}
                 style={{
                   fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F1EA', background: '#191720',
                   border: 0, borderRadius: 9, padding: '9px 16px', cursor: 'pointer',
@@ -149,6 +150,60 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
           </>
         )}
       </div>
+
+      {/* GitHub izin ekranı (kozmetik) */}
+      {showConsent && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: 'rgba(25,23,32,.55)', backdropFilter: 'blur(6px)' }}>
+          <div style={{ width: '100%', maxWidth: 420, padding: 28, borderRadius: 22, background: '#F4F1EA', border: '1px solid rgba(25,23,32,.12)', boxShadow: '0 40px 90px rgba(25,23,32,.35)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <KodfolyoLogo size={26} />
+              </div>
+              <Link2 className="w-4 h-4" style={{ color: '#8C8797' }} />
+              <div style={{ width: 52, height: 52, borderRadius: 14, background: '#191720', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <GithubIcon className="w-6 h-6" style={{ color: '#F4F1EA' }} />
+              </div>
+            </div>
+
+            <h3 style={{ margin: '0 0 6px', fontSize: 17, fontWeight: 800, textAlign: 'center', color: '#191720' }}>Kodfolyo, GitHub hesabına erişmek istiyor</h3>
+            <p style={{ margin: '0 0 18px', fontSize: 13, color: '#6B6675', textAlign: 'center' }}>
+              Devam edersen aşağıdaki verilere salt-okunur erişim verilmiş olur:
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 20 }}>
+              {[
+                'Herkese açık profil bilgileri (isim, avatar, biyografi)',
+                'Herkese açık repo listesi',
+                'Yıldız ve fork sayıları',
+              ].map((item) => (
+                <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, padding: '10px 12px', borderRadius: 11, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.08)' }}>
+                  <Check className="w-3.5 h-3.5" style={{ color: '#00845E', marginTop: 2, flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: '#3A3644', lineHeight: 1.4 }}>{item}</span>
+                </div>
+              ))}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9, padding: '10px 12px', borderRadius: 11, background: 'rgba(198,49,78,.06)', border: '1px solid rgba(198,49,78,.15)' }}>
+                <AlertCircle className="w-3.5 h-3.5" style={{ color: '#C6314E', marginTop: 2, flexShrink: 0 }} />
+                <span style={{ fontSize: 13, color: '#3A3644', lineHeight: 1.4 }}>Yazma izni yok — hiçbir repona veya ayarına dokunulmaz.</span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setShowConsent(false)}
+                style={{ flex: 1, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#3A3644', background: 'transparent', border: '1px solid rgba(25,23,32,.16)', borderRadius: 13, padding: '12px 16px', cursor: 'pointer' }}
+              >
+                Vazgeç
+              </button>
+              <button
+                onClick={() => { setShowConsent(false); setShowPrompt(true); }}
+                style={{ flex: 1.4, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 13, padding: '12px 16px', cursor: 'pointer' }}
+              >
+                İzin ver
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hızlı Kullanıcı Adı Prompt Modalı */}
       {showPrompt && (

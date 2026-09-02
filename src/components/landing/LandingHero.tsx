@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 import Kodi from '@/components/mascot/Kodi';
+import PublishCelebration from './PublishCelebration';
 
 const DEMOS = ['torvalds', 'sindresorhus', 'gaearon'];
 
@@ -12,6 +13,7 @@ export default function LandingHero() {
   const [usernameInput, setUsernameInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [publishedUsername, setPublishedUsername] = useState<string | null>(null);
 
   const handleGeneratePortfolio = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +41,7 @@ export default function LandingHero() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('kodfolyo_active_username', cleanUser);
       }
-      router.push(`/${cleanUser}`);
+      setPublishedUsername(cleanUser);
     } catch (err) {
       console.error(err);
       router.push(`/${cleanUser}`);
@@ -47,6 +49,16 @@ export default function LandingHero() {
       setIsLoading(false);
     }
   };
+
+  if (publishedUsername) {
+    return (
+      <PublishCelebration
+        username={publishedUsername}
+        onGoToPortfolio={() => router.push(`/${publishedUsername}`)}
+        onEdit={() => router.push(`/dashboard?username=${encodeURIComponent(publishedUsername)}`)}
+      />
+    );
+  }
 
   return (
     <div style={{ position: 'relative', padding: '78px clamp(16px, 5vw, 40px) 30px', overflow: 'hidden' }}>
