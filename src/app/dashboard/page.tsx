@@ -515,7 +515,6 @@ function DashboardContent() {
 
       {/* İçerik — her seferinde sadece seçili sekme gösterilir */}
       <div className="dash-content" style={{ padding: '24px 32px 100px', background: 'radial-gradient(ellipse at 100% 0%, rgba(0,166,118,.07), transparent 50%)' }}>
-        <div style={{ maxWidth: 1280 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
           <div>
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>{activeItem.label}</h1>
@@ -550,7 +549,7 @@ function DashboardContent() {
         </div>
 
         <div className={showLivePreview ? 'dash-split' : undefined} style={{ display: 'grid', gridTemplateColumns: showLivePreview ? 'minmax(0,1fr) 440px' : 'minmax(0,1fr)', gap: 32, alignItems: 'start' }}>
-          <div style={{ minWidth: 0, maxWidth: showLivePreview ? undefined : 760 }}>
+          <div style={{ minWidth: 0 }}>
             {renderTabContent()}
           </div>
           {showLivePreview && (
@@ -558,7 +557,6 @@ function DashboardContent() {
               <LivePortfolioPreview profile={displayProfile} repos={repos} />
             </div>
           )}
-        </div>
         </div>
       </div>
 
