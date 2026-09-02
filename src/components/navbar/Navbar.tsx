@@ -89,6 +89,9 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
       </Link>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+        <Link href="/kesfet" className="nav-hide-narrow" style={{ fontSize: 14, color: theme.muted, textDecoration: 'none' }}>
+          Keşfet
+        </Link>
         <Link href="/temalar" className="nav-hide-narrow" style={{ fontSize: 14, color: theme.muted, textDecoration: 'none' }}>
           Temalar
         </Link>

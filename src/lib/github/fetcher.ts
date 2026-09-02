@@ -151,6 +151,124 @@ export async function fetchTopStarredRepos(
   }
 }
 
+export interface DiscoverProfileSummary {
+  username: string;
+  name: string | null;
+  avatarUrl: string;
+  location: string | null;
+  topLanguages: string[];
+  totalStars: number;
+}
+
+/**
+ * Keşfet sayfası için hafif özet: dil breakdown çağrıları yapılmaz
+ * (repo.language alanı yeterli), sadece 2 istek/kullanıcı.
+ */
+export async function fetchDiscoverProfileSummary(rawUsername: string, accessToken?: string): Promise<DiscoverProfileSummary | null> {
+  const username = sanitizeUsername(rawUsername);
+  if (!username || !isValidGitHubUsername(username)) return null;
+
+  const userData = await fetchGitHubUserData(username, accessToken);
+  if (!userData) return null;
+
+  try {
+    const res = await fetch(`${GITHUB_API_BASE}/users/${encodeURIComponent(username)}/repos?per_page=100&sort=updated`, {
+      headers: getHeaders(accessToken),
+      next: { revalidate: 600 },
+    });
+    const repos: GitHubRepoData[] = res.ok ? await res.json() : [];
+    const nonForks = Array.isArray(repos) ? repos.filter((r) => !r.fork) : [];
+
+    const langCounts = new Map<string, number>();
+    let totalStars = 0;
+    for (const repo of nonForks) {
+      totalStars += repo.stargazers_count || 0;
+      if (repo.language) langCounts.set(repo.language, (langCounts.get(repo.language) || 0) + 1);
+    }
+
+    const topLanguages = Array.from(langCounts.entries()).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([lang]) => lang);
+
+    return {
+      username: userData.login,
+      name: userData.name,
+      avatarUrl: userData.avatar_url,
+      location: userData.location,
+      topLanguages,
+      totalStars,
+    };
+  } catch (error) {
+    console.warn(`Discover summary fetch error for ${username}:`, error);
+    return {
+      username: userData.login,
+      name: userData.name,
+      avatarUrl: userData.avatar_url,
+      location: userData.location,
+      topLanguages: [],
+      totalStars: 0,
+    };
+  }
+}
+
+export interface ExternalContribution {
+  repoFullName: string;
+  repoUrl: string;
+  mergedPrCount: number;
+  stars: number;
+}
+
+/**
+ * Kullanıcının KENDİ repoları dışında, birleşmiş (merged) PR açtığı
+ * projeleri GitHub Search API üzerinden gerçek veriyle döner.
+ */
+export async function fetchExternalContributions(rawUsername: string, accessToken?: string): Promise<ExternalContribution[]> {
+  const username = sanitizeUsername(rawUsername);
+  if (!username || !isValidGitHubUsername(username)) return [];
+
+  try {
+    const searchRes = await fetch(
+      `${GITHUB_API_BASE}/search/issues?q=${encodeURIComponent(`author:${username} type:pr is:merged`)}&per_page=100&sort=created&order=desc`,
+      { headers: getHeaders(accessToken), next: { revalidate: 3600 } }
+    );
+    if (!searchRes.ok) return [];
+
+    const searchData = await searchRes.json();
+    const items: { repository_url: string }[] = Array.isArray(searchData.items) ? searchData.items : [];
+
+    const countsByRepo = new Map<string, number>();
+    for (const item of items) {
+      const fullName = item.repository_url.replace(`${GITHUB_API_BASE}/repos/`, '');
+      const ownerLogin = fullName.split('/')[0];
+      if (ownerLogin.toLowerCase() === username.toLowerCase()) continue; // kendi reposu, dış katkı sayılmaz
+      countsByRepo.set(fullName, (countsByRepo.get(fullName) || 0) + 1);
+    }
+
+    const topRepos = Array.from(countsByRepo.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+
+    const contributions = await Promise.all(
+      topRepos.map(async ([fullName, mergedPrCount]) => {
+        let stars = 0;
+        try {
+          const repoRes = await fetch(`${GITHUB_API_BASE}/repos/${fullName}`, { headers: getHeaders(accessToken), next: { revalidate: 3600 } });
+          if (repoRes.ok) {
+            const repoData = await repoRes.json();
+            stars = repoData.stargazers_count || 0;
+          }
+        } catch {
+          // repo bilgisi alınamazsa yıldız 0 kalır, katkı yine de gösterilir
+        }
+        return { repoFullName: fullName, repoUrl: `https://github.com/${fullName}`, mergedPrCount, stars };
+      })
+    );
+
+    return contributions.sort((a, b) => b.stars - a.stars);
+  } catch (error) {
+    console.warn('Error fetching external contributions:', error);
+    return [];
+  }
+}
+
 /**
  * Yalnızca harici demo amacıyla mock veri üreticiler
  */

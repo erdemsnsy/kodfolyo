@@ -66,6 +66,7 @@ export async function POST(request: Request) {
     const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
     const location: string | null = typeof body.location !== 'undefined' ? body.location : currentProfile.location;
     const blog: string | null = typeof body.blog !== 'undefined' ? body.blog : currentProfile.blog;
+    const rssUrl: string | null = typeof body.rss_url !== 'undefined' ? body.rss_url : (currentProfile.rss_url ?? null);
 
     const updated = await upsertProfile({
       github_id: currentProfile.github_id,
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
       custom_links: customLinks,
       experience,
       section_visibility: sectionVisibility,
+      rss_url: rssUrl,
     });
 
     return NextResponse.json({

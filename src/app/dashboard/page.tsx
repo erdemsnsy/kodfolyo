@@ -48,6 +48,7 @@ function DashboardContent() {
   const [pendingLocation, setPendingLocation] = useState<string | null>(null);
   const [pendingCompany, setPendingCompany] = useState<string | null>(null);
   const [pendingBlog, setPendingBlog] = useState<string | null>(null);
+  const [pendingRssUrl, setPendingRssUrl] = useState<string | null>(null);
   const [pendingCustomLinks, setPendingCustomLinks] = useState<CustomLink[] | null>(null);
   const [pendingExperience, setPendingExperience] = useState<ExperienceEntry[] | null>(null);
   const [pendingSectionVisibility, setPendingSectionVisibility] = useState<SectionVisibility | null>(null);
@@ -62,6 +63,7 @@ function DashboardContent() {
     pendingLocation !== null ||
     pendingCompany !== null ||
     pendingBlog !== null ||
+    pendingRssUrl !== null ||
     pendingCustomLinks !== null ||
     pendingExperience !== null ||
     pendingSectionVisibility !== null;
@@ -163,6 +165,7 @@ function DashboardContent() {
     if (pendingLocation !== null) payload.location = pendingLocation;
     if (pendingCompany !== null) payload.company = pendingCompany;
     if (pendingBlog !== null) payload.blog = pendingBlog;
+    if (pendingRssUrl !== null) payload.rss_url = pendingRssUrl;
     if (pendingCustomLinks !== null) payload.custom_links = pendingCustomLinks;
     if (pendingExperience !== null) payload.experience = pendingExperience;
     if (pendingSectionVisibility !== null) payload.section_visibility = pendingSectionVisibility;
@@ -187,6 +190,7 @@ function DashboardContent() {
             ...(pendingLocation !== null && { location: pendingLocation }),
             ...(pendingCompany !== null && { company: pendingCompany }),
             ...(pendingBlog !== null && { blog: pendingBlog }),
+            ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
             ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
             ...(pendingExperience !== null && { experience: pendingExperience }),
             ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
@@ -199,6 +203,7 @@ function DashboardContent() {
         setPendingLocation(null);
         setPendingCompany(null);
         setPendingBlog(null);
+        setPendingRssUrl(null);
         setPendingCustomLinks(null);
         setPendingExperience(null);
         setPendingSectionVisibility(null);
@@ -289,6 +294,7 @@ function DashboardContent() {
     ...(pendingLocation !== null && { location: pendingLocation }),
     ...(pendingCompany !== null && { company: pendingCompany }),
     ...(pendingBlog !== null && { blog: pendingBlog }),
+    ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
     ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
     ...(pendingExperience !== null && { experience: pendingExperience }),
     ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
@@ -409,6 +415,7 @@ function DashboardContent() {
                 if (fields.location !== undefined) setPendingLocation(fields.location ?? '');
                 if (fields.company !== undefined) setPendingCompany(fields.company ?? '');
                 if (fields.blog !== undefined) setPendingBlog(fields.blog ?? '');
+                if (fields.rss_url !== undefined) setPendingRssUrl(fields.rss_url ?? '');
                 return Promise.resolve();
               }}
             />

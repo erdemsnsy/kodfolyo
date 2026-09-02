@@ -18,10 +18,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     custom_accent TEXT,
     custom_links JSONB DEFAULT '[]'::jsonb,
     experience JSONB DEFAULT '[]'::jsonb,
-    section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb,
+    section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true,"externalContributions":true,"blogPosts":true}'::jsonb,
     is_published BOOLEAN DEFAULT true,
     custom_domain TEXT UNIQUE,
     custom_domain_verified BOOLEAN DEFAULT false,
+    rss_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -29,10 +30,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- Var olan veritabanlarında kolon eksikse ekler (yeni kurulumlarda no-op)
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_accent TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS experience JSONB DEFAULT '[]'::jsonb;
-ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true}'::jsonb;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS section_visibility JSONB DEFAULT '{"techStack":true,"featuredProject":true,"projects":true,"experience":true,"externalContributions":true,"blogPosts":true}'::jsonb;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_published BOOLEAN DEFAULT true;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_domain TEXT UNIQUE;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_domain_verified BOOLEAN DEFAULT false;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS rss_url TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_profiles_custom_domain ON public.profiles(custom_domain) WHERE custom_domain IS NOT NULL;
 

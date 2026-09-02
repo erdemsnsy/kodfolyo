@@ -165,6 +165,7 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
             custom_links: profile.custom_links || [],
             experience: profile.experience || [],
             section_visibility: profile.section_visibility || DEFAULT_SECTION_VISIBILITY,
+            rss_url: profile.rss_url ?? null,
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'github_id' }
@@ -199,6 +200,10 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
     custom_links: profile.custom_links || existing?.custom_links || [],
     experience: profile.experience || existing?.experience || [],
     section_visibility: profile.section_visibility || existing?.section_visibility || DEFAULT_SECTION_VISIBILITY,
+    rss_url: profile.rss_url !== undefined ? profile.rss_url : (existing?.rss_url ?? null),
+    is_published: existing?.is_published,
+    custom_domain: existing?.custom_domain,
+    custom_domain_verified: existing?.custom_domain_verified,
   };
   memoryProfilesStore.set(normalizedUser, updatedProfile);
   return updatedProfile;

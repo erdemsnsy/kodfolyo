@@ -20,6 +20,8 @@ export interface SectionVisibility {
   featuredProject: boolean;
   projects: boolean;
   experience: boolean;
+  externalContributions: boolean;
+  blogPosts: boolean;
 }
 
 export const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
@@ -27,6 +29,8 @@ export const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   featuredProject: true,
   projects: true,
   experience: true,
+  externalContributions: true,
+  blogPosts: true,
 };
 
 export interface UserProfile {
@@ -48,6 +52,7 @@ export interface UserProfile {
   is_published?: boolean;
   custom_domain?: string | null;
   custom_domain_verified?: boolean;
+  rss_url?: string | null;
   created_at?: string;
   updated_at?: string;
 }

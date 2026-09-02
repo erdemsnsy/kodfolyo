@@ -24,6 +24,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   const [location, setLocation] = useState(profile.location ?? '');
   const [company, setCompany] = useState(profile.company ?? '');
   const [blog, setBlog] = useState(profile.blog ?? '');
+  const [rssUrl, setRssUrl] = useState(profile.rss_url ?? '');
   const [isGeneratingBio, setIsGeneratingBio] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
 
@@ -82,6 +83,10 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
         <label>
           <span style={labelStyle}>WEB SİTESİ</span>
           <input value={blog} onChange={(e) => { setBlog(e.target.value); notifyChange({ blog: e.target.value }); }} placeholder="https://gokhan.dev" style={inputStyle} />
+        </label>
+        <label>
+          <span style={labelStyle}>RSS ADRESİ (dev.to / Medium)</span>
+          <input value={rssUrl} onChange={(e) => { setRssUrl(e.target.value); notifyChange({ rss_url: e.target.value }); }} placeholder="https://dev.to/feed/kullaniciadi" style={inputStyle} />
         </label>
         <label style={{ gridColumn: 'span 2' }}>
           <span style={labelStyle}>BİYOGRAFİ</span>

@@ -4,11 +4,15 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 import { getProfileByUsername, getCachedReposByUsername } from '@/lib/supabase/server';
+import { fetchExternalContributions } from '@/lib/github/fetcher';
+import { fetchLatestPosts } from '@/lib/rss';
 import PortfolioHero from '@/components/portfolio/PortfolioHero';
 import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
+import ExternalContributions from '@/components/portfolio/ExternalContributions';
+import BlogFeed from '@/components/portfolio/BlogFeed';
 import AnalyticsBeacon from '@/components/portfolio/AnalyticsBeacon';
 import PortfolioFooter from '@/components/portfolio/PortfolioFooter';
 import Navbar from '@/components/navbar/Navbar';
@@ -120,6 +124,11 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   const gridRepos = featuredRepo ? repos.filter((r) => r.github_repo_id !== featuredRepo.github_repo_id) : repos;
   const visibility = profile.section_visibility || DEFAULT_SECTION_VISIBILITY;
 
+  const [externalContributions, blogPosts] = await Promise.all([
+    visibility.externalContributions !== false ? fetchExternalContributions(profile.username) : Promise.resolve([]),
+    visibility.blogPosts !== false && profile.rss_url ? fetchLatestPosts(profile.rss_url) : Promise.resolve([]),
+  ]);
+
   return (
     <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', flexDirection: 'column' }}>
       <AnalyticsBeacon username={profile.username} />
@@ -131,6 +140,8 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
         {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
         {visibility.projects !== false && <ProjectGrid repos={gridRepos} themeType={profile.theme} />}
         {visibility.experience !== false && <ExperienceTimeline entries={profile.experience} themeType={profile.theme} />}
+        {visibility.externalContributions !== false && <ExternalContributions contributions={externalContributions} themeType={profile.theme} />}
+        {visibility.blogPosts !== false && <BlogFeed posts={blogPosts} themeType={profile.theme} />}
       </main>
 
       <PortfolioFooter username={profile.username} themeType={profile.theme} />

@@ -12,6 +12,8 @@ const SECTION_LABELS: { key: keyof SectionVisibility; label: string; desc: strin
   { key: 'techStack', label: 'Dil Dağılımı', desc: 'Teknoloji/dil yüzde çubuğu.' },
   { key: 'projects', label: 'Proje Grid\'i', desc: 'Görünür repoların kart listesi.' },
   { key: 'experience', label: 'Deneyim & Eğitim', desc: 'Zaman çizelgesi bölümü.' },
+  { key: 'externalContributions', label: 'Dış Katkılar', desc: 'Başka projelere açtığın birleşen PR\'lar.' },
+  { key: 'blogPosts', label: 'Yazılar', desc: 'RSS akışından son yazılar.' },
 ];
 
 export default function SectionVisibilityManager({ visibility, onChange }: SectionVisibilityManagerProps) {
