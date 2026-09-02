@@ -461,11 +461,23 @@ export const themes: Record<string, ThemeConfig> = {
   },
 };
 
-export function getTheme(themeName?: ThemeType): ThemeConfig {
+function isValidHex(value: unknown): value is string {
+  return typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value);
+}
+
+function getContrastTextColor(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? '#020617' : '#f8fafc';
+}
+
+export function getTheme(themeName?: ThemeType, accentOverride?: string | null): ThemeConfig {
   const baseTheme = (themeName && themes[themeName]) ? themes[themeName] : themes['corporate-dark'];
   const isLight = baseTheme.isLight;
 
-  return {
+  const result: ThemeConfig = {
     ...baseTheme,
     iconBg: isLight ? 'bg-slate-900/5' : 'bg-white/5',
     iconBorder: isLight ? 'border-slate-900/10' : 'border-white/10',
@@ -477,4 +489,22 @@ export function getTheme(themeName?: ThemeType): ThemeConfig {
     navMuted: isLight ? 'text-slate-600 hover:text-slate-950' : 'text-[#94a3b8] hover:text-white',
     navBorder: isLight ? 'border-slate-300/80' : 'border-[#23272e]',
   };
+
+  if (isValidHex(accentOverride)) {
+    const contrastText = getContrastTextColor(accentOverride);
+    result.accentColor = accentOverride;
+    result.buttonPrimaryStyle = {
+      ...result.buttonPrimaryStyle,
+      background: accentOverride,
+      color: contrastText,
+    };
+    result.badgeAccentStyle = {
+      ...result.badgeAccentStyle,
+      background: accentOverride,
+      color: contrastText,
+      border: `1px solid ${accentOverride}`,
+    };
+  }
+
+  return result;
 }
