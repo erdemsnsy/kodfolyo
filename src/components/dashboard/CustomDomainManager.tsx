@@ -88,7 +88,7 @@ export default function CustomDomainManager({ profile, onSaveDomain, onVerify }:
             </span>
           </div>
 
-          <div style={{ overflowX: 'auto', marginBottom: 14 }}>
+          <div style={{ overflowX: 'auto', marginBottom: 10 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
               <thead>
                 <tr style={{ textAlign: 'left', color: '#8C8797', fontFamily: 'var(--font-mono)', fontSize: 11 }}>
@@ -103,14 +103,14 @@ export default function CustomDomainManager({ profile, onSaveDomain, onVerify }:
                   <td style={{ padding: '10px 10px 10px 0' }}><CopyableCell value={verificationHost} /></td>
                   <td style={{ padding: '10px 0' }}><CopyableCell value={verificationValue} /></td>
                 </tr>
-                <tr style={{ borderTop: '1px solid rgba(25,23,32,.08)' }}>
-                  <td style={{ padding: '10px 10px 10px 0', fontFamily: 'var(--font-mono)', color: '#3A3644' }}>CNAME</td>
-                  <td style={{ padding: '10px 10px 10px 0' }}><CopyableCell value={profile.custom_domain || ''} /></td>
-                  <td style={{ padding: '10px 0' }}><CopyableCell value="cname.kodfolyo.dev" /></td>
-                </tr>
               </tbody>
             </table>
           </div>
+          <p style={{ fontSize: 12, color: '#8C8797', lineHeight: 1.5, marginBottom: 14 }}>
+            Bu TXT kaydı sahiplik doğrulaması içindir. Doğrulandıktan sonra alan adını gerçekten bu siteye yönlendirmek için
+            hosting sağlayıcının (Vercel, Netlify vb.) &quot;Domains&quot; ayarına <code style={{ fontFamily: 'var(--font-mono)', background: '#FBF9F4', padding: '1px 5px', borderRadius: 4 }}>{profile.custom_domain || 'alan adını'}</code> ekle
+            — sağlayıcı sana kendi CNAME/A kaydı değerini verecek, o kayıt da kendi DNS ayarlarına eklenir.
+          </p>
 
           <button
             type="button"

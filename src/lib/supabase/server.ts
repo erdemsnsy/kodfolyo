@@ -145,6 +145,28 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
 export async function upsertProfile(profile: Partial<UserProfile> & { username: string; github_id: string }): Promise<UserProfile> {
   const normalizedUser = sanitizeUsername(profile.username);
 
+  // ÖNEMLİ: mevcut satır önce okunur. Aksi halde bir alanı (ör. experience,
+  // custom_links, rss_url) hiç göndermeyen bir çağıran (ör. GitHub sync,
+  // her yüklemede çalışır) o alanı sessizce boşaltırdı — sadece caller'ın
+  // GERÇEKTEN gönderdiği alanlar güncellenir, göndermediği alanlar korunur.
+  const existing = await getProfileByUsername(normalizedUser);
+
+  const merged = {
+    name: profile.name ?? existing?.name ?? null,
+    avatar_url: profile.avatar_url || existing?.avatar_url || '',
+    bio: profile.bio ?? existing?.bio ?? null,
+    custom_bio: profile.custom_bio ?? existing?.custom_bio ?? null,
+    company: profile.company ?? existing?.company ?? null,
+    location: profile.location ?? existing?.location ?? null,
+    email: profile.email ?? existing?.email ?? null,
+    blog: profile.blog ?? existing?.blog ?? null,
+    theme: profile.theme || existing?.theme || 'gece',
+    custom_links: profile.custom_links ?? existing?.custom_links ?? [],
+    experience: profile.experience ?? existing?.experience ?? [],
+    section_visibility: profile.section_visibility ?? existing?.section_visibility ?? DEFAULT_SECTION_VISIBILITY,
+    rss_url: profile.rss_url !== undefined ? profile.rss_url : (existing?.rss_url ?? null),
+  };
+
   if (supabaseAdmin) {
     try {
       const { data, error } = await supabaseAdmin
@@ -153,19 +175,7 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
           {
             github_id: profile.github_id,
             username: normalizedUser,
-            name: profile.name,
-            avatar_url: profile.avatar_url,
-            bio: profile.bio,
-            custom_bio: profile.custom_bio,
-            company: profile.company,
-            location: profile.location,
-            email: profile.email,
-            blog: profile.blog,
-            theme: profile.theme || 'gece',
-            custom_links: profile.custom_links || [],
-            experience: profile.experience || [],
-            section_visibility: profile.section_visibility || DEFAULT_SECTION_VISIBILITY,
-            rss_url: profile.rss_url ?? null,
+            ...merged,
             updated_at: new Date().toISOString(),
           },
           { onConflict: 'github_id' }
@@ -183,24 +193,11 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
     }
   }
 
-  const existing = await getProfileByUsername(normalizedUser);
   const updatedProfile: UserProfile = {
     id: existing?.id || crypto.randomUUID(),
     github_id: profile.github_id,
     username: normalizedUser,
-    name: profile.name ?? existing?.name ?? null,
-    avatar_url: profile.avatar_url || existing?.avatar_url || '',
-    bio: profile.bio ?? existing?.bio ?? null,
-    custom_bio: profile.custom_bio ?? existing?.custom_bio ?? null,
-    company: profile.company ?? existing?.company ?? null,
-    location: profile.location ?? existing?.location ?? null,
-    email: profile.email ?? existing?.email ?? null,
-    blog: profile.blog ?? existing?.blog ?? null,
-    theme: profile.theme || existing?.theme || 'gece',
-    custom_links: profile.custom_links || existing?.custom_links || [],
-    experience: profile.experience || existing?.experience || [],
-    section_visibility: profile.section_visibility || existing?.section_visibility || DEFAULT_SECTION_VISIBILITY,
-    rss_url: profile.rss_url !== undefined ? profile.rss_url : (existing?.rss_url ?? null),
+    ...merged,
     is_published: existing?.is_published,
     custom_domain: existing?.custom_domain,
     custom_domain_verified: existing?.custom_domain_verified,

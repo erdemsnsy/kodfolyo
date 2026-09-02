@@ -303,7 +303,7 @@ function DashboardContent() {
   return (
     <div className="dash-root" style={{ display: 'grid', gridTemplateColumns: '236px minmax(0,1fr)', minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
       {/* Yan menü — mobilde gizlenir, alt tab bar devreye girer */}
-      <div className="dash-sidebar" style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 26 }}>
+      <div className="dash-sidebar" style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 20, position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <KodfolyoLogo size={26} />
           <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
