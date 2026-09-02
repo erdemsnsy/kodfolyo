@@ -20,6 +20,7 @@ export interface UserProfile {
   email: string | null;
   blog: string | null;
   theme: ThemeType;
+  custom_accent: string | null;
   custom_links: CustomLink[];
   created_at?: string;
   updated_at?: string;

@@ -24,6 +24,7 @@ export default function LandingPreview() {
     email: mockUser.email,
     blog: mockUser.blog,
     theme: 'corporate-dark',
+    custom_accent: null,
     custom_links: [],
   };
 

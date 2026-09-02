@@ -15,10 +15,14 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT,
     blog TEXT,
     theme TEXT DEFAULT 'corporate-dark',
+    custom_accent TEXT,
     custom_links JSONB DEFAULT '[]'::jsonb,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Var olan veritabanlarında kolon eksikse ekler (yeni kurulumlarda no-op)
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS custom_accent TEXT;
 
 -- Index'ler (Hızlı sorgulama için)
 CREATE INDEX IF NOT EXISTS idx_profiles_username ON public.profiles(username);
