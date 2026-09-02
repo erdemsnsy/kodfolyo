@@ -2,166 +2,164 @@
 
 import { useState } from 'react';
 import { ThemeType } from '@/types';
-import { Palette, Check } from 'lucide-react';
+import { themes, getTheme } from '@/lib/theme';
+import { Palette, Check, RotateCcw } from 'lucide-react';
 
 interface ThemeSelectorProps {
   currentTheme: ThemeType;
+  currentAccent: string | null;
   onSelectTheme: (theme: ThemeType) => Promise<void>;
+  onSelectAccent: (accent: string | null) => Promise<void>;
 }
 
-interface ThemeOption {
-  id: ThemeType;
-  name: string;
-  desc: string;
-  bgPreview: string;
-  borderPreview: string;
-  accentPreview: string;
-}
+const ACCENT_SWATCHES = ['#ff5a3c', '#f5b83d', '#4fd8ff', '#10b981', '#ec4899', '#8b5cf6', '#f43f5e'];
 
-const THEME_OPTIONS: ThemeOption[] = [
-  {
-    id: 'corporate-dark',
-    name: 'Executive Dark',
-    desc: 'Kurumsal obsidiyen siyah zemin, yüksek kontrastlı gümüş beyaz tipografi.',
-    bgPreview: 'bg-[#0c0d0e] text-white',
-    borderPreview: 'border-[#23272e]',
-    accentPreview: 'bg-white',
-  },
-  {
-    id: 'cyber-indigo',
-    name: 'Cyber Indigo ✨',
-    desc: 'Siber çivit tonları, gece mavisi radyal zemin ve neon indigo vurgular.',
-    bgPreview: 'bg-[#0b0d1e] text-indigo-300',
-    borderPreview: 'border-indigo-500/40',
-    accentPreview: 'bg-indigo-500',
-  },
-  {
-    id: 'matrix-mint',
-    name: 'Matrix Mint ✨',
-    desc: 'Derin Matrix koyu yeşil zemin, naneli canlı cam yeşili vurgular.',
-    bgPreview: 'bg-[#040d08] text-emerald-300',
-    borderPreview: 'border-emerald-500/40',
-    accentPreview: 'bg-emerald-400',
-  },
-  {
-    id: 'terminal-amber',
-    name: 'Terminal Amber ✨',
-    desc: 'Koyu antrasit zemin üzerine kehribar sarısı CRT hacker komut vurguları.',
-    bgPreview: 'bg-[#0f1115] text-amber-400',
-    borderPreview: 'border-amber-500/40',
-    accentPreview: 'bg-amber-500',
-  },
-  {
-    id: 'dracula-slate',
-    name: 'Dracula Slate ✨',
-    desc: 'Koyu çelik mavisi zemin üzerine camgöbeği (cyan) ve pembe neonlar.',
-    bgPreview: 'bg-[#14151f] text-cyan-300',
-    borderPreview: 'border-cyan-400/40',
-    accentPreview: 'bg-cyan-400',
-  },
-  {
-    id: 'emerald-slate',
-    name: 'Emerald Slate ✨',
-    desc: 'Koyu kayrak mavisi zemin ve zümrüt yeşili yetkinlik vurguları.',
-    bgPreview: 'bg-[#0b1324] text-emerald-300',
-    borderPreview: 'border-teal-500/40',
-    accentPreview: 'bg-teal-400',
-  },
-  {
-    id: 'paper-light',
-    name: 'Paper Cream',
-    desc: 'Sıcak krem kağıt zemin, vintage espresso ve taş renkleri.',
-    bgPreview: 'bg-[#fcfbf7] text-[#1c1917]',
-    borderPreview: 'border-[#d8cebb]',
-    accentPreview: 'bg-[#1c1917]',
-  },
-  {
-    id: 'corporate-light',
-    name: 'Executive Light',
-    desc: 'Temiz off-white kağıt zemin, kurumsal lacivert-siyah tipografi.',
-    bgPreview: 'bg-[#f8fafc] text-[#0f172a]',
-    borderPreview: 'border-[#cbd5e1]',
-    accentPreview: 'bg-[#0f172a]',
-  },
-  {
-    id: 'modern-dark',
-    name: 'Modern Obsidian',
-    desc: 'Minimalist saf obsidian siyahı, ultra keskin çinko çizgiler.',
-    bgPreview: 'bg-[#050505] text-white',
-    borderPreview: 'border-[#27272a]',
-    accentPreview: 'bg-zinc-200',
-  },
-  {
-    id: 'minimal-light',
-    name: 'Minimal Pure',
-    desc: 'Sade saf beyaz minimalist tasarım, yüksek okunabilirlik.',
-    bgPreview: 'bg-white text-[#18181b]',
-    borderPreview: 'border-[#e4e4e7]',
-    accentPreview: 'bg-[#18181b]',
-  },
-];
+export default function ThemeSelector({ currentTheme, currentAccent, onSelectTheme, onSelectAccent }: ThemeSelectorProps) {
+  const currentIsLight = getTheme(currentTheme).isLight;
+  const [group, setGroup] = useState<'dark' | 'light'>(currentIsLight ? 'light' : 'dark');
+  const [hexInput, setHexInput] = useState(currentAccent ?? '');
 
-export default function ThemeSelector({ currentTheme, onSelectTheme }: ThemeSelectorProps) {
-  const [prevTheme, setPrevTheme] = useState<ThemeType>(currentTheme);
+  const visibleThemes = Object.values(themes).filter((t) => t.isLight === (group === 'light'));
 
-  if (currentTheme !== prevTheme) {
-    setPrevTheme(currentTheme);
-  }
+  const handleHexChange = (value: string) => {
+    setHexInput(value);
+    if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+      onSelectAccent(value);
+    }
+  };
 
   return (
-    <div className="rounded-2xl border border-[#23272e] bg-[#141619] p-6 sm:p-8 shadow-xl space-y-5">
-      <div className="flex items-center gap-3 border-b border-[#23272e] pb-5">
-        <div className="p-2 rounded-lg bg-white/5 text-white border border-white/10">
-          <Palette className="w-5 h-5" />
+    <div className="rounded-3xl border border-[#3a2c22] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f] space-y-5">
+      <div className="flex items-center justify-between gap-4 border-b border-[#3a2c22] pb-5 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
+            <Palette className="w-5 h-5" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-[#fdf6ec]">Portfolyo Teması</h2>
+            <p className="text-xs text-[#cbb9a0]">
+              Bir tema seçin, isterseniz vurgu rengini özelleştirin — değişikliklerinizi en üstteki kaydet butonuyla uygulayın.
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-base font-bold text-[#f8fafc]">Portfolyo Teması</h2>
-          <p className="text-xs text-[#94a3b8]">
-            Bir tema seçin — değişikliklerinizi en üstteki kaydet butonuyla uygulayın.
-          </p>
+
+        <div className="flex bg-[#14110f] border border-[#3a2c22] rounded-full p-1 gap-0.5">
+          {(['dark', 'light'] as const).map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => setGroup(g)}
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
+                group === g ? 'bg-[#ff5a3c] text-[#14110f]' : 'text-[#cbb9a0]'
+              }`}
+            >
+              {g === 'dark' ? 'Koyu' : 'Açık'}
+            </button>
+          ))}
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {THEME_OPTIONS.map((t) => {
+        {visibleThemes.map((t) => {
           const isSelected = currentTheme === t.id;
+          const previewAccent = isSelected && currentAccent ? currentAccent : t.accentColor;
 
           return (
             <button
               key={t.id}
               type="button"
               onClick={() => onSelectTheme(t.id)}
-              className={`relative flex flex-col justify-between p-4 rounded-xl border text-left transition-all duration-200 ${
+              className={`relative flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all duration-200 ${
                 isSelected
-                  ? 'border-white bg-white/10 ring-2 ring-white/40 shadow-lg scale-[1.01]'
-                  : 'border-[#23272e] bg-[#0c0d0e] hover:border-[#3d4352] hover:bg-[#111318] opacity-75 hover:opacity-100'
+                  ? 'border-[#ff5a3c] bg-[#291f19] shadow-[3px_3px_0_0_#ff5a3c]'
+                  : 'border-[#3a2c22] bg-[#14110f] hover:border-[#8a7864]'
               }`}
             >
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className={`w-2.5 h-2.5 rounded-full ${t.accentPreview}`} />
-                    <h4 className="text-sm font-bold text-white">{t.name}</h4>
-                  </div>
-                  {isSelected && (
-                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-slate-950 font-black shadow">
-                      <Check className="w-3 h-3" strokeWidth={3} />
-                    </span>
-                  )}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: previewAccent }} />
+                  <h4 className="text-sm font-bold text-[#fdf6ec]">{t.name}</h4>
                 </div>
-                <p className="text-[11px] text-[#94a3b8] leading-snug">{t.desc}</p>
+                {isSelected && (
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#ff5a3c] text-[#14110f]">
+                    <Check className="w-3 h-3" strokeWidth={3} />
+                  </span>
+                )}
               </div>
 
-              {/* Önizleme Kutusu */}
-              <div className={`mt-3 p-2 rounded-lg border text-[10px] ${t.borderPreview} ${t.bgPreview} flex items-center justify-between`}>
-                <span className="font-semibold">Tema Önizleme</span>
-                <span className={`px-1.5 py-0.5 rounded font-bold text-[9px] ${isSelected ? 'bg-white text-slate-950' : 'bg-black/30 text-white'}`}>
-                  {isSelected ? '✓ Seçildi' : 'Seç'}
+              {/* Canlı önizleme — theme.ts'nin gerçek renklerinden üretilir */}
+              <div
+                className="rounded-xl p-2.5 flex flex-col gap-2"
+                style={{ background: t.bgHex, border: `1px solid ${t.borderHex}` }}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full shrink-0" style={{ backgroundColor: previewAccent }} />
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <span className="h-1.5 rounded-full" style={{ width: '55%', background: t.textPrimaryHex }} />
+                    <span className="h-1 rounded-full opacity-70" style={{ width: '35%', background: t.textSecondaryHex }} />
+                  </div>
+                </div>
+                <span
+                  className="self-start text-[9px] font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: previewAccent, color: '#ffffff' }}
+                >
+                  @kullaniciadi
                 </span>
               </div>
             </button>
           );
         })}
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-[#3a2c22] pt-5">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <span className="text-[11px] font-bold text-[#cbb9a0] uppercase tracking-wide">Accent Rengi</span>
+            <p className="text-[11px] text-[#8a7864]">Opsiyonel — seçili temanın üzerine uygulanır.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setHexInput('');
+              onSelectAccent(null);
+            }}
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-[#cbb9a0] hover:text-[#fdf6ec] border border-[#3a2c22] bg-[#14110f] px-3 py-1.5 rounded-full transition"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Sıfırla
+          </button>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          {ACCENT_SWATCHES.map((hex) => (
+            <button
+              key={hex}
+              type="button"
+              onClick={() => {
+                setHexInput(hex);
+                onSelectAccent(hex);
+              }}
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{
+                backgroundColor: hex,
+                boxShadow: currentAccent === hex ? '0 0 0 2px #14110f, 0 0 0 4px #fdf6ec' : 'none',
+              }}
+            >
+              {currentAccent === hex && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+            </button>
+          ))}
+
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg border border-[#3a2c22]" style={{ backgroundColor: hexInput || '#14110f' }} />
+            <input
+              type="text"
+              value={hexInput}
+              onChange={(e) => handleHexChange(e.target.value)}
+              placeholder="#RRGGBB"
+              className="w-28 px-3 py-2 rounded-lg border border-[#3a2c22] bg-[#14110f] text-[#fdf6ec] font-mono text-xs focus:border-[#ff5a3c] focus:outline-none"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

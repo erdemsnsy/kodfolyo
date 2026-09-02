@@ -28,6 +28,7 @@ function DashboardContent() {
 
   // Pending (kaydedilmemiş) değişiklikler
   const [pendingTheme, setPendingTheme] = useState<ThemeType | null>(null);
+  const [pendingAccent, setPendingAccent] = useState<string | null | undefined>(undefined);
   const [pendingBio, setPendingBio] = useState<string | null>(null);
   const [pendingName, setPendingName] = useState<string | null>(null);
   const [pendingLocation, setPendingLocation] = useState<string | null>(null);
@@ -40,6 +41,7 @@ function DashboardContent() {
 
   const hasPendingChanges =
     pendingTheme !== null ||
+    pendingAccent !== undefined ||
     pendingBio !== null ||
     pendingName !== null ||
     pendingLocation !== null ||
@@ -143,6 +145,7 @@ function DashboardContent() {
       setActiveUsername(clean);
       // Bekleyen değişiklikleri temizle
       setPendingTheme(null);
+      setPendingAccent(undefined);
       setPendingBio(null);
       setPendingName(null);
       setPendingLocation(null);
@@ -162,6 +165,7 @@ function DashboardContent() {
 
     const payload: Record<string, unknown> = { username: activeUsername };
     if (pendingTheme !== null) payload.theme = pendingTheme;
+    if (pendingAccent !== undefined) payload.custom_accent = pendingAccent;
     if (pendingBio !== null) payload.custom_bio = pendingBio;
     if (pendingName !== null) payload.name = pendingName;
     if (pendingLocation !== null) payload.location = pendingLocation;
@@ -185,6 +189,7 @@ function DashboardContent() {
           setProfile((prev) => ({
             ...prev!,
             ...(pendingTheme !== null && { theme: pendingTheme }),
+            ...(pendingAccent !== undefined && { custom_accent: pendingAccent }),
             ...(pendingBio !== null && { custom_bio: pendingBio }),
             ...(pendingName !== null && { name: pendingName }),
             ...(pendingLocation !== null && { location: pendingLocation }),
@@ -196,6 +201,7 @@ function DashboardContent() {
 
         // Pending değişiklikleri temizle
         setPendingTheme(null);
+        setPendingAccent(undefined);
         setPendingBio(null);
         setPendingName(null);
         setPendingLocation(null);
@@ -245,6 +251,7 @@ function DashboardContent() {
   const displayProfile: UserProfile = {
     ...profile,
     ...(pendingTheme !== null && { theme: pendingTheme }),
+    ...(pendingAccent !== undefined && { custom_accent: pendingAccent }),
     ...(pendingBio !== null && { custom_bio: pendingBio }),
     ...(pendingName !== null && { name: pendingName }),
     ...(pendingLocation !== null && { location: pendingLocation }),
@@ -351,8 +358,13 @@ function DashboardContent() {
 
         <ThemeSelector
           currentTheme={displayProfile.theme}
+          currentAccent={displayProfile.custom_accent}
           onSelectTheme={(theme) => {
             setPendingTheme(theme);
+            return Promise.resolve();
+          }}
+          onSelectAccent={(accent) => {
+            setPendingAccent(accent);
             return Promise.resolve();
           }}
         />
