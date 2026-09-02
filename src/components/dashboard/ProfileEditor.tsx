@@ -2,12 +2,21 @@
 
 import { useState } from 'react';
 import { UserProfile } from '@/types';
-import { User, Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw } from 'lucide-react';
 
 interface ProfileEditorProps {
   profile: UserProfile;
   onSave: (updated: Partial<UserProfile>) => Promise<void>;
 }
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', marginTop: 7, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.12)', borderRadius: 10,
+  padding: '11px 13px', color: '#191720', fontFamily: 'var(--font-sans)', fontSize: 14.5, outline: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797', letterSpacing: '.04em',
+};
 
 export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   const [customBio, setCustomBio] = useState(profile.custom_bio ?? profile.bio ?? '');
@@ -24,13 +33,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
       const res = await fetch('/api/ai/bio-suggest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: profile.username,
-          name,
-          company,
-          location,
-          tone,
-        }),
+        body: JSON.stringify({ username: profile.username, name, company, location, tone }),
       });
       const data = await res.json();
       if (data.success && data.suggestedBios) {
@@ -48,127 +51,65 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   };
 
   return (
-    <div className="rounded-3xl border border-[#384139] bg-[#17201b] p-6 sm:p-8 shadow-[5px_5px_0_0_#0d1310]">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#1fd88f]/10 text-[#1fd88f] border border-[#1fd88f]/25">
-            <User className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-[#f2f7f0]">Profil & Biyografi Düzenleme</h2>
-            <p className="text-xs text-[#c9d1cb]">
-              Portfolyo sitenizde görünecek özel biyografi ve kişisel iletişim bilgilerinizi girin.
-            </p>
-          </div>
-        </div>
-
+    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ fontSize: 16, fontWeight: 700 }}>Temel bilgiler</div>
         <button
           type="button"
           onClick={() => handleGenerateAiBio('professional')}
           disabled={isGeneratingBio}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 text-xs font-semibold transition"
+          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 9, background: 'rgba(99,102,241,.12)', color: '#4F46E5', border: '1px solid rgba(99,102,241,.28)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
         >
-          {isGeneratingBio ? (
-            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-          )}
-          <span>AI Biyografi Üret</span>
+          {isGeneratingBio ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+          AI Biyografi
         </button>
       </div>
+      <div style={{ fontSize: 13.5, color: '#6B6675', marginBottom: 18 }}>GitHub&apos;dan çekildi, istediğin gibi değiştirebilirsin.</div>
 
-      <div className="space-y-5">
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <label className="block text-xs font-semibold text-[#c9d1cb]">
-              Özel Biyografi (Custom Bio)
-            </label>
-            {aiSuggestions.length > 0 && (
-              <span className="text-[11px] text-indigo-400 font-medium">Uygulamak için öneriye tıklayın</span>
-            )}
-          </div>
-
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <label>
+          <span style={labelStyle}>İSİM</span>
+          <input value={name} onChange={(e) => { setName(e.target.value); notifyChange({ name: e.target.value }); }} style={inputStyle} />
+        </label>
+        <label>
+          <span style={labelStyle}>KONUM</span>
+          <input value={location} onChange={(e) => { setLocation(e.target.value); notifyChange({ location: e.target.value }); }} placeholder="İstanbul, Türkiye" style={inputStyle} />
+        </label>
+        <label>
+          <span style={labelStyle}>ŞİRKET</span>
+          <input value={company} onChange={(e) => { setCompany(e.target.value); notifyChange({ company: e.target.value }); }} placeholder="Kodfolyo Tech" style={inputStyle} />
+        </label>
+        <label>
+          <span style={labelStyle}>WEB SİTESİ</span>
+          <input value={blog} onChange={(e) => { setBlog(e.target.value); notifyChange({ blog: e.target.value }); }} placeholder="https://gokhan.dev" style={inputStyle} />
+        </label>
+        <label style={{ gridColumn: 'span 2' }}>
+          <span style={labelStyle}>BİYOGRAFİ</span>
           <textarea
             value={customBio}
-            onChange={(e) => {
-              setCustomBio(e.target.value);
-              notifyChange({ custom_bio: e.target.value });
-            }}
+            onChange={(e) => { setCustomBio(e.target.value); notifyChange({ custom_bio: e.target.value }); }}
             rows={3}
             placeholder="Kendinizden ve hedeflerinizden bahsedin..."
-            className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-3 text-sm text-[#f2f7f0] placeholder-[#93a297] focus:border-[#1fd88f] focus:outline-none transition"
+            style={{ ...inputStyle, lineHeight: 1.5, resize: 'vertical' }}
           />
-
-          {aiSuggestions.length > 0 && (
-            <div className="space-y-2 pt-2">
-              <span className="text-[11px] text-[#c9d1cb] font-bold">✨ AI Önerileri:</span>
-              <div className="space-y-1.5">
-                {aiSuggestions.map((sug, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      setCustomBio(sug);
-                      notifyChange({ custom_bio: sug });
-                    }}
-                    className="w-full text-left p-2.5 rounded-lg border border-[#384139] bg-[#0d1310] hover:border-indigo-500/50 hover:bg-indigo-500/10 text-xs text-[#c9d1cb] transition"
-                  >
-                    {sug}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="space-y-1.5">
-            <label className="block font-semibold text-[#c9d1cb]">Görüntülenecek İsim</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => { setName(e.target.value); notifyChange({ name: e.target.value }); }}
-              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block font-semibold text-[#c9d1cb]">Konum / Şehir</label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => { setLocation(e.target.value); notifyChange({ location: e.target.value }); }}
-              placeholder="İstanbul, Türkiye"
-              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div className="space-y-1.5">
-            <label className="block font-semibold text-[#c9d1cb]">Okul / Şirket</label>
-            <input
-              type="text"
-              value={company}
-              onChange={(e) => { setCompany(e.target.value); notifyChange({ company: e.target.value }); }}
-              placeholder="İTÜ Bilgisayar Mühendisliği"
-              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block font-semibold text-[#c9d1cb]">Web Sitesi / Blog</label>
-            <input
-              type="text"
-              value={blog}
-              onChange={(e) => { setBlog(e.target.value); notifyChange({ blog: e.target.value }); }}
-              placeholder="https://gokhan.dev"
-              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
-            />
-          </div>
-        </div>
-
+        </label>
       </div>
+
+      {aiSuggestions.length > 0 && (
+        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <span style={{ fontSize: 11, color: '#4F46E5', fontWeight: 700 }}>✨ AI Önerileri — uygulamak için tıkla</span>
+          {aiSuggestions.map((sug, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => { setCustomBio(sug); notifyChange({ custom_bio: sug }); }}
+              style={{ textAlign: 'left', padding: 10, borderRadius: 10, border: '1px solid rgba(99,102,241,.25)', background: 'rgba(99,102,241,.06)', fontSize: 12.5, color: '#3A3644', cursor: 'pointer' }}
+            >
+              {sug}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

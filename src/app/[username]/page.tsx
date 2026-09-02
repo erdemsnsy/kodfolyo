@@ -9,8 +9,8 @@ import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import PortfolioFooter from '@/components/portfolio/PortfolioFooter';
 import Navbar from '@/components/navbar/Navbar';
-import { getTheme } from '@/lib/theme';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import Kodi from '@/components/mascot/Kodi';
+import { ArrowLeft } from 'lucide-react';
 
 interface PortfolioPageProps {
   params: Promise<{ username: string }>;
@@ -54,31 +54,25 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   // Eğer GitHub'da böyle bir kullanıcı yoksa temiz 404 hatası göster
   if (!profile) {
     return (
-      <div className="min-h-screen bg-[#0c0d0e] text-[#f8fafc] flex flex-col font-sans">
+      <div style={{ minHeight: '100vh', background: '#F4F1EA', color: '#191720', display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-
-        <main className="flex-1 flex items-center justify-center p-6 my-12">
-          <div className="mx-auto max-w-md w-full rounded-2xl border border-[#23272e] bg-[#141619] p-8 text-center space-y-6 shadow-2xl">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mx-auto">
-              <AlertCircle className="w-6 h-6" />
+        <main style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+          <div style={{ textAlign: 'center', maxWidth: 460 }}>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <Kodi size={140} grayscale />
             </div>
-
-            <div className="space-y-2">
-              <h1 className="text-xl font-bold text-white">GitHub Kullanıcısı Bulunamadı</h1>
-              <p className="text-xs text-[#94a3b8] leading-relaxed">
-                <code className="text-white font-mono bg-[#0c0d0e] px-1.5 py-0.5 rounded">@{decodedUsername}</code> kullanıcı adıyla GitHub üzerinde kayıtlı bir profil bulunamadı.
-              </p>
-            </div>
-
-            <div className="pt-2 flex flex-col gap-3">
-              <Link
-                href="/"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-slate-200 px-5 py-3 text-xs font-bold text-slate-950 shadow transition"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Tekrar Arama Yap</span>
-              </Link>
-            </div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#C6314E', marginTop: 8 }}>404 — KULLANICI BULUNAMADI</div>
+            <h1 style={{ margin: '10px 0 12px', fontSize: 32, fontWeight: 800, letterSpacing: '-.035em' }}>Kodi bu profili bulamadı</h1>
+            <p style={{ margin: '0 0 22px', fontSize: 15, lineHeight: 1.55, color: '#6B6675' }}>
+              <code style={{ background: '#FFFFFF', padding: '2px 6px', borderRadius: 6, fontFamily: 'var(--font-mono)' }}>@{decodedUsername}</code> kullanıcı adıyla GitHub üzerinde kayıtlı bir profil bulunamadı ya da profil gizli.
+            </p>
+            <Link
+              href="/"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 11, padding: '12px 20px', textDecoration: 'none' }}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Ana sayfaya dön
+            </Link>
           </div>
         </main>
       </div>
@@ -86,22 +80,20 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   }
 
   const repos = await getCachedReposByUsername(decodedUsername);
-  const theme = getTheme(profile.theme, profile.custom_accent);
+  const visibleRepos = repos.filter((r) => r.is_visible !== false);
+  const starCount = visibleRepos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
   return (
-    <div
-      className={`min-h-screen ${theme.bg} transition-all duration-300 flex flex-col`}
-      style={theme.backgroundStyle}
-    >
-      <Navbar headerStyle={theme.headerStyle} themeType={profile.theme} currentUsername={profile.username} customAccent={profile.custom_accent} />
+    <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', flexDirection: 'column' }}>
+      <Navbar themeType={profile.theme} currentUsername={profile.username} />
 
-      <main className="flex-1">
-        <PortfolioHero profile={profile} />
-        <TechStack repos={repos} themeType={profile.theme} customAccent={profile.custom_accent} />
-        <ProjectGrid repos={repos} themeType={profile.theme} customAccent={profile.custom_accent} />
+      <main style={{ flex: 1 }}>
+        <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} />
+        <TechStack repos={repos} themeType={profile.theme} />
+        <ProjectGrid repos={repos} themeType={profile.theme} />
       </main>
 
-      <PortfolioFooter username={profile.username} themeType={profile.theme} customAccent={profile.custom_accent} />
+      <PortfolioFooter username={profile.username} themeType={profile.theme} />
     </div>
   );
 }

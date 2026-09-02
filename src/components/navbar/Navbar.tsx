@@ -3,22 +3,20 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { LayoutDashboard, User, LogOut, Code2, ExternalLink, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
+import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { useState, useEffect } from 'react';
 
 import { ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
-import Kodi from '@/components/mascot/Kodi';
 
 interface NavbarProps {
-  headerStyle?: React.CSSProperties;
   themeType?: ThemeType;
   currentUsername?: string;
-  customAccent?: string | null;
 }
 
-export default function Navbar({ headerStyle, themeType, currentUsername, customAccent }: NavbarProps = {}) {
+export default function Navbar({ themeType, currentUsername }: NavbarProps = {}) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [showPrompt, setShowPrompt] = useState(false);
@@ -34,8 +32,7 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
     }
   }, []);
 
-  const theme = getTheme(themeType, customAccent);
-  const isAppShell = themeType === undefined;
+  const theme = getTheme(themeType);
 
   const handleQuickLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,148 +76,116 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b ${isAppShell ? 'border-[#384139]' : theme.navBorder} transition-all duration-300`}
-      style={headerStyle || (isAppShell
-        ? { backgroundColor: 'rgba(20, 17, 15, 0.9)', backdropFilter: 'blur(12px)' }
-        : { backgroundColor: 'rgba(12, 13, 14, 0.9)', backdropFilter: 'blur(12px)' })}
+      style={{
+        position: 'sticky', top: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        flexWrap: 'wrap', rowGap: 8,
+        padding: '16px clamp(16px, 4vw, 40px)', background: `${theme.bg}CC`, backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(25,23,32,.07)',
+      }}
     >
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 text-sm font-bold tracking-tight transition hover:opacity-80">
-          {isAppShell ? (
-            <div className="h-8 w-8 shrink-0">
-              <Kodi pose="idle" size={32} />
-            </div>
-          ) : (
-            <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${theme.isLight ? 'bg-slate-950 text-white' : 'bg-white text-slate-950'} font-black shadow-sm`}>
-              <Code2 className="h-4 w-4" />
-            </div>
-          )}
-          <span className={isAppShell ? 'text-[#f2f7f0] font-bold' : theme.navText}>
-            Kodfolyo<span className={isAppShell ? 'text-[#93a297]' : (theme.isLight ? 'text-slate-500' : 'text-slate-400')}>.dev</span>
-          </span>
-        </Link>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none' }}>
+        <KodfolyoLogo size={30} />
+        <span style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
+      </Link>
 
-        {/* Navigation & Actions */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          {status === 'authenticated' && session?.user ? (
-            <>
-              <Link
-                href={`/${username}`}
-                className={isAppShell
-                  ? 'hidden sm:flex items-center gap-1.5 rounded-full border border-[#384139] bg-[#17201b] px-3 py-1.5 text-xs font-medium text-[#c9d1cb] hover:text-[#f2f7f0] transition'
-                  : `hidden sm:flex items-center gap-1.5 rounded-lg border ${theme.navBorder} ${theme.badge} px-3 py-1.5 text-xs font-medium ${theme.navMuted} transition`}
-                style={isAppShell ? undefined : theme.badgeStyle}
-              >
-                <User className="h-3.5 w-3.5" />
-                <span>/{username}</span>
-                <ExternalLink className="h-3 w-3 opacity-60" />
-              </Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+        {status === 'authenticated' && session?.user ? (
+          <>
+            <Link
+              href={`/${username}`}
+              className="nav-hide-narrow"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: theme.muted, textDecoration: 'none' }}
+            >
+              <User className="h-3.5 w-3.5" />
+              <span>/{username}</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </Link>
 
+            <Link
+              href={editDashboardUrl}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
+                color: '#F4F1EA', background: '#191720', border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
+              }}
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              <span>Panelim</span>
+            </Link>
+
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              style={{ display: 'flex', alignItems: 'center', color: theme.muted, background: 'transparent', border: 0, cursor: 'pointer' }}
+              title="Çıkış Yap"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/ornek-ogrenci" className="nav-hide-narrow" style={{ fontSize: 14, color: theme.muted, textDecoration: 'none' }}>
+              Örnek Portfolyo
+            </Link>
+
+            {activeTargetUser && activeTargetUser !== 'ornek-ogrenci' && activeTargetUser !== 'demo' ? (
               <Link
                 href={editDashboardUrl}
-                className={isAppShell
-                  ? 'flex items-center gap-1.5 rounded-full bg-[#1fd88f] px-3.5 py-1.5 text-xs font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition'
-                  : `flex items-center gap-1.5 rounded-lg ${theme.buttonPrimary} px-3.5 py-1.5 text-xs font-bold shadow-sm transition`}
-                style={isAppShell ? undefined : theme.buttonPrimaryStyle}
+                style={{
+                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F1EA', background: '#191720',
+                  border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
+                }}
               >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                <span>Düzenle</span>
+                Düzenle (@{activeTargetUser})
               </Link>
-
+            ) : (
               <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className={isAppShell
-                  ? 'flex items-center gap-1.5 rounded-full border border-[#384139] bg-[#17201b] px-2.5 py-1.5 text-xs text-[#93a297] hover:text-red-400 transition'
-                  : `flex items-center gap-1.5 rounded-lg border ${theme.navBorder} ${theme.badge} px-2.5 py-1.5 text-xs ${theme.textMuted} hover:text-red-500 transition`}
-                style={isAppShell ? undefined : theme.badgeStyle}
-                title="Çıkış Yap"
+                onClick={() => setShowPrompt(true)}
+                style={{
+                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F1EA', background: '#191720',
+                  border: 0, borderRadius: 9, padding: '9px 16px', cursor: 'pointer',
+                }}
               >
-                <LogOut className="h-3.5 w-3.5" />
+                GitHub ile Giriş
               </button>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/ornek-ogrenci"
-                className={isAppShell ? 'text-xs font-semibold text-[#c9d1cb] hover:text-[#f2f7f0] px-2 py-1 transition' : `text-xs font-semibold ${theme.navMuted} px-2 py-1 transition`}
-                title="Canlı Örnek Portfolyoyu İncele"
-              >
-                Örnek Portfolyo
-              </Link>
-
-              {activeTargetUser && activeTargetUser !== 'ornek-ogrenci' && activeTargetUser !== 'demo' ? (
-                <Link
-                  href={editDashboardUrl}
-                  className={isAppShell
-                    ? 'flex items-center gap-1.5 rounded-full bg-[#1fd88f] px-3 sm:px-4 py-2 text-xs font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition active:scale-95'
-                    : `flex items-center gap-1.5 rounded-lg ${theme.buttonPrimary} px-3 sm:px-4 py-2 text-xs font-bold shadow-sm transition active:scale-95`}
-                  style={isAppShell ? undefined : theme.buttonPrimaryStyle}
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  <span className="hidden sm:inline">Düzenle (@{activeTargetUser})</span>
-                  <span className="sm:hidden">Düzenle</span>
-                </Link>
-              ) : (
-                <button
-                  onClick={() => setShowPrompt(true)}
-                  className={isAppShell
-                    ? 'flex items-center gap-1.5 sm:gap-2 rounded-full bg-[#1fd88f] px-3 sm:px-4 py-2 text-xs font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition active:scale-95'
-                    : `flex items-center gap-1.5 sm:gap-2 rounded-lg ${theme.buttonPrimary} px-3 sm:px-4 py-2 text-xs font-bold shadow-sm transition active:scale-95`}
-                  style={isAppShell ? undefined : theme.buttonPrimaryStyle}
-                >
-                  <GithubIcon className="h-4 w-4" />
-                  <span className="hidden sm:inline">Portfolyomu Çek</span>
-                  <span className="sm:hidden">Portfolyo</span>
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Hızlı Kullanıcı Adı Prompt Modalı */}
       {showPrompt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-3xl border border-[#384139] bg-[#17201b] p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm font-bold text-[#f2f7f0]">
+        <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: 'rgba(25,23,32,.55)', backdropFilter: 'blur(6px)' }}>
+          <div style={{ width: '100%', maxWidth: 420, padding: 24, borderRadius: 22, background: '#F4F1EA', border: '1px solid rgba(25,23,32,.12)', boxShadow: '0 40px 90px rgba(25,23,32,.35)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 800, color: '#191720' }}>
                 <GithubIcon className="w-4 h-4" />
                 <span>GitHub Kullanıcı Adını Gir</span>
               </div>
               <button
-                onClick={() => {
-                  setShowPrompt(false);
-                  setErrorMsg(null);
-                }}
-                className="text-xs text-[#93a297] hover:text-[#f2f7f0]"
+                onClick={() => { setShowPrompt(false); setErrorMsg(null); }}
+                style={{ fontSize: 18, lineHeight: 1, color: '#6B6675', background: 'transparent', border: 0, cursor: 'pointer' }}
               >
-                Kapat
+                ×
               </button>
             </div>
 
-            <p className="text-xs text-[#c9d1cb]">
+            <p style={{ fontSize: 13, color: '#56515F', margin: '0 0 16px' }}>
               Kendi GitHub kullanıcı adını yaz, profilini ve projelerini anında çekip portfolyonu hazırlayalım:
             </p>
 
-            <form onSubmit={handleQuickLogin} className="space-y-3 text-xs">
-              <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-[#384139] bg-[#0d1310] text-[#f2f7f0]">
-                <span className="text-[#93a297] font-bold">@</span>
+            <form onSubmit={handleQuickLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.14)', borderRadius: 13, padding: '5px 5px 5px 16px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, color: '#8C8797' }}>github.com/</span>
                 <input
                   type="text"
                   value={usernameInput}
-                  onChange={(e) => {
-                    setUsernameInput(e.target.value);
-                    if (errorMsg) setErrorMsg(null);
-                  }}
-                  placeholder="github_kullanici_adi"
-                  className="w-full bg-transparent border-none outline-none placeholder-[#93a297] text-xs sm:text-sm"
+                  onChange={(e) => { setUsernameInput(e.target.value); if (errorMsg) setErrorMsg(null); }}
+                  placeholder="kullaniciadi"
                   autoFocus
+                  style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', color: '#191720', fontFamily: 'var(--font-mono)', fontSize: 15, padding: '11px 4px' }}
                 />
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-1.5 text-xs text-red-400 font-medium">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#C6314E', fontWeight: 500 }}>
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
@@ -229,7 +194,11 @@ export default function Navbar({ headerStyle, themeType, currentUsername, custom
               <button
                 type="submit"
                 disabled={isLoading || !usernameInput.trim()}
-                className="w-full flex items-center justify-center gap-2 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] px-4 py-3 font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition disabled:opacity-50"
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, fontFamily: 'var(--font-sans)',
+                  fontSize: 15, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 13,
+                  padding: '13px 24px', cursor: 'pointer', opacity: isLoading || !usernameInput.trim() ? 0.5 : 1,
+                }}
               >
                 {isLoading ? (
                   <>

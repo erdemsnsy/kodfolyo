@@ -34,11 +34,6 @@ export async function POST(request: Request) {
     // 2. Profil Ayarları Güncelleme (Bio, Tema, Özel Bağlantılar, İletişim Bilgileri)
     const customBio: string | null = typeof body.custom_bio !== 'undefined' ? body.custom_bio : currentProfile.custom_bio;
     const theme: ThemeType = body.theme || currentProfile.theme;
-    const isValidHexColor = (value: unknown): value is string => typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value);
-    const customAccent: string | null =
-      typeof body.custom_accent === 'undefined'
-        ? currentProfile.custom_accent
-        : (body.custom_accent === null ? null : (isValidHexColor(body.custom_accent) ? body.custom_accent : currentProfile.custom_accent));
     const customLinks: CustomLink[] = body.custom_links || currentProfile.custom_links;
     const name: string | null = typeof body.name !== 'undefined' ? body.name : currentProfile.name;
     const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
@@ -57,7 +52,6 @@ export async function POST(request: Request) {
       email: currentProfile.email,
       blog,
       theme,
-      custom_accent: customAccent,
       custom_links: customLinks,
     });
 

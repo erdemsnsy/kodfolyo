@@ -77,8 +77,7 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       location: mockUser.location,
       email: mockUser.email,
       blog: mockUser.blog,
-      theme: 'corporate-dark',
-      custom_accent: null,
+      theme: 'gece',
       custom_links: [],
     };
     memoryProfilesStore.set(normalizedUser, mockProfile);
@@ -105,8 +104,7 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       location: realGithubUser.location,
       email: realGithubUser.email,
       blog: realGithubUser.blog,
-      theme: 'corporate-dark',
-      custom_accent: null,
+      theme: 'gece',
       custom_links: [],
     };
     memoryProfilesStore.set(normalizedUser, profile);
@@ -138,8 +136,7 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
             location: profile.location,
             email: profile.email,
             blog: profile.blog,
-            theme: profile.theme || 'corporate-dark',
-            custom_accent: profile.custom_accent ?? null,
+            theme: profile.theme || 'gece',
             custom_links: profile.custom_links || [],
             updated_at: new Date().toISOString(),
           },
@@ -174,8 +171,7 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
     location: profile.location ?? existing?.location ?? null,
     email: profile.email ?? existing?.email ?? null,
     blog: profile.blog ?? existing?.blog ?? null,
-    theme: profile.theme || existing?.theme || 'corporate-dark',
-    custom_accent: profile.custom_accent ?? existing?.custom_accent ?? null,
+    theme: profile.theme || existing?.theme || 'gece',
     custom_links: profile.custom_links || existing?.custom_links || [],
   };
   memoryProfilesStore.set(normalizedUser, updatedProfile);

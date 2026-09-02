@@ -1,34 +1,37 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Navbar from '@/components/navbar/Navbar';
+import { useSearchParams } from 'next/navigation';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import RepoSelector from '@/components/dashboard/RepoSelector';
 import CustomLinksManager from '@/components/dashboard/CustomLinksManager';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import SyncButton from '@/components/dashboard/SyncButton';
+import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { ExternalLink, ShieldCheck, Save, CheckCircle2, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect } from 'react';
+import { Save, CheckCircle2 } from 'lucide-react';
+
+const NAV_ITEMS = [
+  { label: 'Genel bakış', href: '#genel' },
+  { label: 'Profil', href: '#profil' },
+  { label: 'Repolar', href: '#repolar' },
+  { label: 'Tema', href: '#tema' },
+  { label: 'Bağlantılar', href: '#baglantilar' },
+];
 
 function DashboardContent() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const router = useRouter();
 
   const [activeUsername, setActiveUsername] = useState<string>('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [repos, setRepos] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [switchInput, setSwitchInput] = useState('');
 
   // Pending (kaydedilmemiş) değişiklikler
   const [pendingTheme, setPendingTheme] = useState<ThemeType | null>(null);
-  const [pendingAccent, setPendingAccent] = useState<string | null | undefined>(undefined);
   const [pendingBio, setPendingBio] = useState<string | null>(null);
   const [pendingName, setPendingName] = useState<string | null>(null);
   const [pendingLocation, setPendingLocation] = useState<string | null>(null);
@@ -41,7 +44,6 @@ function DashboardContent() {
 
   const hasPendingChanges =
     pendingTheme !== null ||
-    pendingAccent !== undefined ||
     pendingBio !== null ||
     pendingName !== null ||
     pendingLocation !== null ||
@@ -93,7 +95,6 @@ function DashboardContent() {
           const data = await syncRes.json();
           if (isMounted) {
             setActiveUsername(targetUser);
-            setSwitchInput(targetUser);
             if (typeof window !== 'undefined') {
               localStorage.setItem('kodfolyo_active_username', targetUser);
             }
@@ -112,7 +113,6 @@ function DashboardContent() {
             const fbData = await fbRes.json();
             if (isMounted) {
               setActiveUsername('erdemsnsy');
-              setSwitchInput('erdemsnsy');
               if (typeof window !== 'undefined') {
                 localStorage.setItem('kodfolyo_active_username', 'erdemsnsy');
               }
@@ -135,28 +135,6 @@ function DashboardContent() {
     };
   }, [searchParams, session]);
 
-  const handleSwitchUser = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = sanitizeUsername(switchInput);
-    if (clean) {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('kodfolyo_active_username', clean);
-      }
-      setActiveUsername(clean);
-      // Bekleyen değişiklikleri temizle
-      setPendingTheme(null);
-      setPendingAccent(undefined);
-      setPendingBio(null);
-      setPendingName(null);
-      setPendingLocation(null);
-      setPendingCompany(null);
-      setPendingBlog(null);
-      setPendingCustomLinks(null);
-      loadData(clean);
-      router.push(`/dashboard?username=${clean}`);
-    }
-  };
-
   // Tüm değişiklikleri tek seferde kaydet
   const handleSaveAll = async () => {
     if (!profile || !hasPendingChanges) return;
@@ -165,7 +143,6 @@ function DashboardContent() {
 
     const payload: Record<string, unknown> = { username: activeUsername };
     if (pendingTheme !== null) payload.theme = pendingTheme;
-    if (pendingAccent !== undefined) payload.custom_accent = pendingAccent;
     if (pendingBio !== null) payload.custom_bio = pendingBio;
     if (pendingName !== null) payload.name = pendingName;
     if (pendingLocation !== null) payload.location = pendingLocation;
@@ -182,14 +159,12 @@ function DashboardContent() {
 
       if (res.ok) {
         const data = await res.json();
-        // Local profile state'i güncelle
         if (data.profile) {
           setProfile(data.profile);
         } else {
           setProfile((prev) => ({
             ...prev!,
             ...(pendingTheme !== null && { theme: pendingTheme }),
-            ...(pendingAccent !== undefined && { custom_accent: pendingAccent }),
             ...(pendingBio !== null && { custom_bio: pendingBio }),
             ...(pendingName !== null && { name: pendingName }),
             ...(pendingLocation !== null && { location: pendingLocation }),
@@ -199,9 +174,7 @@ function DashboardContent() {
           }));
         }
 
-        // Pending değişiklikleri temizle
         setPendingTheme(null);
-        setPendingAccent(undefined);
         setPendingBio(null);
         setPendingName(null);
         setPendingLocation(null);
@@ -235,23 +208,18 @@ function DashboardContent() {
 
   if (isLoading || !profile) {
     return (
-      <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col font-sans">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-[#1fd88f] border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs text-[#c9d1cb]">@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
-          </div>
+      <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 22, height: 22, border: '2px solid #1F3AE8', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
+          <p style={{ fontSize: 13, color: '#6B6675' }}>@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
         </div>
       </div>
     );
   }
 
-  // Anlık önizleme için kullanılan profil (pending değişikliklerle birlikte)
   const displayProfile: UserProfile = {
     ...profile,
     ...(pendingTheme !== null && { theme: pendingTheme }),
-    ...(pendingAccent !== undefined && { custom_accent: pendingAccent }),
     ...(pendingBio !== null && { custom_bio: pendingBio }),
     ...(pendingName !== null && { name: pendingName }),
     ...(pendingLocation !== null && { location: pendingLocation }),
@@ -261,155 +229,110 @@ function DashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0]">
-      <Navbar />
-
-      <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 space-y-8">
-        {/* Üst Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#384139] bg-[#17201b] shadow-[5px_5px_0_0_#0d1310]">
-          <div className="space-y-1 min-w-0 max-w-full">
-            <div className="text-xs text-[#c9d1cb] font-semibold flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#1fd88f]" />
-              <span>Kontrol Paneli</span>
-            </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#f2f7f0] truncate">
-              Düzenlenen Profil: <span className="text-[#f0b429]">@{displayProfile.username}</span>
-            </h1>
-            <p className="text-xs text-[#c9d1cb]">
-              `/{displayProfile.username}` adresindeki portfolyonu buradan kişiselleştirebilirsin.
-            </p>
+    <div style={{ display: 'grid', gridTemplateColumns: '236px minmax(0,1fr)', minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
+      {/* Yan menü */}
+      <div style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 26 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <KodfolyoLogo size={26} />
+          <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {NAV_ITEMS.map((n) => (
+            <a key={n.label} href={n.href} style={{ fontSize: 14, fontWeight: 500, padding: '9px 12px', borderRadius: 9, color: '#6B6675', textDecoration: 'none' }}>
+              {n.label}
+            </a>
+          ))}
+        </div>
+        <div style={{ marginTop: 'auto', padding: 14, borderRadius: 13, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797', marginBottom: 6 }}>SON SENKRON</div>
+          <div style={{ fontSize: 13, color: '#3A3644', marginBottom: 11 }}>
+            {profile.updated_at ? new Date(profile.updated_at).toLocaleString('tr-TR') : '—'}
           </div>
+          <SyncButton onSync={() => loadData(activeUsername)} />
+        </div>
+      </div>
 
-          <div className="shrink-0 pt-2 sm:pt-0">
-            <Link
+      {/* İçerik */}
+      <div style={{ padding: '26px 34px 110px', background: 'radial-gradient(ellipse at 100% 0%, rgba(0,166,118,.09), transparent 50%)' }}>
+        <div id="genel" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 26 }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 27, fontWeight: 800, letterSpacing: '-.035em', color: '#191720' }}>Profilini düzenle</h1>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: '#6B6675', marginTop: 5 }}>kodfolyo.dev/{displayProfile.username}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: saveAllSuccess ? '#00845E' : '#6B6675' }}>
+              {saveAllSuccess ? '✓ Kaydedildi' : hasPendingChanges ? 'Kaydedilmemiş değişiklikler' : 'Güncel'}
+            </span>
+            <a
               href={`/${displayProfile.username}`}
               target="_blank"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] px-4 py-2.5 text-xs font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition active:scale-95 whitespace-nowrap"
+              style={{ fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#3A3644', background: 'transparent', border: '1px solid rgba(25,23,32,.16)', borderRadius: 10, padding: '10px 16px', textDecoration: 'none', whiteSpace: 'nowrap' }}
             >
-              <span>Canlı Portfolyo</span>
-              <ExternalLink className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-
-        {/* ========= DEĞİŞİKLİKLERİ KAYDET BUTONU (Sayfa akışında sabit durur, scroll ile kaybolur) ========= */}
-        {(hasPendingChanges || saveAllSuccess) && (
-          <div>
-            <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl border shadow-[5px_5px_0_0_#0d1310] transition-all duration-300 ${
-              saveAllSuccess
-                ? 'border-emerald-500/50 bg-emerald-950/80 backdrop-blur-md'
-                : 'border-[#f0b429]/50 bg-[#17201b]/90 backdrop-blur-md'
-            }`}>
-              <div className="flex items-center gap-3 text-sm">
-                {saveAllSuccess ? (
-                  <>
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                    <span className="text-emerald-300 font-semibold">
-                      Tüm değişiklikler başarıyla kaydedildi! Canlı portfolyoyu yenileyerek görebilirsiniz.
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shrink-0" />
-                    <span className="text-amber-200 font-semibold">
-                      Kaydedilmemiş değişiklikleriniz var. Aşağıdaki butona basarak kaydedin.
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {!saveAllSuccess && (
-                <button
-                  type="button"
-                  onClick={handleSaveAll}
-                  disabled={isSavingAll}
-                  className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] text-[#0d1310] text-sm font-extrabold shadow-[3px_3px_0_0_#0d1310] transition active:scale-95 disabled:opacity-60"
-                >
-                  {isSavingAll ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Kaydediliyor...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      <span>Değişiklikleri Kaydet</span>
-                    </>
-                  )}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        <SyncButton onSync={() => loadData(activeUsername)} lastSyncedAt={profile.updated_at} />
-
-        <ProfileEditor
-          profile={displayProfile}
-          onSave={(fields) => {
-            if (fields.custom_bio !== undefined) setPendingBio(fields.custom_bio ?? '');
-            if (fields.name !== undefined) setPendingName(fields.name ?? '');
-            if (fields.location !== undefined) setPendingLocation(fields.location ?? '');
-            if (fields.company !== undefined) setPendingCompany(fields.company ?? '');
-            if (fields.blog !== undefined) setPendingBlog(fields.blog ?? '');
-            return Promise.resolve();
-          }}
-        />
-
-        <ThemeSelector
-          currentTheme={displayProfile.theme}
-          currentAccent={displayProfile.custom_accent}
-          onSelectTheme={(theme) => {
-            setPendingTheme(theme);
-            return Promise.resolve();
-          }}
-          onSelectAccent={(accent) => {
-            setPendingAccent(accent);
-            return Promise.resolve();
-          }}
-        />
-
-        <CustomLinksManager
-          customLinks={displayProfile.custom_links}
-          onSaveLinks={(links) => {
-            setPendingCustomLinks(links);
-            return Promise.resolve();
-          }}
-        />
-
-        <RepoSelector repos={repos} onToggleVisibility={handleToggleRepoVisibility} />
-
-        {/* Alt Kaydet Butonu */}
-        {hasPendingChanges && (
-          <div className="flex justify-end pb-8">
+              Önizle
+            </a>
             <button
               type="button"
               onClick={handleSaveAll}
-              disabled={isSavingAll}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] text-[#0d1310] text-sm font-extrabold shadow-[4px_4px_0_0_#0d1310] transition active:scale-95 disabled:opacity-60"
+              disabled={isSavingAll || !hasPendingChanges}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 700,
+                color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 10, padding: '10px 20px', cursor: 'pointer',
+                whiteSpace: 'nowrap', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1,
+              }}
             >
-              {isSavingAll ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Kaydediliyor...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-5 h-5" />
-                  <span>Tüm Değişiklikleri Kaydet</span>
-                </>
-              )}
+              {isSavingAll ? <CheckCircle2 className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
+              Değişiklikleri kaydet
             </button>
           </div>
-        )}
-      </main>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 18, alignItems: 'start' }}>
+          <div id="profil" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <ProfileEditor
+              profile={displayProfile}
+              onSave={(fields) => {
+                if (fields.custom_bio !== undefined) setPendingBio(fields.custom_bio ?? '');
+                if (fields.name !== undefined) setPendingName(fields.name ?? '');
+                if (fields.location !== undefined) setPendingLocation(fields.location ?? '');
+                if (fields.company !== undefined) setPendingCompany(fields.company ?? '');
+                if (fields.blog !== undefined) setPendingBlog(fields.blog ?? '');
+                return Promise.resolve();
+              }}
+            />
+            <div id="repolar">
+              <RepoSelector repos={repos} onToggleVisibility={handleToggleRepoVisibility} />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div id="tema">
+              <ThemeSelector
+                currentTheme={displayProfile.theme}
+                onSelectTheme={(theme) => {
+                  setPendingTheme(theme);
+                  return Promise.resolve();
+                }}
+              />
+            </div>
+            <div id="baglantilar">
+              <CustomLinksManager
+                customLinks={displayProfile.custom_links}
+                onSaveLinks={(links) => {
+                  setPendingCustomLinks(links);
+                  return Promise.resolve();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] p-8">Yükleniyor...</div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F4F1EA' }} />}>
       <DashboardContent />
     </Suspense>
   );

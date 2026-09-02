@@ -1,76 +1,56 @@
-'use client';
-
 import Navbar from '@/components/navbar/Navbar';
 import LandingHero from '@/components/landing/LandingHero';
 import LandingFeatures from '@/components/landing/LandingFeatures';
 import LandingPreview from '@/components/landing/LandingPreview';
 import Link from 'next/link';
-import { Code2 } from 'lucide-react';
-import { GithubIcon } from '@/components/icons/GithubIcon';
-import { motion } from 'framer-motion';
-import { fadeUp } from '@/lib/motion';
+import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 
 export default function LandingPage() {
   return (
-    <div
-      className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col selection:bg-[#1fd88f] selection:text-[#0d1310]"
-      style={{ backgroundImage: 'radial-gradient(#17201b 1.5px, transparent 1.5px)', backgroundSize: '26px 26px' }}
-    >
+    <div style={{ fontFamily: 'var(--font-sans)', background: '#F4F1EA', color: '#191720', minHeight: '100vh', overflowX: 'hidden' }}>
       <Navbar />
 
-      <main className="flex-1 space-y-6">
+      <main>
         <LandingHero />
         <LandingPreview />
         <LandingFeatures />
 
-        {/* CTA Bitiş Kutusu */}
-        <section className="mx-auto max-w-4xl px-4 sm:px-6 my-16">
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.5 }}
-            className="p-8 sm:p-10 rounded-3xl border border-[#384139] bg-[#17201b] text-center space-y-4 shadow-[6px_6px_0_0_#0d1310]"
-          >
-            <h2 className="text-xl sm:text-3xl font-extrabold text-[#f2f7f0]">
-              Portfolyonu Bugün Yayınla
-            </h2>
-            <p className="text-xs sm:text-sm text-[#c9d1cb] max-w-lg mx-auto">
-              Sıfır kurulum yükü. GitHub kullanıcı adını gir, sade ve kurumsal portfolyon anında oluşturulsun.
-            </p>
-
-            <div className="pt-2">
+        {/* Kapanış CTA */}
+        <div style={{ padding: '0 clamp(16px, 5vw, 40px) 80px' }}>
+          <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', borderRadius: 24, overflow: 'hidden', background: 'linear-gradient(120deg,#1F3AE8,#4B7BFF 45%,#00A676)', padding: '48px clamp(20px, 5vw, 48px)' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 36, flexWrap: 'wrap' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 38, fontWeight: 900, letterSpacing: '-.04em', color: '#FFFFFF', maxWidth: 620 }}>
+                  Bir sonraki başvurunda link atacağın bir yerin olsun.
+                </h2>
+                <p style={{ margin: '14px 0 0', fontSize: 16, color: 'rgba(255,255,255,.88)', maxWidth: 520 }}>
+                  Ücretsiz. GitHub kullanıcı adını gir, saniyeler içinde yayında olsun.
+                </p>
+              </div>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] px-6 py-3 text-xs font-bold text-[#0d1310] shadow-[4px_4px_0_0_#f0b429] transition active:scale-95"
+                style={{ fontFamily: 'var(--font-sans)', fontSize: 16, fontWeight: 700, color: '#1F3AE8', background: '#FFFFFF', border: 0, borderRadius: 14, padding: '17px 30px', textDecoration: 'none', whiteSpace: 'nowrap' }}
               >
-                <GithubIcon className="w-4 h-4" />
-                <span>Hemen Başla (Ücretsiz)</span>
+                Hemen oluştur →
               </Link>
             </div>
-          </motion.div>
-        </section>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
-      <motion.footer
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.8 }}
-        className="border-t border-[#384139] bg-[#0d1310] py-8 px-4 text-center text-xs text-[#93a297]"
-      >
-        <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1fd88f] text-[#0d1310] font-bold">
-              <Code2 className="h-3 w-3" />
-            </div>
-            <span className="font-bold text-[#f2f7f0]">Kodfolyo.dev</span>
+      <footer style={{ borderTop: '1px solid rgba(25,23,32,.08)', padding: '34px clamp(16px, 5vw, 40px) 60px' }}>
+        <div style={{ maxWidth: 1180, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <KodfolyoLogo size={22} />
+            <span style={{ fontSize: 14, color: '#6B6675' }}>© {new Date().getFullYear()} Kodfolyo</span>
           </div>
-
-          <p>© {new Date().getFullYear()} Kodfolyo. Tüm hakları saklıdır.</p>
+          <div style={{ display: 'flex', gap: 22, fontSize: 14 }}>
+            <a href="#ozellikler" style={{ color: '#6B6675' }}>Özellikler</a>
+            <a href="#onizleme" style={{ color: '#6B6675' }}>Örnekler</a>
+          </div>
         </div>
-      </motion.footer>
+      </footer>
     </div>
   );
 }

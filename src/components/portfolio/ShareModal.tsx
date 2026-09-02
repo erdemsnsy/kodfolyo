@@ -9,19 +9,18 @@ import { getTheme } from '@/lib/theme';
 interface ShareModalProps {
   username: string;
   themeType?: ThemeType;
-  customAccent?: string | null;
   onClose: () => void;
 }
 
-export default function ShareModal({ username, themeType, customAccent, onClose }: ShareModalProps) {
+export default function ShareModal({ username, themeType, onClose }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  const theme = getTheme(themeType, customAccent);
+  const theme = getTheme(themeType);
 
   const portfolioUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/${username}`
     : `https://kodfolyo.dev/${username}`;
 
-  const qrSvg = generateQRCodeSVG(portfolioUrl, 180, '#09090b', '#ffffff');
+  const qrSvg = generateQRCodeSVG(portfolioUrl, 160, '#191720', '#ffffff');
 
   const handleCopy = () => {
     navigator.clipboard.writeText(portfolioUrl).then(() => {
@@ -37,96 +36,54 @@ export default function ShareModal({ username, themeType, customAccent, onClose 
   const whatsappUrl = `https://api.whatsapp.com/send?text=${shareText}%20${encodedUrl}`;
   const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
 
+  const socialBtn: React.CSSProperties = {
+    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px', borderRadius: 11,
+    border: `1px solid ${theme.border}`, background: 'rgba(25,23,32,.04)', color: theme.dim, fontWeight: 600,
+    fontSize: 13, textDecoration: 'none',
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      <div className="w-full max-w-md rounded-2xl border border-[#23272e] bg-[#141619] p-6 shadow-2xl space-y-6">
-        {/* Modal Başlık */}
-        <div className="flex items-center justify-between border-b border-[#23272e] pb-4">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-white">
+    <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: 'rgba(25,23,32,.55)', backdropFilter: 'blur(6px)' }}>
+      <div style={{ width: '100%', maxWidth: 420, padding: 24, borderRadius: 22, background: '#F4F1EA', border: '1px solid rgba(25,23,32,.12)', boxShadow: '0 40px 90px rgba(25,23,32,.35)', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ padding: 8, borderRadius: 12, background: 'rgba(25,23,32,.06)', border: `1px solid ${theme.border}`, color: theme.ink }}>
               <Share2 className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Portfolyonu Paylaş</h3>
-              <p className="text-xs text-[#94a3b8]">@{username} adresine özel QR kod ve bağlantı</p>
+              <div style={{ fontSize: 16, fontWeight: 800, color: theme.ink }}>Portfolyonu Paylaş</div>
+              <div style={{ fontSize: 12.5, color: theme.muted }}>@{username} adresine özel QR kod ve bağlantı</div>
             </div>
           </div>
-
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg border border-[#23272e] bg-[#0c0d0e] text-[#64748b] hover:text-white transition"
-          >
+          <button onClick={onClose} style={{ padding: 6, borderRadius: 9, border: `1px solid ${theme.border}`, background: '#FFFFFF', color: theme.muted, cursor: 'pointer' }}>
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* QR Kod Alanı */}
-        <div className="flex flex-col items-center justify-center p-5 rounded-2xl border border-[#23272e] bg-[#0c0d0e] space-y-3">
-          <div
-            dangerouslySetInnerHTML={{ __html: qrSvg }}
-            className="shadow-xl rounded-xl overflow-hidden"
-          />
-          <p className="text-[11px] text-[#94a3b8] flex items-center gap-1 font-mono">
-            <QrCode className="w-3.5 h-3.5 text-slate-400" />
-            Kamera veya QR okuyucu ile tara
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20, borderRadius: 16, border: `1px solid ${theme.border}`, background: '#FFFFFF' }}>
+          <div dangerouslySetInnerHTML={{ __html: qrSvg }} style={{ borderRadius: 12, overflow: 'hidden' }} />
+          <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 11, color: theme.mutedLight, margin: 0 }}>
+            <QrCode className="w-3.5 h-3.5" /> Kamera veya QR okuyucu ile tara
           </p>
         </div>
 
-        {/* Bağlantı Kopyalama Kutusu */}
-        <div className="space-y-1.5">
-          <label className="block text-xs font-semibold text-slate-300">Portfolyo Bağlantın</label>
-          <div className="flex items-center gap-2 p-2 rounded-xl border border-[#23272e] bg-[#0c0d0e]">
-            <input
-              type="text"
-              readOnly
-              value={portfolioUrl}
-              className="w-full bg-transparent text-xs text-white outline-none px-2 font-mono truncate"
-            />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <label style={{ fontSize: 12, fontWeight: 600, color: theme.dim }}>Portfolyo Bağlantın</label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 6, borderRadius: 12, border: `1px solid ${theme.border}`, background: '#FFFFFF' }}>
+            <input readOnly value={portfolioUrl} style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', fontFamily: 'var(--font-mono)', fontSize: 12.5, color: theme.ink, padding: '0 8px' }} />
             <button
               onClick={handleCopy}
-              className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-slate-200 text-slate-950 text-xs font-bold shadow transition active:scale-95"
+              style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 14px', borderRadius: 9, background: '#191720', color: '#F4F1EA', fontSize: 12.5, fontWeight: 700, border: 0, cursor: 'pointer' }}
             >
-              {copied ? (
-                <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Kopyalandı</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Kopyala</span>
-                </>
-              )}
+              {copied ? (<><Check className="w-3.5 h-3.5" /> Kopyalandı</>) : (<><Copy className="w-3.5 h-3.5" /> Kopyala</>)}
             </button>
           </div>
         </div>
 
-        {/* Sosyal Medya Paylaşım Butonları */}
-        <div className="grid grid-cols-3 gap-2 pt-1 text-xs">
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold transition"
-          >
-            <span>WhatsApp</span>
-          </a>
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 font-semibold transition"
-          >
-            <span>Twitter / X</span>
-          </a>
-          <a
-            href={linkedinUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-1.5 p-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 font-semibold transition"
-          >
-            <span>LinkedIn</span>
-          </a>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" style={socialBtn}>WhatsApp</a>
+          <a href={twitterUrl} target="_blank" rel="noopener noreferrer" style={socialBtn}>X</a>
+          <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" style={socialBtn}>LinkedIn</a>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Repository } from '@/types';
-import { FolderGit2, Eye, EyeOff, Star, GitFork } from 'lucide-react';
+import { languageColor } from '@/lib/languageColors';
 
 interface RepoSelectorProps {
   repos: Repository[];
@@ -12,7 +12,6 @@ interface RepoSelectorProps {
 export default function RepoSelector({ repos, onToggleVisibility }: RepoSelectorProps) {
   const [localRepos, setLocalRepos] = useState<Repository[]>(repos);
   const [prevRepos, setPrevRepos] = useState<Repository[]>(repos);
-  const [updatingId, setUpdatingId] = useState<number | null>(null);
 
   if (repos !== prevRepos) {
     setPrevRepos(repos);
@@ -21,96 +20,58 @@ export default function RepoSelector({ repos, onToggleVisibility }: RepoSelector
 
   const handleToggle = async (repoId: number, currentVisible: boolean) => {
     const nextState = !currentVisible;
-    setUpdatingId(repoId);
-
-    setLocalRepos((prev) =>
-      prev.map((r) => (r.github_repo_id === repoId ? { ...r, is_visible: nextState } : r))
-    );
-
+    setLocalRepos((prev) => prev.map((r) => (r.github_repo_id === repoId ? { ...r, is_visible: nextState } : r)));
     try {
       await onToggleVisibility(repoId, nextState);
     } catch (err) {
       console.error(err);
-      setLocalRepos((prev) =>
-        prev.map((r) => (r.github_repo_id === repoId ? { ...r, is_visible: currentVisible } : r))
-      );
-    } finally {
-      setUpdatingId(null);
+      setLocalRepos((prev) => prev.map((r) => (r.github_repo_id === repoId ? { ...r, is_visible: currentVisible } : r)));
     }
   };
 
+  const visibleCount = localRepos.filter((r) => r.is_visible !== false).length;
+
   return (
-    <div className="rounded-3xl border border-[#384139] bg-[#17201b] p-6 sm:p-8 shadow-[5px_5px_0_0_#0d1310] space-y-6">
-      <div className="flex items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-[#1fd88f]/10 text-[#1fd88f] border border-[#1fd88f]/25">
-          <FolderGit2 className="w-5 h-5" />
-        </div>
+    <div style={{ padding: 24, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div>
-          <h2 className="text-base font-bold text-[#f2f7f0]">Görünür Repolar Yönetimi</h2>
-          <p className="text-xs text-[#c9d1cb]">
-            En çok yıldız alan 6 proje arasından hangilerinin portfolyoda listeleneceğini seçin
-          </p>
+          <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Görünür repolar</div>
+          <div style={{ fontSize: 13.5, color: '#6B6675' }}>{visibleCount} repo portfolyonda gösteriliyor.</div>
         </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#8C8797' }}>YILDIZA GÖRE SIRALI</span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {localRepos.map((repo) => {
           const isVisible = repo.is_visible !== false;
-          const isLoading = updatingId === repo.github_repo_id;
-
           return (
             <div
               key={repo.github_repo_id || repo.name}
-              className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
-                isVisible
-                  ? 'border-[#384139] bg-[#0d1310]'
-                  : 'border-[#1e2a23] bg-[#0d1310]/40 opacity-50'
-              }`}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 15px',
+                borderRadius: 12, background: '#FBF9F4', border: `1px solid ${isVisible ? 'rgba(31,58,232,.22)' : 'rgba(25,23,32,.07)'}`,
+                opacity: isVisible ? 1 : 0.5,
+              }}
             >
-              <div className="space-y-1 min-w-0 pr-3">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-xs font-bold text-[#f2f7f0] truncate">{repo.name}</h4>
-                  {repo.language && (
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-[#1e2a23] text-[#c9d1cb] border border-[#384139]">
-                      {repo.language}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-[#c9d1cb] line-clamp-1">{repo.description || 'Açıklama yok'}</p>
-                <div className="flex items-center gap-3 text-[11px] text-[#93a297]">
-                  <span className="flex items-center gap-1">
-                    <Star className="w-3 h-3 text-[#f0b429] fill-[#f0b429]/20" />
-                    {repo.stargazers_count}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <GitFork className="w-3 h-3" />
-                    {repo.forks_count}
-                  </span>
-                </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13.5, color: '#191720' }}>{repo.name}</div>
+                <div style={{ fontSize: 12.5, color: '#6B6675', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{repo.description || 'Açıklama yok'}</div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => handleToggle(repo.github_repo_id, isVisible)}
-                disabled={isLoading}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                  isVisible
-                    ? 'bg-[#1fd88f]/15 text-[#1fd88f] border border-[#1fd88f]/30'
-                    : 'bg-[#1e2a23] text-[#93a297] border border-[#384139]'
-                }`}
-              >
-                {isVisible ? (
-                  <>
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>Görünür</span>
-                  </>
-                ) : (
-                  <>
-                    <EyeOff className="w-3.5 h-3.5" />
-                    <span>Gizli</span>
-                  </>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#8C8797' }}>★ {repo.stargazers_count}</span>
+                {repo.language && (
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, padding: '3px 9px', borderRadius: 999, background: `${languageColor(repo.language)}22`, color: languageColor(repo.language) }}>
+                    {repo.language}
+                  </span>
                 )}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleToggle(repo.github_repo_id, isVisible)}
+                  style={{ position: 'relative', width: 42, height: 24, borderRadius: 999, border: 0, cursor: 'pointer', padding: 0, background: isVisible ? '#1F3AE8' : 'rgba(25,23,32,.14)' }}
+                >
+                  <span style={{ position: 'absolute', top: 3, left: isVisible ? 21 : 3, width: 18, height: 18, borderRadius: '50%', background: '#F4F1EA', transition: 'left .16s ease' }} />
+                </button>
+              </div>
             </div>
           );
         })}

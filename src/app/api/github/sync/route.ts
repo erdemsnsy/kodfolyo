@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       location: githubUserData.location,
       email: githubUserData.email,
       blog: githubUserData.blog,
-      theme: existingProfile?.theme || 'corporate-dark',
+      theme: existingProfile?.theme || 'gece',
       custom_links: existingProfile?.custom_links || [],
     });
 

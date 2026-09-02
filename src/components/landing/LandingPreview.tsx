@@ -6,12 +6,11 @@ import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import { UserProfile } from '@/types';
 import { ShieldCheck } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { fadeUp } from '@/lib/motion';
 
 export default function LandingPreview() {
   const mockUser = getMockGitHubUserData('ornek-ogrenci');
   const mockRepos = getMockRepositories('ornek-ogrenci');
+  const starCount = mockRepos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
 
   const demoProfile: UserProfile = {
     id: 'demo-123',
@@ -25,46 +24,42 @@ export default function LandingPreview() {
     location: mockUser.location,
     email: mockUser.email,
     blog: mockUser.blog,
-    theme: 'corporate-dark',
-    custom_accent: null,
+    theme: 'gece',
     custom_links: [],
   };
 
   return (
-    <section className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
-      <div className="text-center space-y-2 mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#17201b] border border-[#384139] text-xs font-semibold text-[#f2f7f0] shadow-[3px_3px_0_0_#0d1310]">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#1fd88f]" /> Canlı Executive Portfolyo Simülasyonu
+    <div id="onizleme" style={{ padding: '88px clamp(16px, 5vw, 40px)', position: 'relative' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 30, flexWrap: 'wrap' }}>
+          <div>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1F3AE8' }}>01 — ÇIKTI</span>
+            <h2 style={{ margin: '10px 0 0', fontSize: 40, fontWeight: 800, letterSpacing: '-.035em', color: '#191720' }}>Böyle görünüyor.</h2>
+          </div>
+          <p style={{ margin: 0, maxWidth: 420, fontSize: 15.5, lineHeight: 1.55, color: '#56515F' }}>
+            Her portfolyo kendi adresinde yayınlanır ve GitHub verisi değiştikçe kendini günceller.
+          </p>
+        </div>
+
+        <div style={{ position: 'relative', borderRadius: 18, border: '1px solid rgba(25,23,32,.13)', background: '#FFFFFF', overflow: 'hidden', boxShadow: '0 40px 90px rgba(25,23,32,.12)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', background: '#E7E2D6', borderBottom: '1px solid rgba(25,23,32,.08)' }}>
+            <div style={{ display: 'flex', gap: 7 }}>
+              <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#FF5F57' }} />
+              <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#FEBC2E' }} />
+              <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#28C840' }} />
+            </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, background: '#F4F1EA', borderRadius: 8, padding: '7px 12px', fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#6B6675' }}>
+              <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#28C840' }} /> kodfolyo.dev/{demoProfile.username}
+            </div>
+          </div>
+
+          <div style={{ background: '#FFFFFF' }}>
+            <PortfolioHero profile={demoProfile} repoCount={mockRepos.length} starCount={starCount} isDemo />
+            <TechStack repos={mockRepos} themeType="gece" />
+            <ProjectGrid repos={mockRepos.slice(0, 4)} themeType="gece" />
+          </div>
         </div>
       </div>
-
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.15 }}
-        className="rounded-3xl border border-[#384139] bg-[#0d1310] p-2 sm:p-4 shadow-[6px_6px_0_0_#17201b] overflow-hidden"
-      >
-        {/* Mock Browser Bar */}
-        <div className="flex items-center justify-between px-4 py-2 bg-[#17201b] rounded-2xl border border-[#384139] mb-4 text-xs text-[#c9d1cb]">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1fd88f]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#f0b429]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5c8a]" />
-          </div>
-          <div className="px-3 py-0.5 rounded-full bg-[#0d1310] text-[11px] text-[#f2f7f0]">
-            https://kodfolyo.dev/ornek-ogrenci
-          </div>
-          <div className="w-10" />
-        </div>
-
-        {/* Canlı Bileşen Önizleme */}
-        <div className="rounded-2xl bg-[#0c0d0e]">
-          <PortfolioHero profile={demoProfile} isDemo={true} />
-          <TechStack repos={mockRepos} themeType="corporate-dark" />
-          <ProjectGrid repos={mockRepos.slice(0, 4)} themeType="corporate-dark" />
-        </div>
-      </motion.div>
-    </section>
+    </div>
   );
 }

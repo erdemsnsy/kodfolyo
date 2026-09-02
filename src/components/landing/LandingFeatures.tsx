@@ -1,98 +1,40 @@
 'use client';
 
-import { ShieldCheck, RefreshCw, FolderGit2, Layers, Link2, Sparkles } from 'lucide-react';
-import Kodi from '@/components/mascot/Kodi';
-import { motion } from 'framer-motion';
-import { fadeUp } from '@/lib/motion';
-
 const FEATURES = [
-  {
-    icon: RefreshCw,
-    title: 'Otomatik GitHub API Senkronizasyonu',
-    desc: 'GitHub kullanıcı adını gir. Biyografin, en çok yıldız alan projelerin ve dil yetkinliklerin canlı çekilsin.',
-    wide: true,
-  },
-  {
-    icon: Sparkles,
-    title: 'Canlı & Karakterli Tasarım',
-    desc: 'Şablon gibi durmayan, enerjik bir kimlikle öne çık — sosyal medyada paylaşılınca fark yaratır.',
-    wide: false,
-  },
-  {
-    icon: FolderGit2,
-    title: 'Prestijli Proje Kartları',
-    desc: 'Repoların yıldız sayıları, dil etiketleri ve doğrudan GitHub linkleri ile yüksek okunabilirlikte listelenir.',
-    wide: false,
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Supabase Akıllı Önbellek',
-    desc: 'GitHub API rate limitlerine takılmadan yüksek performanslı ve kesintisiz yükleme garantisi.',
-    wide: false,
-  },
-  {
-    icon: Layers,
-    title: 'Kurumsal Tema Seçenekleri',
-    desc: 'Executive Dark, Executive Light, Terminal Amber ve Dracula Slate temalarından tarzına uyanı seç.',
-    wide: false,
-  },
-  {
-    icon: Link2,
-    title: 'Özel CV & LinkedIn Bağlantıları',
-    desc: 'Özgeçmiş PDF dosyanı ve LinkedIn profilini portfolyona dahil et (İstediğin zaman ekleyebilir veya silebilirsin).',
-    wide: true,
-  },
+  { icon: '⟳', title: 'Otomatik GitHub senkronu', desc: 'Biyografin, en çok yıldız alan projelerin ve dil yetkinliklerin canlı çekilsin.', tag: 'GitHub REST API' },
+  { icon: '▤', title: 'Proje kartları', desc: 'Yıldız, fork, dil ve açıklama otomatik gelir. Hangileri görünsün, sen seçersin.', tag: 'aç/kapa yönetimi' },
+  { icon: '◐', title: 'Dil ve teknoloji analizi', desc: 'Tüm repolarındaki dil dağılımı tek bir çubukta özetlenir.', tag: 'canlı hesaplanır' },
+  { icon: '◈', title: 'Tema seçenekleri', desc: 'Dört hazır tema, canlı önizleme. Kod yazmadan tonunu değiştir.', tag: '4 tema' },
+  { icon: '↗', title: 'Özel bağlantılar', desc: 'CV, LinkedIn, kişisel site — profilinin üstünde buton olarak dursun.', tag: 'sınırsız link' },
+  { icon: '⚡', title: 'Akıllı önbellekleme', desc: 'API limitine takılmadan çalışır; sayfa her zaman hızlı açılır.', tag: 'Supabase cache' },
 ];
-
-const CHIP_COLORS = ['#1fd88f', '#f0b429', '#ff5c8a'];
 
 export default function LandingFeatures() {
   return (
-    <section className="mx-auto max-w-4xl px-4 sm:px-6 py-12">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.6 }}
-        className="text-center space-y-2 mb-10 relative"
-      >
-        <div className="hidden sm:block absolute -top-4 right-4">
-          <Kodi pose="idle" size={56} />
+    <div id="ozellikler" style={{ padding: '20px clamp(16px, 5vw, 40px) 96px' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto' }}>
+        <div style={{ marginBottom: 32 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#00A676' }}>02 — ÖZELLİKLER</span>
+          <h2 style={{ margin: '10px 0 0', fontSize: 40, fontWeight: 800, letterSpacing: '-.035em', color: '#191720' }}>Altı parça, sıfır ayar.</h2>
         </div>
-        <h2 className="text-xl sm:text-3xl font-extrabold text-[#f2f7f0]">
-          Neden <span className="text-[#f0b429]">Kodfolyo</span>?
-        </h2>
-        <p className="text-xs sm:text-sm text-[#c9d1cb]">
-          Geliştiriciler ve mühendisler için iş hayatında prestij sağlayan sade altyapı
-        </p>
-      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {FEATURES.map((feat, idx) => {
-          const Icon = feat.icon;
-          const chipColor = CHIP_COLORS[idx % CHIP_COLORS.length];
-          return (
-            <motion.div
-              key={feat.title}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: (idx % 2) * 0.08 }}
-              className={`p-5 rounded-3xl border border-[#384139] bg-[#17201b] space-y-3 shadow-[4px_4px_0_0_#0d1310] hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              style={{ position: 'relative', padding: 26, borderRadius: 16, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', overflow: 'hidden' }}
             >
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: chipColor, boxShadow: `3px 3px 0 0 #0d1310` }}
-              >
-                <Icon className="w-5 h-5 text-[#0d1310]" />
+              <div style={{ position: 'absolute', top: -40, right: -40, width: 120, height: 120, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,166,118,.14), transparent 70%)' }} />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 42, height: 42, borderRadius: 12, background: 'rgba(31,58,232,.13)', border: '1px solid rgba(31,58,232,.28)', fontSize: 19, marginBottom: 16 }}>
+                {f.icon}
               </div>
-              <div className="text-sm font-bold text-[#f2f7f0]">{feat.title}</div>
-              <p className="text-xs text-[#c9d1cb] leading-relaxed">{feat.desc}</p>
-            </motion.div>
-          );
-        })}
+              <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-.02em', marginBottom: 8, color: '#191720' }}>{f.title}</div>
+              <div style={{ fontSize: 14, lineHeight: 1.55, color: '#6B6675' }}>{f.desc}</div>
+              <div style={{ marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: 11, color: '#A09BA8' }}>{f.tag}</div>
+            </div>
+          ))}
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

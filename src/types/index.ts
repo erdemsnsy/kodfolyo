@@ -1,4 +1,4 @@
-export type ThemeType = 'corporate-dark' | 'corporate-light' | 'terminal-amber' | 'matrix-mint' | 'paper-light' | 'dracula-slate' | 'modern-dark' | 'minimal-light' | 'cyber-indigo' | 'emerald-slate';
+export type ThemeType = 'gece' | 'kagit' | 'neon' | 'mercan';
 
 export interface CustomLink {
   id: string;
@@ -20,7 +20,6 @@ export interface UserProfile {
   email: string | null;
   blog: string | null;
   theme: ThemeType;
-  custom_accent: string | null;
   custom_links: CustomLink[];
   created_at?: string;
   updated_at?: string;

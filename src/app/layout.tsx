@@ -1,24 +1,19 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google';
+import { Archivo, DM_Mono } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
 
-const jetbrainsMono = JetBrains_Mono({
+const archivo = Archivo({
   subsets: ['latin'],
-  variable: '--font-mono',
-  display: 'swap',
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-const spaceGrotesk = Space_Grotesk({
+const dmMono = DM_Mono({
   subsets: ['latin'],
-  weight: ['500', '700'],
-  variable: '--font-display',
+  weight: ['400', '500'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
@@ -41,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className={`${jetbrainsMono.variable} ${plusJakartaSans.variable} ${spaceGrotesk.variable}`}>
-      <body className="bg-[#0d1310] text-[#f2f7f0] font-sans antialiased selection:bg-[#1fd88f] selection:text-[#0d1310]">
+    <html lang="tr" className={`${archivo.variable} ${dmMono.variable}`}>
+      <body className="bg-[#F4F1EA] text-[#191720] font-sans antialiased selection:bg-[#00A676] selection:text-white">
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>
