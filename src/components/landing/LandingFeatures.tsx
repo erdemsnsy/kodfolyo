@@ -42,7 +42,7 @@ const FEATURES = [
   },
 ];
 
-const CHIP_COLORS = ['#ff5a3c', '#38bdf8'];
+const CHIP_COLORS = ['#ff5a3c', '#38bdf8', '#f5b83d'];
 
 export default function LandingFeatures() {
   return (
@@ -66,15 +66,16 @@ export default function LandingFeatures() {
           return (
             <div
               key={feat.title}
-              className={`p-5 rounded-3xl border border-[#3a3530] bg-[#1f1a16] space-y-3 shadow-[4px_4px_0_0_#14110f] hover:-translate-y-0.5 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
+              className={`p-5 rounded-3xl bg-[#1f1a16] space-y-3 hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
+              style={{ border: `1px solid ${chipColor}4d`, boxShadow: `5px 5px 0 0 ${chipColor}80` }}
             >
               <div
-                className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: chipColor }}
+                className="w-12 h-12 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: chipColor, boxShadow: `3px 3px 0 0 #14110f` }}
               >
-                <Icon className="w-4 h-4 text-[#14110f]" />
+                <Icon className="w-5 h-5 text-[#14110f]" />
               </div>
-              <div className="text-xs font-bold text-[#fdf6ec]">{feat.title}</div>
+              <div className="text-sm font-bold text-[#fdf6ec]">{feat.title}</div>
               <p className="text-xs text-[#d6d0c7] leading-relaxed">{feat.desc}</p>
             </div>
           );

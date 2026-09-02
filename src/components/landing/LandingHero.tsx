@@ -24,6 +24,12 @@ export default function LandingHero() {
   const frameOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
   const hintOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
+  // Kodi scroll boyunca yörünge çizerek, dönerek süzülüp yerine yerleşir
+  const kodiX = useTransform(scrollYProgress, [0, 1], [260, 0]);
+  const kodiY = useTransform(scrollYProgress, [0, 0.5, 1], [-220, -40, 0]);
+  const kodiRotate = useTransform(scrollYProgress, [0, 0.6, 1], [-24, 8, 0]);
+  const kodiScale = useTransform(scrollYProgress, [0, 0.6, 1], [0.6, 1.08, 1]);
+
   const handleGeneratePortfolio = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUser = sanitizeUsername(usernameInput);
@@ -174,9 +180,12 @@ export default function LandingHero() {
                   </div>
                 </div>
 
-                <div className="shrink-0">
+                <motion.div
+                  className="shrink-0"
+                  style={{ x: kodiX, y: kodiY, rotate: kodiRotate, scale: kodiScale }}
+                >
                   <Kodi pose="jump" size={170} />
-                </div>
+                </motion.div>
               </div>
             </div>
           </section>
