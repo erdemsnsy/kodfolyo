@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
 import { Code2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 interface PortfolioFooterProps {
   themeType?: ThemeType;
@@ -15,7 +17,11 @@ export default function PortfolioFooter({ themeType, username, customAccent }: P
   const theme = getTheme(themeType, customAccent);
 
   return (
-    <footer
+    <motion.footer
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.6 }}
       className={`mt-12 border-t ${theme.border} py-8 px-4 text-xs ${theme.textMuted}`}
       style={{ borderColor: theme.borderHex, color: theme.textMutedHex }}
     >
@@ -41,6 +47,6 @@ export default function PortfolioFooter({ themeType, username, customAccent }: P
           Kendi Siteni Oluştur
         </Link>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

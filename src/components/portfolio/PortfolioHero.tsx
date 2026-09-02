@@ -7,6 +7,8 @@ import { GithubIcon } from '@/components/icons/GithubIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { BOUNCE_EASE } from '@/lib/motion';
 import ShareModal from './ShareModal';
 
 interface PortfolioHeroProps {
@@ -31,14 +33,21 @@ export default function PortfolioHero({ profile, isDemo: isDemoProp }: Portfolio
   return (
     <section className="mx-auto max-w-4xl px-4 sm:px-6 pt-8 pb-4">
       {/* Executive Profil Kartı */}
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: BOUNCE_EASE }}
         className={`rounded-2xl ${theme.card} p-6 sm:p-8 shadow-xl transition-all duration-300 space-y-6 print-page`}
         style={theme.cardStyle}
       >
         <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b ${theme.dividerBorder} pb-6`}>
           <div className="flex items-center gap-4 min-w-0 max-w-full">
             {/* Profil Resmi */}
-            <div className={`relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-2xl border ${theme.iconBorder} ${theme.iconBg} shrink-0 shadow-md`}>
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: -2 }}
+              transition={{ duration: 0.3, ease: BOUNCE_EASE }}
+              className={`relative h-20 w-20 sm:h-24 sm:w-24 overflow-hidden rounded-2xl border ${theme.iconBorder} ${theme.iconBg} shrink-0 shadow-md`}
+            >
               <Image
                 src={profile.avatar_url}
                 alt={profile.name || profile.username}
@@ -46,7 +55,7 @@ export default function PortfolioHero({ profile, isDemo: isDemoProp }: Portfolio
                 className="object-cover"
                 priority
               />
-            </div>
+            </motion.div>
 
             {/* İsim ve Kullanıcı Adı */}
             <div className="space-y-1 min-w-0 max-w-full">
@@ -193,7 +202,7 @@ export default function PortfolioHero({ profile, isDemo: isDemoProp }: Portfolio
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {showShareModal && (
         <ShareModal

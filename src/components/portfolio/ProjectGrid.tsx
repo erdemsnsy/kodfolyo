@@ -4,6 +4,8 @@ import { Repository, ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
 import ProjectCard from './ProjectCard';
 import { FolderGit2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 interface ProjectGridProps {
   repos: Repository[];
@@ -32,13 +34,19 @@ export default function ProjectGrid({ repos, themeType, customAccent }: ProjectG
   return (
     <section className="mx-auto max-w-4xl px-4 sm:px-6 my-8 space-y-4">
       {/* Başlık */}
-      <div className={`flex items-center justify-between border-b ${theme.border} pb-2 text-xs font-bold uppercase tracking-wider`}>
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.6 }}
+        className={`flex items-center justify-between border-b ${theme.border} pb-2 text-xs font-bold uppercase tracking-wider`}
+      >
         <div className="flex items-center gap-2">
           <FolderGit2 className="w-4 h-4 text-slate-400" />
           <span className={theme.textPrimary}>Öne Çıkan Projeler</span>
         </div>
         <span className={`text-[11px] ${theme.textMuted}`}>{visibleRepos.length} Repozituvar</span>
-      </div>
+      </motion.div>
 
       {/* Grid Düzeni */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

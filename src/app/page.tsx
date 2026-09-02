@@ -1,3 +1,5 @@
+'use client';
+
 import Navbar from '@/components/navbar/Navbar';
 import LandingHero from '@/components/landing/LandingHero';
 import LandingFeatures from '@/components/landing/LandingFeatures';
@@ -5,10 +7,15 @@ import LandingPreview from '@/components/landing/LandingPreview';
 import Link from 'next/link';
 import { Code2 } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col selection:bg-[#1fd88f] selection:text-[#0d1310]">
+    <div
+      className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col selection:bg-[#1fd88f] selection:text-[#0d1310]"
+      style={{ backgroundImage: 'radial-gradient(#17201b 1.5px, transparent 1.5px)', backgroundSize: '26px 26px' }}
+    >
       <Navbar />
 
       <main className="flex-1 space-y-6">
@@ -18,7 +25,13 @@ export default function LandingPage() {
 
         {/* CTA Bitiş Kutusu */}
         <section className="mx-auto max-w-4xl px-4 sm:px-6 my-16">
-          <div className="p-8 sm:p-10 rounded-3xl border border-[#384139] bg-[#17201b] text-center space-y-4 shadow-[6px_6px_0_0_#0d1310]">
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
+            className="p-8 sm:p-10 rounded-3xl border border-[#384139] bg-[#17201b] text-center space-y-4 shadow-[6px_6px_0_0_#0d1310]"
+          >
             <h2 className="text-xl sm:text-3xl font-extrabold text-[#f2f7f0]">
               Portfolyonu Bugün Yayınla
             </h2>
@@ -35,12 +48,18 @@ export default function LandingPage() {
                 <span>Hemen Başla (Ücretsiz)</span>
               </Link>
             </div>
-          </div>
+          </motion.div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#384139] bg-[#0d1310] py-8 px-4 text-center text-xs text-[#93a297]">
+      <motion.footer
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.8 }}
+        className="border-t border-[#384139] bg-[#0d1310] py-8 px-4 text-center text-xs text-[#93a297]"
+      >
         <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1fd88f] text-[#0d1310] font-bold">
@@ -51,7 +70,7 @@ export default function LandingPage() {
 
           <p>© {new Date().getFullYear()} Kodfolyo. Tüm hakları saklıdır.</p>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }

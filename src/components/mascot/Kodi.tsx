@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { BOUNCE_EASE } from '@/lib/motion';
 
-export const BOUNCE_EASE: [number, number, number, number] = [0.34, 1.56, 0.64, 1];
+export { BOUNCE_EASE };
 
 interface KodiProps {
   pose: 'idle' | 'wave' | 'jump' | 'wink';

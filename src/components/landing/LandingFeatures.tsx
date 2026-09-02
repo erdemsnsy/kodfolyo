@@ -2,6 +2,8 @@
 
 import { ShieldCheck, RefreshCw, FolderGit2, Layers, Link2, Sparkles } from 'lucide-react';
 import Kodi from '@/components/mascot/Kodi';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 const FEATURES = [
   {
@@ -47,7 +49,13 @@ const CHIP_COLORS = ['#1fd88f', '#f0b429', '#ff5c8a'];
 export default function LandingFeatures() {
   return (
     <section className="mx-auto max-w-4xl px-4 sm:px-6 py-12">
-      <div className="text-center space-y-2 mb-10 relative">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.6 }}
+        className="text-center space-y-2 mb-10 relative"
+      >
         <div className="hidden sm:block absolute -top-4 right-4">
           <Kodi pose="idle" size={56} />
         </div>
@@ -57,17 +65,21 @@ export default function LandingFeatures() {
         <p className="text-xs sm:text-sm text-[#c9d1cb]">
           Geliştiriciler ve mühendisler için iş hayatında prestij sağlayan sade altyapı
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {FEATURES.map((feat, idx) => {
           const Icon = feat.icon;
           const chipColor = CHIP_COLORS[idx % CHIP_COLORS.length];
           return (
-            <div
+            <motion.div
               key={feat.title}
-              className={`p-5 rounded-3xl bg-[#17201b] space-y-3 hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
-              style={{ border: `1px solid ${chipColor}4d`, boxShadow: `5px 5px 0 0 ${chipColor}80` }}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: (idx % 2) * 0.08 }}
+              className={`p-5 rounded-3xl border border-[#384139] bg-[#17201b] space-y-3 shadow-[4px_4px_0_0_#0d1310] hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
             >
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center"
@@ -77,7 +89,7 @@ export default function LandingFeatures() {
               </div>
               <div className="text-sm font-bold text-[#f2f7f0]">{feat.title}</div>
               <p className="text-xs text-[#c9d1cb] leading-relaxed">{feat.desc}</p>
-            </div>
+            </motion.div>
           );
         })}
       </div>

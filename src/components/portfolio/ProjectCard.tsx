@@ -3,6 +3,8 @@
 import { Repository, ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
 import { Star, GitFork, ExternalLink, FolderGit2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 interface ProjectCardProps {
   repo: Repository;
@@ -14,8 +16,13 @@ export default function ProjectCard({ repo, themeType, customAccent }: ProjectCa
   const theme = getTheme(themeType, customAccent);
 
   return (
-    <div
-      className={`group relative flex flex-col justify-between p-5 rounded-2xl ${theme.card} ${theme.cardHover} transition-all duration-300`}
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.3 }}
+      whileHover={{ y: -4 }}
+      className={`group relative flex flex-col justify-between p-5 rounded-2xl ${theme.card} ${theme.cardHover} transition-colors duration-300`}
       style={theme.cardStyle}
     >
       <div className="space-y-3">
@@ -81,6 +88,6 @@ export default function ProjectCard({ repo, themeType, customAccent }: ProjectCa
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

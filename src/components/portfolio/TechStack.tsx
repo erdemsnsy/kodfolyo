@@ -3,6 +3,8 @@
 import { Repository, ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
 import { Code2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 interface TechStackProps {
   repos: Repository[];
@@ -60,7 +62,11 @@ export default function TechStack({ repos, themeType, customAccent }: TechStackP
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 my-6">
-      <div
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.4 }}
         className={`p-5 sm:p-6 rounded-2xl ${theme.card} space-y-4`}
         style={theme.cardStyle}
       >
@@ -75,16 +81,20 @@ export default function TechStack({ repos, themeType, customAccent }: TechStackP
 
         {/* Dil Çubuğu */}
         <div className={`h-2.5 w-full overflow-hidden rounded-md ${theme.progressBarBg} flex gap-0.5`}>
-          {sortedLangs.map(([lang, count]) => {
+          {sortedLangs.map(([lang, count], idx) => {
             const pct = Math.max(3, Math.round((count / (totalScore || 1)) * 100));
             const color = LANGUAGE_COLORS[lang] || '#818cf8';
 
             return (
-              <div
+              <motion.div
                 key={lang}
-                style={{ width: `${pct}%`, backgroundColor: color }}
+                initial={{ width: 0 }}
+                whileInView={{ width: `${pct}%` }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.6, delay: idx * 0.06, ease: 'easeOut' }}
+                style={{ backgroundColor: color }}
                 title={`${lang}: %${pct}`}
-                className="h-full transition-all duration-300 hover:opacity-80"
+                className="h-full hover:opacity-80"
               />
             );
           })}
@@ -105,7 +115,7 @@ export default function TechStack({ repos, themeType, customAccent }: TechStackP
             );
           })}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

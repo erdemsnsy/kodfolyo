@@ -6,6 +6,8 @@ import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import { UserProfile } from '@/types';
 import { ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeUp } from '@/lib/motion';
 
 export default function LandingPreview() {
   const mockUser = getMockGitHubUserData('ornek-ogrenci');
@@ -36,7 +38,13 @@ export default function LandingPreview() {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-[#384139] bg-[#0d1310] p-2 sm:p-4 shadow-[6px_6px_0_0_#17201b] overflow-hidden">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.15 }}
+        className="rounded-3xl border border-[#384139] bg-[#0d1310] p-2 sm:p-4 shadow-[6px_6px_0_0_#17201b] overflow-hidden"
+      >
         {/* Mock Browser Bar */}
         <div className="flex items-center justify-between px-4 py-2 bg-[#17201b] rounded-2xl border border-[#384139] mb-4 text-xs text-[#c9d1cb]">
           <div className="flex items-center gap-1.5">
@@ -56,7 +64,7 @@ export default function LandingPreview() {
           <TechStack repos={mockRepos} themeType="corporate-dark" />
           <ProjectGrid repos={mockRepos.slice(0, 4)} themeType="corporate-dark" />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
