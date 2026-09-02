@@ -46,6 +46,8 @@ export interface UserProfile {
   experience: ExperienceEntry[];
   section_visibility: SectionVisibility;
   is_published?: boolean;
+  custom_domain?: string | null;
+  custom_domain_verified?: boolean;
   created_at?: string;
   updated_at?: string;
 }

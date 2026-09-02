@@ -13,10 +13,11 @@ import ExperienceManager from '@/components/dashboard/ExperienceManager';
 import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityManager';
 import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
+import CustomDomainManager from '@/components/dashboard/CustomDomainManager';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings, BarChart3 } from 'lucide-react';
+import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings, BarChart3, Globe2 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { label: 'Genel bakış', href: '#genel', icon: LayoutGrid },
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { label: 'Bağlantılar', href: '#baglantilar', icon: Link2 },
   { label: 'Rozet', href: '#rozet', icon: BadgeCheck },
   { label: 'Analytics', href: '#analytics', icon: BarChart3 },
+  { label: 'Alan Adı', href: '#alanadi', icon: Globe2 },
 ];
 
 function DashboardContent() {
@@ -238,6 +240,36 @@ function DashboardContent() {
     }
   };
 
+  const handleSaveDomain = async (domain: string | null) => {
+    try {
+      const res = await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: activeUsername, customDomain: domain }),
+      });
+      const data = await res.json();
+      if (data.profile) setProfile(data.profile);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleVerifyDomain = async (): Promise<{ verified: boolean; error?: string }> => {
+    try {
+      const res = await fetch('/api/domain/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: activeUsername }),
+      });
+      const data = await res.json();
+      if (data.verified) setProfile((prev) => (prev ? { ...prev, custom_domain_verified: true } : prev));
+      return { verified: !!data.verified, error: data.error };
+    } catch (err) {
+      console.error(err);
+      return { verified: false, error: 'Doğrulama isteği başarısız.' };
+    }
+  };
+
   if (isLoading || !profile) {
     return (
       <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -424,6 +456,9 @@ function DashboardContent() {
             </div>
             <div id="rozet">
               <BadgeGenerator username={displayProfile.username} defaultTheme={displayProfile.theme} />
+            </div>
+            <div id="alanadi">
+              <CustomDomainManager profile={displayProfile} onSaveDomain={handleSaveDomain} onVerify={handleVerifyDomain} />
             </div>
           </div>
         </div>

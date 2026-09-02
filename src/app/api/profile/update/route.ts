@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
-import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo, setProfilePublished, deleteProfile } from '../../../../lib/supabase/server';
+import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo, setProfilePublished, deleteProfile, setCustomDomain } from '../../../../lib/supabase/server';
 import { CustomLink, ThemeType, ExperienceEntry, SectionVisibility } from '../../../../types';
 
 export async function POST(request: Request) {
@@ -41,6 +41,13 @@ export async function POST(request: Request) {
     if (typeof body.isPublished === 'boolean') {
       await setProfilePublished(currentProfile, body.isPublished);
       return NextResponse.json({ success: true, message: body.isPublished ? 'Portfolyo tekrar yayında.' : 'Portfolyo yayından kaldırıldı.' });
+    }
+
+    // 1c-2. Özel alan adı ayarla (henüz doğrulanmamış olarak kaydedilir)
+    if (typeof body.customDomain !== 'undefined') {
+      await setCustomDomain(currentProfile, body.customDomain);
+      const updatedProfile = await getProfileByUsername(username);
+      return NextResponse.json({ success: true, profile: updatedProfile, message: 'Alan adı kaydedildi. Şimdi DNS kaydını doğrula.' });
     }
 
     // 1d. Hesabı kalıcı olarak sil (geri alınamaz)

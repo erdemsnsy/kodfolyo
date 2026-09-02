@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { resolveTxt } from 'dns/promises';
 import { UserProfile, Repository, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { fetchGitHubUserData, fetchTopStarredRepos, getMockGitHubUserData, getMockRepositories, sanitizeUsername, isValidGitHubUsername } from '@/lib/github/fetcher';
 
@@ -529,4 +530,102 @@ export async function getAnalyticsSummary(userProfile: UserProfile): Promise<Ana
   const clicks = memoryLinkClicksStore.get(normalizedUser) || [];
   const pdfDownloads = memoryPdfDownloadsStore.get(normalizedUser) || [];
   return buildAnalyticsSummary(views, clicks, pdfDownloads);
+}
+
+// ─── Özel alan adı: DNS TXT doğrulaması ile gerçek bağlama ─────────────────
+
+export function getDomainVerificationRecord(profile: UserProfile): { host: string; value: string } {
+  return { host: '_kodfolyo-verify', value: `kodfolyo-verify=${profile.id}` };
+}
+
+/**
+ * Kullanıcının portfolyosuna bağlamak istediği alan adını kaydeder (henüz doğrulanmamış).
+ */
+export async function setCustomDomain(userProfile: UserProfile, domain: string | null): Promise<boolean> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+  const normalizedDomain = domain ? domain.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '') : null;
+
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ custom_domain: normalizedDomain, custom_domain_verified: false })
+        .eq('id', userProfile.id);
+    } catch (err) {
+      console.warn('Supabase setCustomDomain error:', err);
+    }
+  }
+
+  const existing = memoryProfilesStore.get(normalizedUser);
+  if (existing) {
+    memoryProfilesStore.set(normalizedUser, { ...existing, custom_domain: normalizedDomain, custom_domain_verified: false });
+  }
+  return true;
+}
+
+/**
+ * `_kodfolyo-verify.<domain>` TXT kaydında `kodfolyo-verify=<profile.id>` değerini arar.
+ * Gerçek DNS sorgusu yapılır — sahte "doğrulandı" durumu yok.
+ */
+export async function verifyCustomDomain(userProfile: UserProfile): Promise<{ verified: boolean; error?: string }> {
+  const normalizedUser = sanitizeUsername(userProfile.username);
+  const domain = userProfile.custom_domain;
+
+  if (!domain) {
+    return { verified: false, error: 'Önce bir alan adı gir.' };
+  }
+
+  const { host, value } = getDomainVerificationRecord(userProfile);
+  let verified = false;
+  let error: string | undefined;
+
+  try {
+    const records = await resolveTxt(`${host}.${domain}`);
+    verified = records.some((rec) => rec.join('').trim() === value);
+    if (!verified) error = 'TXT kaydı bulundu ama değer eşleşmiyor.';
+  } catch {
+    error = 'TXT kaydı bulunamadı. DNS yayılımı zaman alabilir (birkaç saate kadar).';
+  }
+
+  if (supabaseAdmin) {
+    try {
+      await supabaseAdmin.from('profiles').update({ custom_domain_verified: verified }).eq('id', userProfile.id);
+    } catch (err) {
+      console.warn('Supabase verifyCustomDomain error:', err);
+    }
+  }
+
+  const existing = memoryProfilesStore.get(normalizedUser);
+  if (existing) {
+    memoryProfilesStore.set(normalizedUser, { ...existing, custom_domain_verified: verified });
+  }
+
+  return { verified, error: verified ? undefined : error };
+}
+
+/**
+ * Doğrulanmış bir özel alan adına karşılık gelen profili bulur — proxy'de host bazlı yönlendirme için.
+ */
+export async function getProfileByCustomDomain(domain: string): Promise<UserProfile | null> {
+  const normalizedDomain = domain.trim().toLowerCase();
+
+  if (supabaseAdmin) {
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .select('*')
+        .eq('custom_domain', normalizedDomain)
+        .eq('custom_domain_verified', true)
+        .single();
+
+      if (data && !error) return normalizeProfile(data);
+    } catch (err) {
+      console.warn('Supabase getProfileByCustomDomain error:', err);
+    }
+  }
+
+  for (const profile of memoryProfilesStore.values()) {
+    if (profile.custom_domain === normalizedDomain && profile.custom_domain_verified) return profile;
+  }
+  return null;
 }
