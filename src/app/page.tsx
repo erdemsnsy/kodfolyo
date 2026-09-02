@@ -8,7 +8,7 @@ import { GithubIcon } from '@/components/icons/GithubIcon';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0c0d0e] text-[#f8fafc] flex flex-col selection:bg-white selection:text-slate-950">
+    <div className="min-h-screen bg-[#14110f] text-[#fdf6ec] flex flex-col selection:bg-[#ff5a3c] selection:text-[#14110f]">
       <Navbar />
 
       <main className="flex-1 space-y-6">
@@ -18,18 +18,18 @@ export default function LandingPage() {
 
         {/* CTA Bitiş Kutusu */}
         <section className="mx-auto max-w-4xl px-4 sm:px-6 my-16">
-          <div className="p-8 sm:p-10 rounded-2xl border border-[#23272e] bg-[#141619] text-center space-y-4 shadow-xl">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-white">
+          <div className="p-8 sm:p-10 rounded-3xl border border-[#3a2c22] bg-[#1f1a16] text-center space-y-4 shadow-[6px_6px_0_0_#14110f]">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-[#fdf6ec]">
               Portfolyonu Bugün Yayınla
             </h2>
-            <p className="text-xs sm:text-sm text-[#94a3b8] max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-[#cbb9a0] max-w-lg mx-auto">
               Sıfır kurulum yükü. GitHub kullanıcı adını gir, sade ve kurumsal portfolyon anında oluşturulsun.
             </p>
 
             <div className="pt-2">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-slate-200 px-6 py-3 text-xs font-bold text-slate-950 shadow transition active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-6 py-3 text-xs font-bold text-[#14110f] shadow-[4px_4px_0_0_#f5b83d] transition active:scale-95"
               >
                 <GithubIcon className="w-4 h-4" />
                 <span>Hemen Başla (Ücretsiz)</span>
@@ -40,13 +40,13 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#23272e] bg-[#0c0d0e] py-8 px-4 text-center text-xs text-[#64748b]">
+      <footer className="border-t border-[#3a2c22] bg-[#14110f] py-8 px-4 text-center text-xs text-[#8a7864]">
         <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-white text-slate-950 font-bold">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#ff5a3c] text-[#14110f] font-bold">
               <Code2 className="h-3 w-3" />
             </div>
-            <span className="font-bold text-white">Kodfolyo.dev</span>
+            <span className="font-bold text-[#fdf6ec]">Kodfolyo.dev</span>
           </div>
 
           <p>© {new Date().getFullYear()} Kodfolyo. Tüm hakları saklıdır.</p>
