@@ -42,7 +42,7 @@ const FEATURES = [
   },
 ];
 
-const CHIP_COLORS = ['#ff5a3c', '#38bdf8', '#f5b83d'];
+const CHIP_COLORS = ['#1fd88f', '#f0b429', '#ff5c8a'];
 
 export default function LandingFeatures() {
   return (
@@ -51,10 +51,10 @@ export default function LandingFeatures() {
         <div className="hidden sm:block absolute -top-4 right-4">
           <Kodi pose="idle" size={56} />
         </div>
-        <h2 className="text-xl sm:text-3xl font-extrabold text-[#fdf6ec]">
-          Neden <span className="text-[#38bdf8]">Kodfolyo</span>?
+        <h2 className="text-xl sm:text-3xl font-extrabold text-[#f2f7f0]">
+          Neden <span className="text-[#f0b429]">Kodfolyo</span>?
         </h2>
-        <p className="text-xs sm:text-sm text-[#d6d0c7]">
+        <p className="text-xs sm:text-sm text-[#c9d1cb]">
           Geliştiriciler ve mühendisler için iş hayatında prestij sağlayan sade altyapı
         </p>
       </div>
@@ -66,17 +66,17 @@ export default function LandingFeatures() {
           return (
             <div
               key={feat.title}
-              className={`p-5 rounded-3xl bg-[#1f1a16] space-y-3 hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
+              className={`p-5 rounded-3xl bg-[#17201b] space-y-3 hover:-translate-y-1 transition-transform ${feat.wide ? 'md:col-span-2' : ''}`}
               style={{ border: `1px solid ${chipColor}4d`, boxShadow: `5px 5px 0 0 ${chipColor}80` }}
             >
               <div
                 className="w-12 h-12 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: chipColor, boxShadow: `3px 3px 0 0 #14110f` }}
+                style={{ backgroundColor: chipColor, boxShadow: `3px 3px 0 0 #0d1310` }}
               >
-                <Icon className="w-5 h-5 text-[#14110f]" />
+                <Icon className="w-5 h-5 text-[#0d1310]" />
               </div>
-              <div className="text-sm font-bold text-[#fdf6ec]">{feat.title}</div>
-              <p className="text-xs text-[#d6d0c7] leading-relaxed">{feat.desc}</p>
+              <div className="text-sm font-bold text-[#f2f7f0]">{feat.title}</div>
+              <p className="text-xs text-[#c9d1cb] leading-relaxed">{feat.desc}</p>
             </div>
           );
         })}

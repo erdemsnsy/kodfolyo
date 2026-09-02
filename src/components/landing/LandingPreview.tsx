@@ -31,20 +31,20 @@ export default function LandingPreview() {
   return (
     <section className="mx-auto max-w-4xl px-4 sm:px-6 py-8">
       <div className="text-center space-y-2 mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1f1a16] border border-[#3a3530] text-xs font-semibold text-[#fdf6ec] shadow-[3px_3px_0_0_#14110f]">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#ff5a3c]" /> Canlı Executive Portfolyo Simülasyonu
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#17201b] border border-[#384139] text-xs font-semibold text-[#f2f7f0] shadow-[3px_3px_0_0_#0d1310]">
+          <ShieldCheck className="w-3.5 h-3.5 text-[#1fd88f]" /> Canlı Executive Portfolyo Simülasyonu
         </div>
       </div>
 
-      <div className="rounded-3xl border border-[#3a3530] bg-[#14110f] p-2 sm:p-4 shadow-[6px_6px_0_0_#1f1a16] overflow-hidden">
+      <div className="rounded-3xl border border-[#384139] bg-[#0d1310] p-2 sm:p-4 shadow-[6px_6px_0_0_#17201b] overflow-hidden">
         {/* Mock Browser Bar */}
-        <div className="flex items-center justify-between px-4 py-2 bg-[#1f1a16] rounded-2xl border border-[#3a3530] mb-4 text-xs text-[#d6d0c7]">
+        <div className="flex items-center justify-between px-4 py-2 bg-[#17201b] rounded-2xl border border-[#384139] mb-4 text-xs text-[#c9d1cb]">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5a3c]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#38bdf8]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#f5b83d]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1fd88f]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f0b429]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ff5c8a]" />
           </div>
-          <div className="px-3 py-0.5 rounded-full bg-[#14110f] text-[11px] text-[#fdf6ec]">
+          <div className="px-3 py-0.5 rounded-full bg-[#0d1310] text-[11px] text-[#f2f7f0]">
             https://kodfolyo.dev/ornek-ogrenci
           </div>
           <div className="w-10" />

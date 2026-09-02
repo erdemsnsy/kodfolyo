@@ -48,15 +48,15 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   };
 
   return (
-    <div className="rounded-3xl border border-[#3a3530] bg-[#1f1a16] p-6 sm:p-8 shadow-[5px_5px_0_0_#14110f]">
+    <div className="rounded-3xl border border-[#384139] bg-[#17201b] p-6 sm:p-8 shadow-[5px_5px_0_0_#0d1310]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#ff5a3c]/10 text-[#ff5a3c] border border-[#ff5a3c]/25">
+          <div className="p-2.5 rounded-xl bg-[#1fd88f]/10 text-[#1fd88f] border border-[#1fd88f]/25">
             <User className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-[#fdf6ec]">Profil & Biyografi Düzenleme</h2>
-            <p className="text-xs text-[#d6d0c7]">
+            <h2 className="text-base font-bold text-[#f2f7f0]">Profil & Biyografi Düzenleme</h2>
+            <p className="text-xs text-[#c9d1cb]">
               Portfolyo sitenizde görünecek özel biyografi ve kişisel iletişim bilgilerinizi girin.
             </p>
           </div>
@@ -80,7 +80,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
       <div className="space-y-5">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <label className="block text-xs font-semibold text-[#d6d0c7]">
+            <label className="block text-xs font-semibold text-[#c9d1cb]">
               Özel Biyografi (Custom Bio)
             </label>
             {aiSuggestions.length > 0 && (
@@ -96,12 +96,12 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
             }}
             rows={3}
             placeholder="Kendinizden ve hedeflerinizden bahsedin..."
-            className="w-full rounded-xl border border-[#3a3530] bg-[#14110f] px-4 py-3 text-sm text-[#fdf6ec] placeholder-[#9a948b] focus:border-[#ff5a3c] focus:outline-none transition"
+            className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-3 text-sm text-[#f2f7f0] placeholder-[#93a297] focus:border-[#1fd88f] focus:outline-none transition"
           />
 
           {aiSuggestions.length > 0 && (
             <div className="space-y-2 pt-2">
-              <span className="text-[11px] text-[#d6d0c7] font-bold">✨ AI Önerileri:</span>
+              <span className="text-[11px] text-[#c9d1cb] font-bold">✨ AI Önerileri:</span>
               <div className="space-y-1.5">
                 {aiSuggestions.map((sug, idx) => (
                   <button
@@ -111,7 +111,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
                       setCustomBio(sug);
                       notifyChange({ custom_bio: sug });
                     }}
-                    className="w-full text-left p-2.5 rounded-lg border border-[#3a3530] bg-[#14110f] hover:border-indigo-500/50 hover:bg-indigo-500/10 text-xs text-[#d6d0c7] transition"
+                    className="w-full text-left p-2.5 rounded-lg border border-[#384139] bg-[#0d1310] hover:border-indigo-500/50 hover:bg-indigo-500/10 text-xs text-[#c9d1cb] transition"
                   >
                     {sug}
                   </button>
@@ -123,47 +123,47 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="space-y-1.5">
-            <label className="block font-semibold text-[#d6d0c7]">Görüntülenecek İsim</label>
+            <label className="block font-semibold text-[#c9d1cb]">Görüntülenecek İsim</label>
             <input
               type="text"
               value={name}
               onChange={(e) => { setName(e.target.value); notifyChange({ name: e.target.value }); }}
-              className="w-full rounded-xl border border-[#3a3530] bg-[#14110f] px-4 py-2.5 text-sm text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none transition"
+              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block font-semibold text-[#d6d0c7]">Konum / Şehir</label>
+            <label className="block font-semibold text-[#c9d1cb]">Konum / Şehir</label>
             <input
               type="text"
               value={location}
               onChange={(e) => { setLocation(e.target.value); notifyChange({ location: e.target.value }); }}
               placeholder="İstanbul, Türkiye"
-              className="w-full rounded-xl border border-[#3a3530] bg-[#14110f] px-4 py-2.5 text-sm text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none transition"
+              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="space-y-1.5">
-            <label className="block font-semibold text-[#d6d0c7]">Okul / Şirket</label>
+            <label className="block font-semibold text-[#c9d1cb]">Okul / Şirket</label>
             <input
               type="text"
               value={company}
               onChange={(e) => { setCompany(e.target.value); notifyChange({ company: e.target.value }); }}
               placeholder="İTÜ Bilgisayar Mühendisliği"
-              className="w-full rounded-xl border border-[#3a3530] bg-[#14110f] px-4 py-2.5 text-sm text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none transition"
+              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block font-semibold text-[#d6d0c7]">Web Sitesi / Blog</label>
+            <label className="block font-semibold text-[#c9d1cb]">Web Sitesi / Blog</label>
             <input
               type="text"
               value={blog}
               onChange={(e) => { setBlog(e.target.value); notifyChange({ blog: e.target.value }); }}
               placeholder="https://gokhan.dev"
-              className="w-full rounded-xl border border-[#3a3530] bg-[#14110f] px-4 py-2.5 text-sm text-[#fdf6ec] focus:border-[#ff5a3c] focus:outline-none transition"
+              className="w-full rounded-xl border border-[#384139] bg-[#0d1310] px-4 py-2.5 text-sm text-[#f2f7f0] focus:border-[#1fd88f] focus:outline-none transition"
             />
           </div>
         </div>

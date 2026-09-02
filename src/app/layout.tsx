@@ -42,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr" className={`${jetbrainsMono.variable} ${plusJakartaSans.variable} ${spaceGrotesk.variable}`}>
-      <body className="bg-[#14110f] text-[#fdf6ec] font-sans antialiased selection:bg-[#ff5a3c] selection:text-[#14110f]">
+      <body className="bg-[#0d1310] text-[#f2f7f0] font-sans antialiased selection:bg-[#1fd88f] selection:text-[#0d1310]">
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

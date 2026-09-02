@@ -8,7 +8,7 @@ import { GithubIcon } from '@/components/icons/GithubIcon';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#14110f] text-[#fdf6ec] flex flex-col selection:bg-[#ff5a3c] selection:text-[#14110f]">
+    <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col selection:bg-[#1fd88f] selection:text-[#0d1310]">
       <Navbar />
 
       <main className="flex-1 space-y-6">
@@ -18,18 +18,18 @@ export default function LandingPage() {
 
         {/* CTA Bitiş Kutusu */}
         <section className="mx-auto max-w-4xl px-4 sm:px-6 my-16">
-          <div className="p-8 sm:p-10 rounded-3xl border border-[#3a3530] bg-[#1f1a16] text-center space-y-4 shadow-[6px_6px_0_0_#14110f]">
-            <h2 className="text-xl sm:text-3xl font-extrabold text-[#fdf6ec]">
+          <div className="p-8 sm:p-10 rounded-3xl border border-[#384139] bg-[#17201b] text-center space-y-4 shadow-[6px_6px_0_0_#0d1310]">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-[#f2f7f0]">
               Portfolyonu Bugün Yayınla
             </h2>
-            <p className="text-xs sm:text-sm text-[#d6d0c7] max-w-lg mx-auto">
+            <p className="text-xs sm:text-sm text-[#c9d1cb] max-w-lg mx-auto">
               Sıfır kurulum yükü. GitHub kullanıcı adını gir, sade ve kurumsal portfolyon anında oluşturulsun.
             </p>
 
             <div className="pt-2">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-6 py-3 text-xs font-bold text-[#14110f] shadow-[4px_4px_0_0_#38bdf8] transition active:scale-95"
+                className="inline-flex items-center gap-2 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] px-6 py-3 text-xs font-bold text-[#0d1310] shadow-[4px_4px_0_0_#f0b429] transition active:scale-95"
               >
                 <GithubIcon className="w-4 h-4" />
                 <span>Hemen Başla (Ücretsiz)</span>
@@ -40,13 +40,13 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#3a3530] bg-[#14110f] py-8 px-4 text-center text-xs text-[#9a948b]">
+      <footer className="border-t border-[#384139] bg-[#0d1310] py-8 px-4 text-center text-xs text-[#93a297]">
         <div className="mx-auto max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#ff5a3c] text-[#14110f] font-bold">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#1fd88f] text-[#0d1310] font-bold">
               <Code2 className="h-3 w-3" />
             </div>
-            <span className="font-bold text-[#fdf6ec]">Kodfolyo.dev</span>
+            <span className="font-bold text-[#f2f7f0]">Kodfolyo.dev</span>
           </div>
 
           <p>© {new Date().getFullYear()} Kodfolyo. Tüm hakları saklıdır.</p>

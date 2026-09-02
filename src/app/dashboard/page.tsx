@@ -235,12 +235,12 @@ function DashboardContent() {
 
   if (isLoading || !profile) {
     return (
-      <div className="min-h-screen bg-[#14110f] text-[#fdf6ec] flex flex-col font-sans">
+      <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] flex flex-col font-sans">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-6">
           <div className="flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-[#ff5a3c] border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs text-[#d6d0c7]">@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
+            <div className="w-6 h-6 border-2 border-[#1fd88f] border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs text-[#c9d1cb]">@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
           </div>
         </div>
       </div>
@@ -261,21 +261,21 @@ function DashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#14110f] text-[#fdf6ec]">
+    <div className="min-h-screen bg-[#0d1310] text-[#f2f7f0]">
       <Navbar />
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12 space-y-8">
         {/* Üst Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#3a3530] bg-[#1f1a16] shadow-[5px_5px_0_0_#14110f]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[#384139] bg-[#17201b] shadow-[5px_5px_0_0_#0d1310]">
           <div className="space-y-1 min-w-0 max-w-full">
-            <div className="text-xs text-[#d6d0c7] font-semibold flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#ff5a3c]" />
+            <div className="text-xs text-[#c9d1cb] font-semibold flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-[#1fd88f]" />
               <span>Kontrol Paneli</span>
             </div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#fdf6ec] truncate">
-              Düzenlenen Profil: <span className="text-[#38bdf8]">@{displayProfile.username}</span>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-[#f2f7f0] truncate">
+              Düzenlenen Profil: <span className="text-[#f0b429]">@{displayProfile.username}</span>
             </h1>
-            <p className="text-xs text-[#d6d0c7]">
+            <p className="text-xs text-[#c9d1cb]">
               `/{displayProfile.username}` adresindeki portfolyonu buradan kişiselleştirebilirsin.
             </p>
           </div>
@@ -284,7 +284,7 @@ function DashboardContent() {
             <Link
               href={`/${displayProfile.username}`}
               target="_blank"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] px-4 py-2.5 text-xs font-bold text-[#14110f] shadow-[3px_3px_0_0_#14110f] transition active:scale-95 whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] px-4 py-2.5 text-xs font-bold text-[#0d1310] shadow-[3px_3px_0_0_#0d1310] transition active:scale-95 whitespace-nowrap"
             >
               <span>Canlı Portfolyo</span>
               <ExternalLink className="w-4 h-4" />
@@ -295,10 +295,10 @@ function DashboardContent() {
         {/* ========= DEĞİŞİKLİKLERİ KAYDET BUTONU (Sayfa akışında sabit durur, scroll ile kaybolur) ========= */}
         {(hasPendingChanges || saveAllSuccess) && (
           <div>
-            <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl border shadow-[5px_5px_0_0_#14110f] transition-all duration-300 ${
+            <div className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-3xl border shadow-[5px_5px_0_0_#0d1310] transition-all duration-300 ${
               saveAllSuccess
                 ? 'border-emerald-500/50 bg-emerald-950/80 backdrop-blur-md'
-                : 'border-[#38bdf8]/50 bg-[#1f1a16]/90 backdrop-blur-md'
+                : 'border-[#f0b429]/50 bg-[#17201b]/90 backdrop-blur-md'
             }`}>
               <div className="flex items-center gap-3 text-sm">
                 {saveAllSuccess ? (
@@ -323,7 +323,7 @@ function DashboardContent() {
                   type="button"
                   onClick={handleSaveAll}
                   disabled={isSavingAll}
-                  className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] text-[#14110f] text-sm font-extrabold shadow-[3px_3px_0_0_#14110f] transition active:scale-95 disabled:opacity-60"
+                  className="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] text-[#0d1310] text-sm font-extrabold shadow-[3px_3px_0_0_#0d1310] transition active:scale-95 disabled:opacity-60"
                 >
                   {isSavingAll ? (
                     <>
@@ -386,7 +386,7 @@ function DashboardContent() {
               type="button"
               onClick={handleSaveAll}
               disabled={isSavingAll}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-[#ff5a3c] hover:bg-[#ff7159] text-[#14110f] text-sm font-extrabold shadow-[4px_4px_0_0_#14110f] transition active:scale-95 disabled:opacity-60"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-full bg-[#1fd88f] hover:bg-[#4eeaa8] text-[#0d1310] text-sm font-extrabold shadow-[4px_4px_0_0_#0d1310] transition active:scale-95 disabled:opacity-60"
             >
               {isSavingAll ? (
                 <>
@@ -409,7 +409,7 @@ function DashboardContent() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#14110f] text-[#fdf6ec] p-8">Yükleniyor...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#0d1310] text-[#f2f7f0] p-8">Yükleniyor...</div>}>
       <DashboardContent />
     </Suspense>
   );
