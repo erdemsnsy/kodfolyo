@@ -41,8 +41,8 @@ export default function LivePortfolioPreview({ profile, repos }: LivePortfolioPr
             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>kodfolyo.dev/{profile.username}</span>
           </div>
         </div>
-        <div style={{ height: 520, overflow: 'hidden', position: 'relative', background: '#F4F1EA' }}>
-          <div style={{ position: 'absolute', top: 0, left: 0, width: '285%', transform: 'scale(0.35)', transformOrigin: 'top left' }}>
+        <div style={{ height: 460, overflow: 'hidden', position: 'relative', background: '#F4F1EA' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: 1060, transform: 'scale(0.415)', transformOrigin: 'top left' }}>
             <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} isDemo />
             {visibility.techStack !== false && <TechStack repos={repos} themeType={profile.theme} />}
             {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
