@@ -47,7 +47,7 @@ Full visual reference: brand kit v2 canvas (published artifact, pending re-revie
 
 ## Kodi, the mascot
 
-Original single-blob character (rounded body via one large-radius rect), `</>` chest emblem, lime antenna, no resemblance to Octocat (flat single body, no tentacle legs, no cat ears). Delivered as inline SVG + `framer-motion`, four poses:
+Original single-blob character (rounded body via one large-radius rect), `</>` chest emblem, mustard antenna, no resemblance to Octocat (flat single body, no tentacle legs, no cat ears). Delivered as inline SVG + `framer-motion`, four poses:
 
 - **idle** — default resting state.
 - **jump** — continuous bounce loop (translateY + squash/stretch + shadow inverse-scale + sparkle particles). This is the one used on the landing hero.
@@ -56,7 +56,7 @@ Original single-blob character (rounded body via one large-radius rect), `</>` c
 
 Visual details (revised for v2): flat coral body fill with a hard dark-maroon outline stroke (no gradient, no soft ambient glow halo — those read as generic-AI per the brand kit revision), glossy highlight ellipse, blush cheeks, double eye-sparkle, eyebrows on energetic poses, sky-blue twinkle-star particles on jump, a hard flat ground shadow (no blur) instead of a soft radial one.
 
-**Component:** `src/components/mascot/Kodi.tsx` — `<Kodi pose="jump" size={170} />`. Poses are separate render branches inside one component (shared `<defs>` gradients per instance to avoid SVG id collisions when multiple instances exist on a page — suffix gradient ids with a `useId()`-based key). Animation via `framer-motion`'s `animate` prop with `repeat: Infinity`, not raw CSS `@keyframes`, to match how the rest of the app will start using motion and to make the bounce easing token reusable in code (a shared `BOUNCE_EASE` constant exported from the component file or a small `src/lib/motion.ts`).
+**Component:** `src/components/mascot/Kodi.tsx` — `<Kodi pose="jump" size={170} />`. Poses are separate render branches inside one component; v2's flat-fill-only mascot needs no gradient `<defs>`, so multiple instances on one page carry no SVG id-collision risk. Animation via `framer-motion`'s `animate` prop with `repeat: Infinity` (only on `jump` and `wave`; `idle` and `wink` are static), not raw CSS `@keyframes`, to match how the rest of the app will start using motion and to make the bounce easing token reusable in code (`BOUNCE_EASE`, exported from `Kodi.tsx`).
 
 ## File-by-file changes
 
