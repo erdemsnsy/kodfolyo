@@ -10,12 +10,12 @@ interface ProfileEditorProps {
 }
 
 const inputStyle: React.CSSProperties = {
-  width: '100%', marginTop: 7, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.12)', borderRadius: 10,
-  padding: '11px 13px', color: '#191720', fontFamily: 'var(--font-sans)', fontSize: 14.5, outline: 'none',
+  flex: 1, minWidth: 0, padding: '7px 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7,
+  background: '#FBF9F4', color: '#191720', fontFamily: 'var(--font-sans)', fontSize: 13, outline: 'none',
 };
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797', letterSpacing: '.04em',
+  flex: '0 0 108px', fontFamily: 'var(--font-mono)', fontSize: 10.5, letterSpacing: '.05em', textTransform: 'uppercase', color: '#8C8797',
 };
 
 export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
@@ -51,70 +51,63 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
     onSave(fields).catch(console.error);
   };
 
+  const fields: { label: string; value: string; set: (v: string) => void; placeholder: string }[] = [
+    { label: 'İsim', value: name, set: (v) => { setName(v); notifyChange({ name: v }); }, placeholder: 'Ad Soyad' },
+    { label: 'Konum', value: location, set: (v) => { setLocation(v); notifyChange({ location: v }); }, placeholder: 'Şehir, Ülke' },
+    { label: 'Şirket', value: company, set: (v) => { setCompany(v); notifyChange({ company: v }); }, placeholder: 'Şirket' },
+    { label: 'Web sitesi', value: blog, set: (v) => { setBlog(v); notifyChange({ blog: v }); }, placeholder: 'site.com' },
+    { label: 'RSS', value: rssUrl, set: (v) => { setRssUrl(v); notifyChange({ rss_url: v }); }, placeholder: 'dev.to/feed/kullanici' },
+  ];
+
   return (
-    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-        <div style={{ fontSize: 16, fontWeight: 700 }}>Temel bilgiler</div>
+    <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 16px', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
+        <span style={{ fontSize: 13, fontWeight: 600 }}>Temel bilgiler</span>
         <button
           type="button"
           onClick={() => handleGenerateAiBio('professional')}
           disabled={isGeneratingBio}
-          style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 9, background: 'rgba(99,102,241,.12)', color: '#4F46E5', border: '1px solid rgba(99,102,241,.28)', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 6, height: 30, padding: '0 11px', border: '1px solid rgba(31,58,232,.28)', borderRadius: 8, background: 'rgba(31,58,232,.06)', color: '#1F3AE8', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
         >
           {isGeneratingBio ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-          AI Biyografi
+          {isGeneratingBio ? 'yazılıyor…' : 'AI biyografi'}
         </button>
-      </div>
-      <div style={{ fontSize: 13.5, color: '#6B6675', marginBottom: 18 }}>GitHub&apos;dan çekildi, istediğin gibi değiştirebilirsin.</div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-        <label>
-          <span style={labelStyle}>İSİM</span>
-          <input value={name} onChange={(e) => { setName(e.target.value); notifyChange({ name: e.target.value }); }} style={inputStyle} />
-        </label>
-        <label>
-          <span style={labelStyle}>KONUM</span>
-          <input value={location} onChange={(e) => { setLocation(e.target.value); notifyChange({ location: e.target.value }); }} placeholder="İstanbul, Türkiye" style={inputStyle} />
-        </label>
-        <label>
-          <span style={labelStyle}>ŞİRKET</span>
-          <input value={company} onChange={(e) => { setCompany(e.target.value); notifyChange({ company: e.target.value }); }} placeholder="Kodfolyo Tech" style={inputStyle} />
-        </label>
-        <label>
-          <span style={labelStyle}>WEB SİTESİ</span>
-          <input value={blog} onChange={(e) => { setBlog(e.target.value); notifyChange({ blog: e.target.value }); }} placeholder="https://gokhan.dev" style={inputStyle} />
-        </label>
-        <label>
-          <span style={labelStyle}>RSS ADRESİ (dev.to / Medium)</span>
-          <input value={rssUrl} onChange={(e) => { setRssUrl(e.target.value); notifyChange({ rss_url: e.target.value }); }} placeholder="https://dev.to/feed/kullaniciadi" style={inputStyle} />
-        </label>
-        <label style={{ gridColumn: 'span 2' }}>
-          <span style={labelStyle}>BİYOGRAFİ</span>
-          <textarea
-            value={customBio}
-            onChange={(e) => { setCustomBio(e.target.value); notifyChange({ custom_bio: e.target.value }); }}
-            rows={3}
-            placeholder="Kendinizden ve hedeflerinizden bahsedin..."
-            style={{ ...inputStyle, lineHeight: 1.5, resize: 'vertical' }}
-          />
-        </label>
       </div>
 
       {aiSuggestions.length > 0 && (
-        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <span style={{ fontSize: 11, color: '#4F46E5', fontWeight: 700 }}>✨ AI Önerileri — uygulamak için tıkla</span>
+        <div style={{ padding: '12px 16px', background: '#FBF9F4', borderBottom: '1px solid rgba(25,23,32,.09)', display: 'flex', flexDirection: 'column', gap: 7 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>3 öneri — tıkla, uygulansın</span>
           {aiSuggestions.map((sug, idx) => (
             <button
               key={idx}
               type="button"
-              onClick={() => { setCustomBio(sug); notifyChange({ custom_bio: sug }); }}
-              style={{ textAlign: 'left', padding: 10, borderRadius: 10, border: '1px solid rgba(99,102,241,.25)', background: 'rgba(99,102,241,.06)', fontSize: 12.5, color: '#3A3644', cursor: 'pointer' }}
+              onClick={() => { setCustomBio(sug); notifyChange({ custom_bio: sug }); setAiSuggestions([]); }}
+              style={{ textAlign: 'left', padding: '10px 12px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 9, background: '#FFFFFF', color: '#56515F', fontSize: 12.5, lineHeight: 1.5, cursor: 'pointer' }}
             >
               {sug}
             </button>
           ))}
         </div>
       )}
+
+      <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {fields.map((f) => (
+          <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '7px 0', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
+            <span style={labelStyle}>{f.label}</span>
+            <input value={f.value} onChange={(e) => f.set(e.target.value)} placeholder={f.placeholder} style={inputStyle} />
+          </div>
+        ))}
+        <div style={{ display: 'flex', gap: 14, paddingTop: 11 }}>
+          <span style={{ ...labelStyle, paddingTop: 8 }}>Biyografi</span>
+          <textarea
+            value={customBio}
+            onChange={(e) => { setCustomBio(e.target.value); notifyChange({ custom_bio: e.target.value }); }}
+            rows={4}
+            placeholder="Kendinizden ve hedeflerinizden bahsedin..."
+            style={{ flex: 1, minWidth: 0, padding: '9px 11px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 8, background: '#FBF9F4', fontSize: 13, lineHeight: 1.55, resize: 'vertical', outline: 'none', fontFamily: 'var(--font-sans)', color: '#191720' }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

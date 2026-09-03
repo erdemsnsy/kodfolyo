@@ -1,16 +1,28 @@
 'use client';
 
 import { useState } from 'react';
+import type React from 'react';
 import { CustomLink } from '@/types';
+import { Trash2, Plus, Link2, X, FileText, Globe, Mail } from 'lucide-react';
+import { LinkedinIcon } from '@/components/icons/LinkedinIcon';
 
 interface CustomLinksManagerProps {
   customLinks: CustomLink[];
   onSaveLinks: (links: CustomLink[]) => Promise<void>;
 }
 
-const ICONS: Record<string, string> = {
-  'external-link': '🔗', linkedin: '💼', twitter: '🐦', cv: '📄', globe: '🌐', email: '✉️',
-};
+const ICON_CHOICES: { key: string; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: 'external-link', label: 'Bağlantı', icon: Link2 },
+  { key: 'linkedin', label: 'LinkedIn', icon: LinkedinIcon },
+  { key: 'twitter', label: 'Twitter / X', icon: X },
+  { key: 'cv', label: 'CV', icon: FileText },
+  { key: 'globe', label: 'Web Sitesi', icon: Globe },
+  { key: 'email', label: 'E-posta', icon: Mail },
+];
+
+function iconFor(key?: string) {
+  return ICON_CHOICES.find((c) => c.key === key)?.icon || Link2;
+}
 
 export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomLinksManagerProps) {
   const [links, setLinks] = useState<CustomLink[]>(customLinks || []);
@@ -24,8 +36,10 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
     setLinks(customLinks || []);
   }
 
+  const ready = newLabel.trim() && newUrl.trim();
+
   const handleAddLink = () => {
-    if (!newLabel.trim() || !newUrl.trim()) return;
+    if (!ready) return;
 
     let formattedUrl = newUrl.trim();
     if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
@@ -47,48 +61,65 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
     onSaveLinks(updated).catch(console.error);
   };
 
-  const fieldStyle: React.CSSProperties = {
-    flex: 1, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.12)', borderRadius: 10, padding: '9px 12px',
-    color: '#191720', fontSize: 13, outline: 'none',
-  };
-
   return (
-    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-      <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Özel bağlantılar</div>
-      <div style={{ fontSize: 13.5, color: '#6B6675', marginBottom: 16 }}>Portfolyonun üstünde buton olarak çıkar.</div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-        {links.map((link) => (
-          <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '11px 13px', borderRadius: 11, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.1)' }}>
-            <span style={{ fontSize: 15 }}>{ICONS[link.iconName || 'external-link']}</span>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 600 }}>{link.label}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#8C8797', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link.url}</div>
-            </div>
-            <button onClick={() => handleRemoveLink(link.id)} style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#A09BA8', background: 'transparent', border: 0, cursor: 'pointer' }}>×</button>
-          </div>
-        ))}
-
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <input placeholder="Etiket (LinkedIn, CV PDF)" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} style={fieldStyle} />
-          <input placeholder="URL (https://...)" value={newUrl} onChange={(e) => setNewUrl(e.target.value)} style={fieldStyle} />
-          <select value={iconName} onChange={(e) => setIconName(e.target.value)} style={{ ...fieldStyle, flex: 'unset' }}>
-            <option value="external-link">🔗 Bağlantı</option>
-            <option value="linkedin">💼 LinkedIn</option>
-            <option value="twitter">🐦 Twitter / X</option>
-            <option value="cv">📄 CV / PDF</option>
-            <option value="globe">🌐 Web Sitesi</option>
-            <option value="email">✉️ E-posta</option>
-          </select>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {links.length > 0 && (
+        <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
+          {links.map((link) => {
+            const Icon = iconFor(link.iconName);
+            return (
+              <div key={link.id} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '10px 16px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
+                <span style={{ display: 'grid', placeItems: 'center', width: 28, height: 28, borderRadius: 8, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.09)', color: '#56515F', flexShrink: 0 }}>
+                  <Icon className="w-3.5 h-3.5" />
+                </span>
+                <span style={{ flexShrink: 0, fontSize: 13, fontWeight: 500 }}>{link.label}</span>
+                <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#8C8797', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link.url}</span>
+                <button onClick={() => handleRemoveLink(link.id)} style={{ display: 'grid', placeItems: 'center', width: 27, height: 27, border: '1px solid rgba(25,23,32,.09)', borderRadius: 7, background: '#FFFFFF', color: '#8C8797', cursor: 'pointer', flexShrink: 0 }}>
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            );
+          })}
         </div>
-        <button
-          type="button"
-          onClick={handleAddLink}
-          disabled={!newLabel.trim() || !newUrl.trim()}
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#00845E', background: 'transparent', border: '1px dashed rgba(0,166,118,.4)', borderRadius: 11, padding: 11, cursor: 'pointer', opacity: !newLabel.trim() || !newUrl.trim() ? 0.5 : 1 }}
-        >
-          + bağlantı ekle
-        </button>
+      )}
+
+      <div style={{ background: '#FBF9F4', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '14px 16px' }}>
+        <div style={{ display: 'flex', gap: 9, flexWrap: 'wrap' }}>
+          <input
+            placeholder="Etiket"
+            value={newLabel}
+            onChange={(e) => setNewLabel(e.target.value)}
+            style={{ flex: '0 0 150px', padding: '8px 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7, background: '#FFFFFF', fontSize: 12.5, outline: 'none' }}
+          />
+          <input
+            placeholder="https://"
+            value={newUrl}
+            onChange={(e) => setNewUrl(e.target.value)}
+            style={{ flex: 1, minWidth: 180, padding: '8px 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7, background: '#FFFFFF', fontSize: 12.5, fontFamily: 'var(--font-mono)', outline: 'none' }}
+          />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', marginTop: 10 }}>
+          {ICON_CHOICES.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              type="button"
+              title={label}
+              onClick={() => setIconName(key)}
+              style={{ display: 'grid', placeItems: 'center', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', background: '#FFFFFF', border: iconName === key ? '1px solid #1F3AE8' : '1px solid rgba(25,23,32,.14)', color: iconName === key ? '#1F3AE8' : '#8C8797' }}
+            >
+              <Icon className="w-3.5 h-3.5" />
+            </button>
+          ))}
+          <div style={{ flex: 1 }} />
+          <button
+            type="button"
+            onClick={handleAddLink}
+            disabled={!ready}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, height: 32, padding: '0 14px', border: 0, borderRadius: 8, fontSize: 12.5, fontWeight: 500, cursor: ready ? 'pointer' : 'not-allowed', background: ready ? '#191720' : 'rgba(25,23,32,.07)', color: ready ? '#FFFFFF' : '#8C8797' }}
+          >
+            <Plus className="w-3.5 h-3.5" /> bağlantı ekle
+          </button>
+        </div>
       </div>
     </div>
   );

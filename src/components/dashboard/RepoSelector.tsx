@@ -41,61 +41,58 @@ export default function RepoSelector({ repos, onToggleVisibility, onSetFeatured 
   };
 
   const visibleCount = localRepos.filter((r) => r.is_visible !== false).length;
+  const hiddenCount = localRepos.length - visibleCount;
 
   return (
-    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 6 }}>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Görünür repolar</div>
-          <div style={{ fontSize: 13.5, color: '#6B6675' }}>{visibleCount} repo portfolyonda gösteriliyor. Yıldıza tıklayıp vitrin projesi seç.</div>
-        </div>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#8C8797' }}>YILDIZA GÖRE SIRALI</span>
+    <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ padding: '11px 16px', borderBottom: '1px solid rgba(25,23,32,.09)', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797' }}>
+        {visibleCount} repo yayında · {hiddenCount} gizli — yıldıza tıklayıp vitrin projesi seç
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {localRepos.map((repo) => {
-          const isVisible = repo.is_visible !== false;
-          const isFeatured = repo.is_featured === true;
-          return (
-            <div
-              key={repo.github_repo_id || repo.name}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 15px', flexWrap: 'wrap',
-                borderRadius: 12, background: '#FBF9F4', border: `1px solid ${isFeatured ? '#1F3AE8' : isVisible ? 'rgba(31,58,232,.22)' : 'rgba(25,23,32,.07)'}`,
-                opacity: isVisible ? 1 : 0.5,
-              }}
+      {localRepos.map((repo) => {
+        const isVisible = repo.is_visible !== false;
+        const isFeatured = repo.is_featured === true;
+        return (
+          <div
+            key={repo.github_repo_id || repo.name}
+            style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderBottom: '1px solid rgba(25,23,32,.06)' }}
+          >
+            <button
+              type="button"
+              onClick={() => handleSetFeatured(repo.github_repo_id)}
+              title={isFeatured ? 'Vitrin projesi' : 'Vitrin projesi yap'}
+              style={{ display: 'grid', placeItems: 'center', width: 26, height: 26, border: 0, borderRadius: 7, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: isFeatured ? '#00A676' : '#C3BEC9' }}
             >
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13.5, color: '#191720' }}>{repo.name}</div>
-                <div style={{ fontSize: 12.5, color: '#6B6675', marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{repo.description || 'Açıklama yok'}</div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-                <button
-                  type="button"
-                  onClick={() => handleSetFeatured(repo.github_repo_id)}
-                  title={isFeatured ? 'Vitrin projesi' : 'Vitrin projesi yap'}
-                  style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 0, cursor: 'pointer', color: isFeatured ? '#F5B83D' : '#D1CCC0' }}
-                >
-                  <Star className="w-4 h-4" fill={isFeatured ? '#F5B83D' : 'none'} />
-                </button>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#8C8797' }}>★ {repo.stargazers_count}</span>
-                {repo.language && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, padding: '3px 9px', borderRadius: 999, background: `${languageColor(repo.language)}22`, color: languageColor(repo.language) }}>
-                    {repo.language}
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleToggle(repo.github_repo_id, isVisible)}
-                  style={{ position: 'relative', width: 42, height: 24, borderRadius: 999, border: 0, cursor: 'pointer', padding: 0, background: isVisible ? '#1F3AE8' : 'rgba(25,23,32,.14)' }}
-                >
-                  <span style={{ position: 'absolute', top: 3, left: isVisible ? 21 : 3, width: 18, height: 18, borderRadius: '50%', background: '#F4F1EA', transition: 'left .16s ease' }} />
-                </button>
-              </div>
+              <Star className="w-4 h-4" fill={isFeatured ? '#00A676' : 'none'} />
+            </button>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500, color: isVisible ? '#191720' : '#8C8797' }}>{repo.name}</div>
+              <div style={{ fontSize: 11.5, color: '#8C8797', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{repo.description || 'Açıklama yok'}</div>
             </div>
-          );
-        })}
-      </div>
+
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5, fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#6B6675', flexShrink: 0 }}>
+              <Star className="w-3 h-3" style={{ opacity: 0.5 }} />
+              {repo.stargazers_count}
+            </span>
+
+            {repo.language && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: 5, width: 98, flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 11, color: '#56515F' }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: languageColor(repo.language) }} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{repo.language}</span>
+              </span>
+            )}
+
+            <button
+              type="button"
+              onClick={() => handleToggle(repo.github_repo_id, isVisible)}
+              style={{ position: 'relative', width: 36, height: 21, borderRadius: 999, border: 0, cursor: 'pointer', padding: 0, flexShrink: 0, background: isVisible ? '#00A676' : 'rgba(25,23,32,.16)' }}
+            >
+              <span style={{ position: 'absolute', top: 3, left: isVisible ? 18 : 3, width: 15, height: 15, borderRadius: '50%', background: '#FFFFFF', boxShadow: '0 1px 2px rgba(25,23,32,.25)', transition: 'left .15s ease' }} />
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }

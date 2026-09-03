@@ -8,51 +8,57 @@ interface ThemeSelectorProps {
   onSelectTheme: (theme: ThemeType) => Promise<void>;
 }
 
+const WASH: Record<ThemeType, string> = {
+  gece: 'rgba(31,58,232,.05)',
+  kagit: 'rgba(180,83,31,.06)',
+  neon: 'rgba(0,132,94,.06)',
+  mercan: 'rgba(198,49,78,.05)',
+};
+
 export default function ThemeSelector({ currentTheme, onSelectTheme }: ThemeSelectorProps) {
-  const t = themes[currentTheme] || themes.gece;
-
   return (
-    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-      <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 14 }}>Tema</div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-        {Object.values(themes).map((theme) => {
-          const selected = currentTheme === theme.id;
-          return (
-            <button
-              key={theme.id}
-              type="button"
-              onClick={() => onSelectTheme(theme.id)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10, padding: 12, borderRadius: 12, cursor: 'pointer',
-                textAlign: 'left', background: '#FBF9F4',
-                border: selected ? '1px solid #1F3AE8' : '1px solid rgba(25,23,32,.1)',
-              }}
-            >
-              <span style={{ width: 26, height: 26, borderRadius: 8, flexShrink: 0, background: `linear-gradient(135deg, ${theme.a}, ${theme.b})` }} />
-              <span style={{ fontSize: 13, fontWeight: 600, color: '#191720' }}>{theme.name}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div style={{ marginTop: 14, padding: 14, borderRadius: 12, border: '1px solid rgba(25,23,32,.09)', background: '#FBF9F4' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8C8797', marginBottom: 10 }}>CANLI ÖNİZLEME</div>
-        <div style={{ padding: 13, borderRadius: 11, background: t.bg, border: '1px solid rgba(25,23,32,.1)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <span style={{ width: 30, height: 30, borderRadius: 9, background: `linear-gradient(135deg, ${t.a}, ${t.b})` }} />
-            <div>
-              <div style={{ fontSize: 12.5, fontWeight: 700, color: '#191720' }}>Portfolyon</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: t.a }}>@kullaniciadi</div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 5, marginTop: 11 }}>
-            <span style={{ flex: 1, height: 6, borderRadius: 999, background: t.a }} />
-            <span style={{ flex: 1, height: 6, borderRadius: 999, background: t.b }} />
-            <span style={{ flex: 1, height: 6, borderRadius: 999, background: 'rgba(25,23,32,.14)' }} />
-          </div>
-        </div>
-      </div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+      {Object.values(themes).map((t) => {
+        const selected = currentTheme === t.id;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => onSelectTheme(t.id)}
+            style={{
+              display: 'block', width: '100%', textAlign: 'left', padding: 0, borderRadius: 12, overflow: 'hidden',
+              cursor: 'pointer', background: '#FFFFFF',
+              border: selected ? '1px solid #191720' : '1px solid rgba(25,23,32,.09)',
+              boxShadow: selected ? '0 0 0 3px rgba(25,23,32,.06)' : 'none',
+            }}
+          >
+            <span style={{ display: 'block', padding: '14px 14px 16px', background: WASH[t.id] }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <span style={{ width: 26, height: 26, borderRadius: '50%', background: '#EBE7DD', flexShrink: 0 }} />
+                <span style={{ display: 'block' }}>
+                  <span style={{ display: 'block', width: 74, height: 7, borderRadius: 999, background: 'rgba(25,23,32,.55)' }} />
+                  <span style={{ display: 'block', width: 48, height: 5, borderRadius: 999, marginTop: 5, background: 'rgba(25,23,32,.2)' }} />
+                </span>
+              </span>
+              <span style={{ display: 'block', width: '100%', height: 5, borderRadius: 999, marginTop: 12, background: 'rgba(25,23,32,.13)' }} />
+              <span style={{ display: 'block', width: '70%', height: 5, borderRadius: 999, marginTop: 5, background: 'rgba(25,23,32,.13)' }} />
+              <span style={{ display: 'flex', gap: 5, marginTop: 12 }}>
+                <span style={{ width: 44, height: 14, borderRadius: 5, background: t.a }} />
+                <span style={{ width: 30, height: 14, borderRadius: 5, background: t.b }} />
+                <span style={{ flex: 1, height: 14, borderRadius: 5, background: 'rgba(25,23,32,.07)' }} />
+              </span>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '11px 14px', borderTop: '1px solid rgba(25,23,32,.09)' }}>
+              <span style={{ display: 'flex', flexShrink: 0 }}>
+                <span style={{ width: 16, height: 16, borderRadius: '50%', background: t.a }} />
+                <span style={{ width: 16, height: 16, borderRadius: '50%', marginLeft: -6, background: t.b }} />
+              </span>
+              <span style={{ flex: 1, fontSize: 13.5, fontWeight: 600 }}>{t.name}</span>
+              {selected && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#00845E' }}>seçili</span>}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

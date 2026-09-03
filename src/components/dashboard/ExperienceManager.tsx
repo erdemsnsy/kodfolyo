@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ExperienceEntry } from '@/types';
+import { Trash2, Plus } from 'lucide-react';
 
 interface ExperienceManagerProps {
   entries: ExperienceEntry[];
@@ -9,8 +10,8 @@ interface ExperienceManagerProps {
 }
 
 const fieldStyle: React.CSSProperties = {
-  background: '#FFFFFF', border: '1px solid rgba(25,23,32,.12)', borderRadius: 10, padding: '9px 12px',
-  color: '#191720', fontSize: 13, outline: 'none',
+  width: '100%', padding: '8px 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7,
+  background: '#FFFFFF', color: '#191720', fontSize: 12.5, outline: 'none', fontFamily: 'var(--font-sans)',
 };
 
 export default function ExperienceManager({ entries, onSaveEntries }: ExperienceManagerProps) {
@@ -26,13 +27,15 @@ export default function ExperienceManager({ entries, onSaveEntries }: Experience
     setList(entries || []);
   }
 
+  const ready = role.trim() && organization.trim() && dateRange.trim();
+
   const handleAdd = () => {
-    if (!role.trim() || !organization.trim()) return;
+    if (!ready) return;
     const entry: ExperienceEntry = {
       id: Date.now().toString(),
       role: role.trim(),
       organization: organization.trim(),
-      dateRange: dateRange.trim() || '—',
+      dateRange: dateRange.trim(),
       description: description.trim(),
     };
     const updated = [entry, ...list];
@@ -51,35 +54,49 @@ export default function ExperienceManager({ entries, onSaveEntries }: Experience
   };
 
   return (
-    <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-      <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 3 }}>Deneyim & Eğitim</div>
-      <div style={{ fontSize: 13.5, color: '#6B6675', marginBottom: 16 }}>Portfolyonda projelerin altında zaman çizelgesi olarak görünür.</div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-        {list.map((entry) => (
-          <div key={entry.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 11, padding: '11px 13px', borderRadius: 11, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.1)' }}>
-            <div style={{ minWidth: 0, flex: 1 }}>
-              <div style={{ fontSize: 13, fontWeight: 700 }}>{entry.role} <span style={{ fontWeight: 400, color: '#6B6675' }}>· {entry.organization}</span></div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8C8797', marginTop: 2 }}>{entry.dateRange}</div>
-              {entry.description && <div style={{ fontSize: 12, color: '#56515F', marginTop: 4 }}>{entry.description}</div>}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {list.length > 0 && (
+        <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
+          {list.map((entry) => (
+            <div key={entry.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '13px 16px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: 13.5, fontWeight: 600 }}>{entry.role}</span>
+                  <span style={{ fontSize: 12.5, color: '#56515F' }}>{entry.organization}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8C8797' }}>{entry.dateRange}</span>
+                </div>
+                {entry.description && <div style={{ fontSize: 12, color: '#6B6675', marginTop: 5, lineHeight: 1.5 }}>{entry.description}</div>}
+              </div>
+              <button
+                onClick={() => handleRemove(entry.id)}
+                style={{ display: 'grid', placeItems: 'center', width: 27, height: 27, border: '1px solid rgba(25,23,32,.09)', borderRadius: 7, background: '#FFFFFF', color: '#8C8797', cursor: 'pointer', flexShrink: 0 }}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
             </div>
-            <button onClick={() => handleRemove(entry.id)} style={{ width: 44, height: 44, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#A09BA8', background: 'transparent', border: 0, cursor: 'pointer' }}>×</button>
-          </div>
-        ))}
+          ))}
+        </div>
+      )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          <input placeholder="Rol (Stajyer, Öğrenci...)" value={role} onChange={(e) => setRole(e.target.value)} style={fieldStyle} />
-          <input placeholder="Kurum / Şirket" value={organization} onChange={(e) => setOrganization(e.target.value)} style={fieldStyle} />
-          <input placeholder="Tarih aralığı (2024 - Günümüz)" value={dateRange} onChange={(e) => setDateRange(e.target.value)} style={{ ...fieldStyle, gridColumn: 'span 2' }} />
-          <textarea placeholder="Kısa açıklama (1-2 satır)" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} style={{ ...fieldStyle, gridColumn: 'span 2', resize: 'vertical' }} />
+      <div style={{ background: '#FBF9F4', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '14px 16px' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797', marginBottom: 11 }}>Yeni kayıt</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
+          <input placeholder="Rol" value={role} onChange={(e) => setRole(e.target.value)} style={fieldStyle} />
+          <input placeholder="Kurum" value={organization} onChange={(e) => setOrganization(e.target.value)} style={fieldStyle} />
+          <input placeholder="2021 — 2023" value={dateRange} onChange={(e) => setDateRange(e.target.value)} style={fieldStyle} />
+          <textarea placeholder="Kısa açıklama" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} style={{ ...fieldStyle, gridColumn: '1 / -1', resize: 'vertical', lineHeight: 1.5 }} />
         </div>
         <button
           type="button"
           onClick={handleAdd}
-          disabled={!role.trim() || !organization.trim()}
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#00845E', background: 'transparent', border: '1px dashed rgba(0,166,118,.4)', borderRadius: 11, padding: 11, cursor: 'pointer', opacity: !role.trim() || !organization.trim() ? 0.5 : 1 }}
+          disabled={!ready}
+          style={{
+            marginTop: 11, display: 'flex', alignItems: 'center', gap: 6, height: 32, padding: '0 14px', border: 0, borderRadius: 8,
+            fontSize: 12.5, fontWeight: 500, cursor: ready ? 'pointer' : 'not-allowed',
+            background: ready ? '#191720' : 'rgba(25,23,32,.07)', color: ready ? '#FFFFFF' : '#8C8797',
+          }}
         >
-          + deneyim ekle
+          <Plus className="w-3.5 h-3.5" /> deneyim ekle
         </button>
       </div>
     </div>

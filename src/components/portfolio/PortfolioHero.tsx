@@ -2,8 +2,9 @@
 
 import { UserProfile } from '@/types';
 import { getTheme } from '@/lib/theme';
-import { MapPin, Building, Globe, Mail, ExternalLink, FileText, Printer, Share2 } from 'lucide-react';
+import { MapPin, Building, Globe, Mail, ExternalLink, FileText, Printer, Share2, X } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
+import { LinkedinIcon } from '@/components/icons/LinkedinIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -20,6 +21,8 @@ function renderLinkIcon(iconName?: string) {
   if (iconName === 'cv') return <FileText className="w-3.5 h-3.5" />;
   if (iconName === 'globe') return <Globe className="w-3.5 h-3.5" />;
   if (iconName === 'email') return <Mail className="w-3.5 h-3.5" />;
+  if (iconName === 'linkedin') return <LinkedinIcon className="w-3.5 h-3.5" />;
+  if (iconName === 'twitter') return <X className="w-3.5 h-3.5" />;
   return <ExternalLink className="w-3.5 h-3.5" />;
 }
 

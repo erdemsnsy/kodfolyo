@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, Suspense, useEffect } from 'react';
+import { useState, Suspense, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import RepoSelector from '@/components/dashboard/RepoSelector';
@@ -15,36 +14,44 @@ import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityMa
 import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import CustomDomainManager from '@/components/dashboard/CustomDomainManager';
+import SettingsPanel from '@/components/dashboard/SettingsPanel';
 import LivePortfolioPreview from '@/components/dashboard/LivePortfolioPreview';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
-import { Save, CheckCircle2, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Rows3, BadgeCheck, Settings, BarChart3, Globe2, Star, ExternalLink } from 'lucide-react';
+import {
+  Save, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Layers, BadgeCheck, Settings,
+  BarChart3, Globe2, Star, ExternalLink, Check, Minus, RefreshCw,
+} from 'lucide-react';
 
 type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'bolumler' | 'tema' | 'baglantilar' | 'rozet' | 'analytics' | 'alanadi';
 
-const NAV_ITEMS: { id: TabId; label: string; description: string; icon: typeof LayoutGrid }[] = [
-  { id: 'genel', label: 'Genel bakış', description: 'Profiline hızlı bakış ve durum özeti.', icon: LayoutGrid },
-  { id: 'profil', label: 'Profil', description: 'İsim, biyografi ve iletişim bilgilerin.', icon: User },
-  { id: 'repolar', label: 'Repolar', description: 'Portfolyoda görünecek repoları ve vitrin projesini seç.', icon: FolderGit2 },
-  { id: 'deneyim', label: 'Deneyim', description: 'İş ve eğitim geçmişini zaman çizelgesine ekle.', icon: Briefcase },
-  { id: 'bolumler', label: 'Bölümler', description: 'Portfolyonda hangi bölümlerin görüneceğini seç.', icon: Rows3 },
-  { id: 'tema', label: 'Tema', description: 'Portfolyonun renk paletini seç.', icon: Palette },
-  { id: 'baglantilar', label: 'Bağlantılar', description: 'CV, sosyal medya ve diğer özel bağlantıların.', icon: Link2 },
-  { id: 'rozet', label: 'Rozet', description: 'README\'ine ekleyebileceğin gömülebilir rozet.', icon: BadgeCheck },
-  { id: 'analytics', label: 'Analytics', description: 'Görüntülenme, tıklama ve indirme istatistiklerin.', icon: BarChart3 },
-  { id: 'alanadi', label: 'Alan Adı', description: 'Portfolyonu kendi alan adından yayınla.', icon: Globe2 },
+const TABS: { id: TabId; label: string; title: string; description: string; icon: typeof LayoutGrid }[] = [
+  { id: 'genel', label: 'Genel', title: 'Genel bakış', description: 'Portfolyonun mevcut durumu ve hızlı geçişler.', icon: LayoutGrid },
+  { id: 'profil', label: 'Profil', title: 'Profil', description: 'Portfolyonun üstünde görünen temel bilgiler.', icon: User },
+  { id: 'repolar', label: 'Repolar', title: 'Repolar', description: 'Yayınlanacak depolar ve vitrin projesi.', icon: FolderGit2 },
+  { id: 'deneyim', label: 'Deneyim', title: 'Deneyim', description: 'İş ve eğitim geçmişi.', icon: Briefcase },
+  { id: 'bolumler', label: 'Bölümler', title: 'Bölümler', description: 'Portfolyo sayfasındaki blokları aç veya kapat.', icon: Layers },
+  { id: 'tema', label: 'Tema', title: 'Tema', description: 'Portfolyonun renk şeması.', icon: Palette },
+  { id: 'baglantilar', label: 'Linkler', title: 'Bağlantılar', description: 'Profilinin altında görünecek bağlantılar.', icon: Link2 },
+  { id: 'rozet', label: 'Rozet', title: 'Rozet', description: "README'ne gömülebilen canlı rozet.", icon: BadgeCheck },
+  { id: 'analytics', label: 'Analiz', title: 'Analytics', description: 'Son 30 günün trafik ve etkileşim özeti.', icon: BarChart3 },
+  { id: 'alanadi', label: 'Alan adı', title: 'Alan Adı', description: 'Portfolyonu kendi alan adında yayınla.', icon: Globe2 },
 ];
+
+const NO_PREVIEW_TABS: TabId[] = ['analytics', 'alanadi'];
 
 function DashboardContent() {
   const { data: session } = useSession();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<TabId>('genel');
+  const [activeTab, setActiveTab] = useState<TabId | 'ayarlar'>('genel');
   const [activeUsername, setActiveUsername] = useState<string>('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [repos, setRepos] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewport, setViewport] = useState({ w: 1440, h: 900 });
 
   // Pending (kaydedilmemiş) değişiklikler
   const [pendingTheme, setPendingTheme] = useState<ThemeType | null>(null);
@@ -59,7 +66,12 @@ function DashboardContent() {
   const [pendingSectionVisibility, setPendingSectionVisibility] = useState<SectionVisibility | null>(null);
 
   const [isSavingAll, setIsSavingAll] = useState(false);
-  const [saveAllSuccess, setSaveAllSuccess] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'justSaved'>('saved');
+
+  const [badgeSize, setBadgeSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [badgeTheme, setBadgeTheme] = useState<ThemeType>('gece');
+
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const hasPendingChanges =
     pendingTheme !== null ||
@@ -72,6 +84,15 @@ function DashboardContent() {
     pendingCustomLinks !== null ||
     pendingExperience !== null ||
     pendingSectionVisibility !== null;
+
+  const status: 'saved' | 'dirty' | 'justSaved' = hasPendingChanges ? 'dirty' : saveStatus;
+
+  useEffect(() => {
+    const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight });
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   // Profili GitHub'dan çek - temayı ASLA sıfırlama
   const loadData = async (userToFetch: string) => {
@@ -120,7 +141,10 @@ function DashboardContent() {
             if (typeof window !== 'undefined') {
               localStorage.setItem('kodfolyo_active_username', targetUser);
             }
-            if (data.profile) setProfile(data.profile);
+            if (data.profile) {
+              setProfile(data.profile);
+              setBadgeTheme(data.profile.theme);
+            }
             if (data.repos) setRepos(data.repos);
           }
           return;
@@ -138,7 +162,10 @@ function DashboardContent() {
               if (typeof window !== 'undefined') {
                 localStorage.setItem('kodfolyo_active_username', 'erdemsnsy');
               }
-              if (fbData.profile) setProfile(fbData.profile);
+              if (fbData.profile) {
+                setProfile(fbData.profile);
+                setBadgeTheme(fbData.profile.theme);
+              }
               if (fbData.repos) setRepos(fbData.repos);
             }
           }
@@ -161,7 +188,6 @@ function DashboardContent() {
   const handleSaveAll = async () => {
     if (!profile || !hasPendingChanges) return;
     setIsSavingAll(true);
-    setSaveAllSuccess(false);
 
     const payload: Record<string, unknown> = { username: activeUsername };
     if (pendingTheme !== null) payload.theme = pendingTheme;
@@ -212,8 +238,9 @@ function DashboardContent() {
         setPendingCustomLinks(null);
         setPendingExperience(null);
         setPendingSectionVisibility(null);
-        setSaveAllSuccess(true);
-        setTimeout(() => setSaveAllSuccess(false), 5000);
+        setSaveStatus('justSaved');
+        clearTimeout(savedTimer.current);
+        savedTimer.current = setTimeout(() => setSaveStatus('saved'), 1800);
       }
     } catch (err) {
       console.error('Save all error:', err);
@@ -280,6 +307,33 @@ function DashboardContent() {
     }
   };
 
+  const handleTogglePublish = async (nextPublished: boolean) => {
+    try {
+      await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: activeUsername, isPublished: nextPublished }),
+      });
+      setProfile((prev) => (prev ? { ...prev, is_published: nextPublished } : prev));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await fetch('/api/profile/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: activeUsername, deleteAccount: true }),
+      });
+      if (typeof window !== 'undefined') localStorage.removeItem('kodfolyo_active_username');
+      router.push('/');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (isLoading || !profile) {
     return (
       <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -305,65 +359,108 @@ function DashboardContent() {
     ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
   };
 
-  const visibleRepoCount = repos.filter((r) => r.is_visible !== false).length;
+  const visibleRepos = repos.filter((r) => r.is_visible !== false);
   const starCount = repos.reduce((sum, r) => sum + (r.stargazers_count || 0), 0);
-  const activeItem = NAV_ITEMS.find((n) => n.id === activeTab)!;
-  // Rozet'in kendi önizlemesi var, Analytics ve Alan Adı görsel bir portfolyo
-  // değişikliği yapmıyor — canlı önizleme sadece anlamlı olan sekmelerde gösterilir.
-  const showLivePreview = !['rozet', 'analytics', 'alanadi'].includes(activeTab);
+  const showcase = repos.find((r) => r.is_featured);
+  const activeTabDef = activeTab === 'ayarlar'
+    ? { title: 'Ayarlar', description: 'Hesap, veri ve yayın durumu.' }
+    : TABS.find((t) => t.id === activeTab)!;
+
+  // ─── Sağdaki canlı önizleme paneli için yerleşim matematiği ───────────────
+  // Kaynak: Design'in "Kodfolyo Dashboard v2" dosyasındaki responsive kurallar.
+  const desktop = viewport.w >= 1024;
+  const wide = viewport.w >= 1180;
+  const inline = !wide && viewport.w >= 640;
+  const showPreview = activeTab !== 'ayarlar' && !NO_PREVIEW_TABS.includes(activeTab as TabId) && (wide || inline);
+  const paneW = Math.round(Math.min(760, Math.max(430, (viewport.w - 74) * 0.46)));
+  const colW = Math.min(660, viewport.w - (desktop ? 74 : 0) - 44);
+  const frameW = wide ? paneW - 34 : colW;
+  const headerH = 62;
+  const frameH = wide ? Math.max(320, viewport.h - headerH - 60) : 520;
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'genel':
+      case 'genel': {
+        const setupItems = [
+          { key: 'bio', label: 'Biyografi yazıldı', ok: !!displayProfile.custom_bio?.trim(), tab: 'profil' as TabId },
+          { key: 'showcase', label: 'Vitrin projesi seçildi', ok: !!showcase, tab: 'repolar' as TabId },
+          { key: 'links', label: 'En az bir bağlantı eklendi', ok: displayProfile.custom_links.length > 0, tab: 'baglantilar' as TabId },
+          { key: 'exp', label: 'Deneyim kaydı girildi', ok: displayProfile.experience.length > 0, tab: 'deneyim' as TabId },
+          { key: 'domain', label: 'Özel alan adı doğrulandı', ok: !!displayProfile.custom_domain && displayProfile.custom_domain_verified === true, tab: 'alanadi' as TabId },
+        ];
+        const doneCount = setupItems.filter((c) => c.ok).length;
+
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ padding: 20, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-              <div style={{ position: 'relative', width: 56, height: 56, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#EBE7DD' }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div style={{ position: 'relative', width: 46, height: 46, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#EBE7DD' }}>
                 <Image src={displayProfile.avatar_url} alt={displayProfile.username} fill className="object-cover" />
               </div>
-              <div style={{ flex: 1, minWidth: 180 }}>
-                <div style={{ fontSize: 17, fontWeight: 800, color: '#191720' }}>{displayProfile.name || displayProfile.username}</div>
-                <a href={`/${displayProfile.username}`} target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#1F3AE8', textDecoration: 'none' }}>
-                  kodfolyo.dev/{displayProfile.username} <ExternalLink className="w-3 h-3" />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-.015em' }}>{displayProfile.name || displayProfile.username}</div>
+                <a href={`/${displayProfile.username}`} target="_blank" style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5 }}>
+                  kodfolyo.dev/{displayProfile.username}
                 </a>
               </div>
               {displayProfile.is_published === false && (
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, padding: '5px 11px', borderRadius: 999, background: 'rgba(180,83,31,.1)', color: '#B4531F' }}>YAYINDA DEĞİL</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '4px 9px', borderRadius: 6, background: 'rgba(198,49,78,.10)', color: '#C6314E' }}>yayında değil</span>
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
-              <div style={{ padding: 18, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-                <FolderGit2 className="w-4 h-4" style={{ color: '#1F3AE8', marginBottom: 10 }} />
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#191720' }}>{visibleRepoCount}</div>
-                <div style={{ fontSize: 12, color: '#6B6675', marginTop: 2 }}>Görünür repo</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Görünür repo</div>
+                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
               </div>
-              <div style={{ padding: 18, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-                <Star className="w-4 h-4" style={{ color: '#F5B83D', marginBottom: 10 }} />
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#191720' }}>{starCount}</div>
-                <div style={{ fontSize: 12, color: '#6B6675', marginTop: 2 }}>Toplam yıldız</div>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Toplam yıldız</div>
+                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
               </div>
-              <div style={{ padding: 18, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-                <Palette className="w-4 h-4" style={{ color: '#00845E', marginBottom: 10 }} />
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#191720', textTransform: 'capitalize' }}>{displayProfile.theme}</div>
-                <div style={{ fontSize: 12, color: '#6B6675', marginTop: 2 }}>Aktif tema</div>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Aktif tema</div>
+                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em', textTransform: 'capitalize' }}>{displayProfile.theme}</div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {NAV_ITEMS.filter((n) => n.id !== 'genel').map((n) => (
-                <button
-                  key={n.id}
-                  type="button"
-                  onClick={() => setActiveTab(n.id)}
-                  style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 600, color: '#3A3644', background: '#FFFFFF', border: '1px solid rgba(25,23,32,.12)', borderRadius: 10, padding: '9px 13px', cursor: 'pointer' }}
-                >
-                  <n.icon className="w-3.5 h-3.5" style={{ color: '#8C8797' }} /> {n.label}
-                </button>
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Kurulum</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#6B6675' }}>{doneCount}/{setupItems.length} tamam</span>
+              </div>
+              {setupItems.map((c) => (
+                <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '10px 16px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
+                  <span style={{ display: 'grid', placeItems: 'center', width: 19, height: 19, borderRadius: '50%', flexShrink: 0, background: c.ok ? 'rgba(0,166,118,.14)' : 'rgba(25,23,32,.06)', color: c.ok ? '#00845E' : '#8C8797' }}>
+                    {c.ok ? <Check className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                  </span>
+                  <span style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: c.ok ? '#56515F' : '#191720' }}>{c.label}</span>
+                  <button
+                    onClick={() => setActiveTab(c.tab)}
+                    style={{ height: 26, padding: '0 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7, background: '#FBF9F4', fontSize: 11.5, fontWeight: 500, color: '#56515F', cursor: 'pointer', flexShrink: 0 }}
+                  >
+                    {TABS.find((t) => t.id === c.tab)!.label}
+                  </button>
+                </div>
               ))}
+            </div>
+
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '15px 16px' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797', marginBottom: 10 }}>Hızlı geçiş</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {TABS.filter((t) => t.id !== 'genel').concat([{ id: 'ayarlar' as TabId, label: 'Ayarlar', title: '', description: '', icon: Settings }]).map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setActiveTab(t.id)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 11px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 8, background: '#FBF9F4', color: '#56515F', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
+                  >
+                    <t.icon className="w-3.5 h-3.5" style={{ opacity: 0.7 }} /> {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         );
+      }
       case 'profil':
         return (
           <ProfileEditor
@@ -422,159 +519,178 @@ function DashboardContent() {
           />
         );
       case 'rozet':
-        return <BadgeGenerator username={displayProfile.username} defaultTheme={displayProfile.theme} />;
+        return <BadgeGenerator username={displayProfile.username} size={badgeSize} theme={badgeTheme} onSizeChange={setBadgeSize} onThemeChange={setBadgeTheme} />;
       case 'analytics':
         return <AnalyticsPanel username={activeUsername} />;
       case 'alanadi':
         return <CustomDomainManager profile={displayProfile} onSaveDomain={handleSaveDomain} onVerify={handleVerifyDomain} />;
+      case 'ayarlar':
+        return <SettingsPanel profile={displayProfile} onTogglePublish={handleTogglePublish} onDeleteAccount={handleDeleteAccount} />;
       default:
         return null;
     }
   };
 
-  return (
-    <div className="dash-root" style={{ display: 'grid', gridTemplateColumns: '224px minmax(0,1fr)', minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
-      {/* Yan menü — mobilde gizlenir, alt tab bar devreye girer */}
-      <div className="dash-sidebar" style={{ borderRight: '1px solid rgba(25,23,32,.08)', background: '#EBE7DD', padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 18, position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <KodfolyoLogo size={24} />
-          <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {NAV_ITEMS.map((n) => {
-            const isActive = activeTab === n.id;
-            return (
-              <button
-                key={n.id}
-                type="button"
-                onClick={() => setActiveTab(n.id)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5, fontWeight: isActive ? 700 : 500,
-                  padding: '8px 11px', borderRadius: 9, minHeight: 38, cursor: 'pointer', border: 0, textAlign: 'left',
-                  color: isActive ? '#1F3AE8' : '#6B6675', background: isActive ? 'rgba(31,58,232,.09)' : 'transparent',
-                }}
-              >
-                <n.icon className="w-3.5 h-3.5" style={{ flexShrink: 0 }} />
-                {n.label}
-              </button>
-            );
-          })}
-          <Link
-            href={`/settings?username=${encodeURIComponent(activeUsername)}`}
-            style={{ fontSize: 13.5, fontWeight: 500, padding: '8px 11px', borderRadius: 9, color: '#6B6675', textDecoration: 'none', minHeight: 38, display: 'flex', alignItems: 'center', gap: 9 }}
-          >
-            <Settings className="w-3.5 h-3.5" /> Ayarlar
-          </Link>
-        </div>
-        <div style={{ marginTop: 'auto', padding: 13, borderRadius: 12, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)' }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8C8797', marginBottom: 6 }}>SON SENKRON</div>
-          <div style={{ fontSize: 12.5, color: '#3A3644', marginBottom: 10 }}>
-            {profile.updated_at ? new Date(profile.updated_at).toLocaleString('tr-TR') : '—'}
-          </div>
-          <SyncButton onSync={() => loadData(activeUsername)} />
-        </div>
-      </div>
+  const statusMap = {
+    saved: { text: 'Güncel', bg: 'rgba(25,23,32,.055)', fg: '#6B6675' },
+    dirty: { text: 'Kaydedilmemiş', bg: 'rgba(180,83,31,.12)', fg: '#B4531F' },
+    justSaved: { text: '✓ Kaydedildi', bg: 'rgba(0,166,118,.12)', fg: '#00845E' },
+  } as const;
+  const st = statusMap[status];
 
-      {/* Mobil alt tab bar */}
-      <nav className="dash-tabbar" style={{ display: 'none' }}>
-        {NAV_ITEMS.map((n) => (
-          <button
-            key={n.id}
-            type="button"
-            onClick={() => setActiveTab(n.id)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, minWidth: 60, minHeight: 48, color: activeTab === n.id ? '#1F3AE8' : '#6B6675', background: 'transparent', border: 0, textDecoration: 'none', fontSize: 10, flexShrink: 0, padding: '4px 6px', cursor: 'pointer' }}
-          >
-            <n.icon className="w-5 h-5" />
-            {n.label}
-          </button>
-        ))}
-        <Link
-          href={`/settings?username=${encodeURIComponent(activeUsername)}`}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, minWidth: 60, minHeight: 48, color: '#6B6675', textDecoration: 'none', fontSize: 10, flexShrink: 0, padding: '4px 6px' }}
+  return (
+    <div className="dash-root" style={{ height: '100vh', display: 'flex', overflow: 'hidden', background: '#F4F1EA', color: '#191720', fontFamily: 'var(--font-sans)' }}>
+      {/* İkon rayı — mobilde gizlenir, alt tab bar devreye girer */}
+      <nav className="dash-sidebar" style={{ flex: '0 0 74px', width: 74, height: '100vh', background: '#EBE7DD', borderRight: '1px solid rgba(25,23,32,.09)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '14px 0 12px', gap: 2 }}>
+        <div style={{ marginBottom: 14 }}>
+          <KodfolyoLogo size={32} />
+        </div>
+        {TABS.map((t) => {
+          const isActive = activeTab === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              title={t.title}
+              onClick={() => setActiveTab(t.id)}
+              style={{
+                width: 62, padding: '7px 2px 6px', border: 0, borderRadius: 10, cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                background: isActive ? '#FFFFFF' : 'transparent', color: isActive ? '#191720' : '#6B6675',
+              }}
+            >
+              <t.icon className="w-[18px] h-[18px]" />
+              <span style={{ fontSize: 9.5, fontWeight: 500, letterSpacing: '-.01em', lineHeight: 1.1, textAlign: 'center' }}>{t.label}</span>
+            </button>
+          );
+        })}
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={() => loadData(activeUsername)}
+          title="Senkronize et"
+          style={{ width: 62, padding: '8px 2px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 10, background: '#FBF9F4', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, color: '#56515F' }}
         >
-          <Settings className="w-5 h-5" />
-          Ayarlar
-        </Link>
+          <RefreshCw className="w-4 h-4" />
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: '#8C8797' }}>
+            {profile.updated_at ? new Date(profile.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—'}
+          </span>
+        </button>
+        <button
+          type="button"
+          title="Ayarlar"
+          onClick={() => setActiveTab('ayarlar')}
+          style={{
+            width: 62, marginTop: 6, padding: '7px 2px 6px', border: 0, borderRadius: 10, cursor: 'pointer',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+            background: activeTab === 'ayarlar' ? '#FFFFFF' : 'transparent', color: activeTab === 'ayarlar' ? '#191720' : '#6B6675',
+          }}
+        >
+          <Settings className="w-[18px] h-[18px]" />
+          <span style={{ fontSize: 9.5, fontWeight: 500 }}>Ayarlar</span>
+        </button>
       </nav>
 
-      {/* Mobil sabit kaydet çubuğu */}
-      {hasPendingChanges && (
-        <div className="dash-savebar" style={{ display: 'none', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '10px 16px' }}>
-          <span style={{ fontSize: 12.5, color: '#3A3644', fontWeight: 600 }}>Kaydedilmemiş değişiklikler</span>
-          <button
-            type="button"
-            onClick={handleSaveAll}
-            disabled={isSavingAll}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 10, padding: '10px 16px', minHeight: 44, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
-          >
-            {isSavingAll ? <CheckCircle2 className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
-            Kaydet
-          </button>
-        </div>
-      )}
-
-      {/* İçerik — her seferinde sadece seçili sekme gösterilir */}
-      <div className="dash-content" style={{ padding: '24px 32px 100px', background: 'radial-gradient(ellipse at 100% 0%, rgba(0,166,118,.07), transparent 50%)' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>{activeItem.label}</h1>
-            <div style={{ fontSize: 13, color: '#6B6675', marginTop: 4 }}>{activeItem.description}</div>
+      <section style={{ flex: 1, minWidth: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid rgba(25,23,32,.09)', background: '#F4F1EA' }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <h1 style={{ margin: 0, fontSize: 17, fontWeight: 600, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 8px', borderRadius: 6, background: st.bg, color: st.fg }}>{st.text}</span>
+            </div>
+            <p style={{ margin: '3px 0 0', fontSize: 12, color: '#8C8797', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeTabDef.description}</p>
           </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: saveAllSuccess ? '#00845E' : '#6B6675' }}>
-              {saveAllSuccess ? '✓ Kaydedildi' : hasPendingChanges ? 'Kaydedilmemiş değişiklikler' : 'Güncel'}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: '0 0 auto' }}>
             <a
               href={`/${displayProfile.username}`}
               target="_blank"
-              style={{ fontFamily: 'var(--font-sans)', fontSize: 13.5, fontWeight: 600, color: '#3A3644', background: 'transparent', border: '1px solid rgba(25,23,32,.16)', borderRadius: 10, padding: '9px 15px', textDecoration: 'none', whiteSpace: 'nowrap' }}
+              rel="noreferrer"
+              className="dash-open-btn"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 12px', border: '1px solid rgba(25,23,32,.16)', borderRadius: 8, background: '#FFFFFF', color: '#191720', fontSize: 12.5, fontWeight: 500, textDecoration: 'none' }}
             >
-              Önizle
+              <ExternalLink className="w-3.5 h-3.5" /> Aç
             </a>
             <button
               type="button"
               onClick={handleSaveAll}
               disabled={isSavingAll || !hasPendingChanges}
-              className="dash-savebtn-desktop"
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 13.5, fontWeight: 700,
-                color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 10, padding: '9px 18px', cursor: 'pointer',
-                whiteSpace: 'nowrap', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1, minHeight: 40,
-              }}
+              className="dash-save-btn"
+              style={{ height: 34, padding: '0 16px', border: 0, borderRadius: 8, background: '#1F3AE8', color: '#FFFFFF', fontSize: 12.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1 }}
             >
-              {isSavingAll ? <CheckCircle2 className="w-4 h-4 animate-pulse" /> : <Save className="w-4 h-4" />}
               Kaydet
             </button>
           </div>
-        </div>
+        </header>
 
-        <div className={showLivePreview ? 'dash-split' : undefined} style={{ display: 'grid', gridTemplateColumns: showLivePreview ? 'minmax(0,1fr) 440px' : 'minmax(0,1fr)', gap: 32, alignItems: 'start' }}>
-          <div style={{ minWidth: 0 }}>
-            {renderTabContent()}
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: wide ? 'row' : 'column', overflowY: wide ? 'hidden' : 'auto' }}>
+          <div style={{ flex: wide ? '1' : '0 0 auto', minWidth: 0, minHeight: 0, overflowY: wide ? 'auto' : 'visible', padding: '20px 22px 24px' }}>
+            <div style={{ maxWidth: colW }}>{renderTabContent()}</div>
           </div>
-          {showLivePreview && (
-            <div className="dash-preview">
-              <LivePortfolioPreview profile={displayProfile} repos={repos} />
-            </div>
+
+          {showPreview && (
+            <aside
+              className="dash-preview"
+              style={{
+                flex: '0 0 auto', display: 'flex', flexDirection: 'column', background: '#EBE7DD',
+                width: wide ? paneW : '100%', height: wide ? '100%' : 620,
+                borderLeft: wide ? '1px solid rgba(25,23,32,.09)' : 0,
+                borderTop: wide ? 0 : '1px solid rgba(25,23,32,.09)',
+              }}
+            >
+              <LivePortfolioPreview
+                profile={displayProfile}
+                repos={repos}
+                frameWidth={frameW}
+                frameHeight={frameH}
+                badgeMode={activeTab === 'rozet'}
+                badgeTheme={badgeTheme}
+                badgeSize={badgeSize}
+              />
+            </aside>
           )}
         </div>
-      </div>
+      </section>
+
+      {/* Mobil alt tab bar */}
+      <nav className="dash-tabbar" style={{ display: 'none' }}>
+        {hasPendingChanges && (
+          <div className="dash-savebar" style={{ padding: '9px 12px', background: '#FBF9F4', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
+            <button
+              onClick={handleSaveAll}
+              disabled={isSavingAll}
+              style={{ width: '100%', height: 40, border: 0, borderRadius: 9, background: '#1F3AE8', color: '#FFFFFF', fontSize: 13.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
+            >
+              Kaydet
+            </button>
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: 2, overflowX: 'auto', padding: '6px 8px' }}>
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActiveTab(t.id)}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === t.id ? '#1F3AE8' : '#8C8797' }}
+            >
+              <t.icon className="w-[18px] h-[18px]" />
+              <span style={{ fontSize: 10, fontWeight: 500, whiteSpace: 'nowrap' }}>{t.label}</span>
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setActiveTab('ayarlar')}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === 'ayarlar' ? '#1F3AE8' : '#8C8797' }}
+          >
+            <Settings className="w-[18px] h-[18px]" />
+            <span style={{ fontSize: 10, fontWeight: 500 }}>Ayarlar</span>
+          </button>
+        </div>
+      </nav>
 
       <style>{`
-        @media (max-width: 1320px) {
-          .dash-split { grid-template-columns: 1fr !important; }
-          .dash-preview { display: none !important; }
-        }
-        @media (max-width: 860px) {
-          .dash-root { grid-template-columns: 1fr !important; }
+        @media (max-width: 1023px) {
           .dash-sidebar { display: none !important; }
-          .dash-content { padding: 20px 16px 90px !important; }
-          .dash-tabbar {
-            display: flex !important; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-            background: #EBE7DD; border-top: 1px solid rgba(25,23,32,.1); overflow-x: auto;
-          }
-          .dash-savebar { display: flex !important; position: fixed; left: 0; right: 0; bottom: 64px; z-index: 51; background: rgba(244,241,234,.97); backdrop-filter: blur(10px); border-top: 1px solid rgba(25,23,32,.1); }
-          .dash-savebtn-desktop { display: none !important; }
+          .dash-root { flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; }
+          .dash-tabbar { display: block !important; position: sticky; bottom: 0; background: #EBE7DD; border-top: 1px solid rgba(25,23,32,.09); z-index: 50; }
         }
       `}</style>
     </div>
