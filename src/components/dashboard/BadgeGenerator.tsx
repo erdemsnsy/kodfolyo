@@ -22,19 +22,19 @@ const SIZES: { id: 'sm' | 'md' | 'lg'; label: string }[] = [
 function CodeBlock({ label, code }: { label: string; code: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 13px', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>{label}</span>
+    <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '9px 13px', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>{label}</span>
         <button
           type="button"
           onClick={() => { navigator.clipboard.writeText(code); setCopied(true); setTimeout(() => setCopied(false), 1400); }}
-          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 9px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 6, background: '#FBF9F4', color: '#56515F', fontSize: 11, cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 9px', border: '1px solid rgba(228,228,231,.09)', borderRadius: 6, background: '#FAFAFA', color: '#52525B', fontSize: 11, cursor: 'pointer' }}
         >
           {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
           {copied ? 'kopyalandı' : 'kopyala'}
         </button>
       </div>
-      <pre style={{ margin: 0, padding: '12px 13px', background: '#FBF9F4', fontFamily: 'var(--font-mono)', fontSize: 11, lineHeight: 1.65, color: '#56515F', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+      <pre style={{ margin: 0, padding: '12px 13px', background: '#FAFAFA', fontFamily: 'var(--font-mono)', fontSize: 11, lineHeight: 1.65, color: '#52525B', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
         {code}
       </pre>
     </div>
@@ -51,16 +51,16 @@ export default function BadgeGenerator({ username, size, theme, onSizeChange, on
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Boyut</span>
-          <div style={{ display: 'flex', padding: 2, borderRadius: 8, background: '#EBE7DD', gap: 2 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Boyut</span>
+          <div style={{ display: 'flex', padding: 2, borderRadius: 8, background: '#F4F4F5', gap: 2 }}>
             {SIZES.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => onSizeChange(s.id)}
-                style={{ padding: '5px 12px', border: 0, borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer', background: size === s.id ? '#FFFFFF' : 'transparent', color: size === s.id ? '#191720' : '#6B6675' }}
+                style={{ padding: '5px 12px', border: 0, borderRadius: 6, fontSize: 12, fontWeight: 500, cursor: 'pointer', background: size === s.id ? '#FFFFFF' : 'transparent', color: size === s.id ? '#18181B' : '#71717A' }}
               >
                 {s.label}
               </button>
@@ -69,7 +69,7 @@ export default function BadgeGenerator({ username, size, theme, onSizeChange, on
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Tema</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Tema</span>
           <div style={{ display: 'flex', gap: 7 }}>
             {Object.values(themes).map((t) => (
               <button
@@ -77,10 +77,27 @@ export default function BadgeGenerator({ username, size, theme, onSizeChange, on
                 type="button"
                 title={t.name}
                 onClick={() => onThemeChange(t.id)}
-                style={{ width: 22, height: 22, borderRadius: '50%', cursor: 'pointer', padding: 0, background: t.a, border: theme === t.id ? '3px solid rgba(25,23,32,.5)' : '1px solid rgba(25,23,32,.14)' }}
+                style={{ width: 22, height: 22, borderRadius: '50%', cursor: 'pointer', padding: 0, background: t.a, border: theme === t.id ? '3px solid rgba(228,228,231,.5)' : '1px solid rgba(228,228,231,.14)' }}
               />
             ))}
           </div>
+        </div>
+      </div>
+
+      <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 13px', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
+          <span style={{ display: 'flex', gap: 5 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#A1A1AA' }}>README.md · önizleme</span>
+        </div>
+        <div style={{ padding: '18px 20px' }}>
+          <div style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-.02em', marginBottom: 8 }}>Merhaba, ben {username} 👋</div>
+          <div style={{ fontSize: 13, color: '#52525B', lineHeight: 1.6, marginBottom: 12 }}>Yazılım geliştiriyorum, açık kaynağı seviyorum. Güncel projelerim ve profilim aşağıdaki rozette.</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img key={badgeUrl} src={badgeUrl} alt={`${username} Kodfolyo rozeti`} style={{ display: 'block', maxWidth: '100%' }} />
         </div>
       </div>
 

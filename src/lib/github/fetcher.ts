@@ -277,9 +277,9 @@ export function getMockGitHubUserData(username: string): GitHubUserData {
   return {
     id: 583231,
     login: clean,
-    name: 'Örnek Öğrenci',
+    name: 'Elif Kaya',
     avatar_url: 'https://avatars.githubusercontent.com/u/583231?v=4',
-    bio: 'Bilgisayar Mühendisliği Öğrencisi | Full-stack Web Geliştirici',
+    bio: 'Full-stack Web Geliştirici',
     company: 'Kodfolyo Tech',
     location: 'İstanbul, Türkiye',
     email: 'ogrenci@example.com',

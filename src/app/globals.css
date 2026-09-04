@@ -6,10 +6,14 @@
     --font-sans: 'Archivo', sans-serif;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: var(--font-sans);
-    background-color: #F4F1EA;
-    color: #191720;
+    background-color: #F9FAFB;
+    color: #18181B;
     overflow-x: hidden;
   }
 
@@ -32,8 +36,34 @@
   96% { transform: scaleY(0.1); }
 }
 
+@keyframes kf-confetti-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--drift), 108vh) rotate(540deg); opacity: 0; }
+}
+
+@keyframes kf-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes kf-pop-in {
+  0% { transform: scale(.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes kf-heart-rise {
+  0% { transform: translateY(0) scale(.4); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-46px) scale(1); opacity: 0; }
+}
+
 @media (max-width: 480px) {
   .nav-hide-narrow { display: none !important; }
+}
+
+@media (max-width: 860px) {
+  .nav-links-mid { display: none !important; }
 }
 
 /* ================= PDF / PRINT STİLLERİ ================= */

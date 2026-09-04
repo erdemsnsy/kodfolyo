@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "name": "Kodfolyo — Soğuk & Kurumsal",
+    "description": "Kodfolyo'nun dashboard ve landing kabuğunun (portfolyo sayfalarının kendi teması hariç) mevcut görsel kimliği. Kod tabanından doğrudan çıkarıldı (ekran görüntüsü ölçümü değil, gerçek token değerleri).",
+    "source_references": [
+      "src/app/dashboard/page.tsx",
+      "src/app/page.tsx",
+      "src/app/globals.css",
+      "src/components/dashboard/*.tsx",
+      "src/components/landing/*.tsx",
+      "src/components/navbar/Navbar.tsx",
+      "src/components/mascot/Kodi.tsx"
+    ],
+    "created_at": "2026-09-03"
+  },
+  "design_system": {
+    "color": {
+      "palette_type": "monochromatic",
+      "primary": { "hex": "#18181B", "role": "zinc-900 — birincil aksiyon (Kaydet, aktif sekme, ikincil buton dolgusu), başlık metni" },
+      "secondary": { "hex": "#71717A", "role": "zinc-500 — ikincil/muted metin, açıklama satırları" },
+      "accent": { "hex": "#18181B", "role": "Ayrı bir marka rengi yok — kurumsal yönde vurgu rengi de monokrom (zinc-900); tek renkli 'kişilik' noktası yalnızca Kodi maskotunda (mavi #1F3AE8 / yeşil #00A676) tutuluyor" },
+      "neutral": {
+        "scale": ["#FFFFFF", "#FAFAFA", "#F9FAFB", "#F4F4F5", "#E4E4E7", "#D4D4D8", "#A1A1AA", "#71717A", "#52525B", "#3F3F46", "#18181B"],
+        "usage": "En açık uç (#FFFFFF/#FAFAFA) kart ve input zemini; #F9FAFB sayfa zemini; #E4E4E7 kenarlıklar; #A1A1AA/#71717A gövde-altı metin; #18181B birincil metin ve dolgu buton"
+      },
+      "semantic": {
+        "success": "#00A676",
+        "warning": "#D97706",
+        "error": "#C6314E",
+        "info": "#18181B"
+      },
+      "surface": {
+        "background": "#F9FAFB",
+        "card": "#FFFFFF",
+        "elevated": "#FFFFFF"
+      },
+      "contrast_strategy": "subtle layers — beyaz kart / zinc-50 zemin / zinc-200 ince kenarlık üçlüsüyle katman ayrımı; metin kontrastı ağırlıkla zinc-900 üzerinden, renkli vurgu yalnızca semantik durumlarda (başarı/uyarı/hata) kullanılıyor"
+    },
+    "typography": {
+      "type_scale": {
+        "display": { "size": "40px", "weight": 800, "line_height": 1.1, "tracking": "-0.035em" },
+        "heading_1": { "size": "24-28px", "weight": 700, "line_height": 1.2, "tracking": "-0.02em" },
+        "heading_2": { "size": "17-20px", "weight": 600, "line_height": 1.25, "tracking": "-0.01em" },
+        "heading_3": { "size": "13-15px", "weight": 600, "line_height": 1.3, "tracking": "-0.005em" },
+        "body": { "size": "13-14px", "weight": 400, "line_height": 1.55, "tracking": "normal" },
+        "body_small": { "size": "11.5-12.5px", "weight": 400, "line_height": 1.5, "tracking": "normal" },
+        "caption": { "size": "9.5-10.5px", "weight": 500, "line_height": 1.2, "tracking": "0.06em" },
+        "overline": { "size": "9-10px", "weight": 500, "line_height": 1.1, "tracking": "0.07em" }
+      },
+      "font_families": {
+        "heading": "Archivo, sans-serif",
+        "body": "Archivo, sans-serif",
+        "mono": "DM Mono, monospace"
+      },
+      "font_style_notes": "Tek grotesk aile (Archivo) başlıktan gövdeye kadar — ayrı bir 'display' yüzü yok, restraint kurumsal tonun parçası. DM Mono yalnızca veri/etiket/adres bağlamında (istatistik alt yazıları, URL'ler, kod blokları, durum rozetleri) kullanılıyor, uppercase + geniş tracking ile."
+    },
+    "spacing": {
+      "base_unit": "2px (çoğu değer çift sayı, 4-8-12-16-20-24 kademesi baskın)",
+      "scale": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24],
+      "content_density": "comfortable",
+      "section_rhythm": "Kartlar arası 12-16px gap; kart içi bölümler 12-20px padding; sayfa üst/alt 16-24px"
+    },
+    "layout": {
+      "grid_system": "flex-tabanlı iki panel: sabit ikon rayı (86px) + esnek içerik + koşullu canlı önizleme paneli",
+      "max_content_width": "576px (önizleme varken), 1040px (önizleme yokken — Analiz/Alan adı), 1180px (landing sayfası)",
+      "columns": "İçerik kolonunda genelde 1-2 sütun (form alanları md:grid-cols-2); istatistik kutuları 3-4 sütun",
+      "gutter": "10-16px",
+      "breakpoints": "640px (inline önizleme eşiği), 1024px (sidebar/mobil tabbar eşiği), 1180px (yan yana 'wide' düzen eşiği)",
+      "alignment_tendency": "strict grid — sol hizalı, sidebar/header/content net bloklar halinde, landing hero'da 1.15fr/.85fr asimetrik iki sütun"
+    },
+    "shape": {
+      "border_radius": { "small": "6-8px", "medium": "10-14px", "large": "16-18px", "pill": "999px" },
+      "border_usage": "subtle 1px — genelde zinc-200 @ ~80% opaklık, aktif/seçili durumda zinc-900 solid",
+      "divider_style": "1px, çok düşük opaklıkta zinc-tint (liste satırları arası)"
+    },
+    "elevation": {
+      "shadow_style": "soft diffused, çok hafif",
+      "levels": {
+        "low": "0 1px 2px 0 rgba(0,0,0,.04) — standart kart",
+        "medium": "0 24px 60px -30px rgba(20,18,30,.35) — canlı önizleme mockup çerçevesi",
+        "high": "0 25px 50px -12px rgba(0,0,0,.25) + 0 0 0 1px rgba(0,0,0,.05) — önizleme tarayıcı penceresi"
+      },
+      "depth_cues": "shadows + ince kenarlık kombinasyonu; katmanlar arası renk/parlaklık farkı da kullanılıyor (beyaz kart / zinc-50 zemin)"
+    },
+    "iconography": {
+      "style": "Karma: sidebar sekmeleri ve boş-durum ikonları için elle üretilmiş renkli pixel-art PNG'ler; form alanı ikonları ve aksiyon butonları için Lucide çizgi ikonlar",
+      "stroke_weight": "Lucide ikonlarda 2px çizgi kalınlığı (varsayılan)",
+      "size_scale": "14-16px (form ikonları/etiket yanı) · 18-25px (sidebar sekme ikonları) · 32-34px (logo/maskot)",
+      "preferred_set": "lucide-react + özel pixel-art set (public/icons)"
+    },
+    "motion": {
+      "easing": "ease / cubic-bezier(.34,1.56,.64,1) (Kodi'nin kulak-kuyruk tepkisi gibi 'spring' hisli noktalarda)",
+      "duration_scale": { "micro": "150-250ms (hover/renk geçişleri)", "normal": "300-450ms (Kodi etkileşimleri)", "macro": "6-8s (float/spin-slow dekoratif döngüler)" },
+      "entrance_pattern": "Yok/minimal — çoğu bileşen statik render, giriş animasyonu aranmıyor",
+      "exit_pattern": "Yok",
+      "philosophy": "minimal functional — hareket yalnızca geri bildirim (hover, toggle, kaydetme durumu) ve Kodi maskotunun oyunculuğu için kullanılıyor; sayfa genelinde 'sahne' animasyonu yok"
+    },
+    "components": {
+      "button_style": "Dolgu (zinc-900/beyaz metin) birincil aksiyon; çerçeveli-şeffaf ikincil; hover'da zinc-800/zinc-50'ye koyulaşma-açılma, sert gölge yok",
+      "input_style": "zinc-50/50 zemin, ince zinc-200 kenarlık, odakta beyaza dönüp zinc-900 halka (focus:ring-1); soldan ikon prefix'li",
+      "card_style": "Beyaz zemin, 16-18px radius, çok hafif gölge + zinc-200 kenarlık — 'rounded-2xl border shadow-sm' formülü sistematik tekrarlanıyor",
+      "navigation_pattern": "Dikey ikon rayı (sol, sabit genişlik) + aktif sekmede tam siyah dolgu pill; mobilde alt sabit tab bar'a dönüşüyor",
+      "modal_style": "Ortalanmış, blur backdrop, 20-22px radius, beyaz zemin",
+      "list_style": "Satır bazlı, ince alt kenarlık ayraç, sol ikon + orta metin + sağ aksiyon düzeni",
+      "component_notes": "Boş durumlar (empty state) kesikli çerçeve + soluk ikon + tek satır açıklama formülüyle tutarlı; toggle switch'ler yeşil (#00A676) açık / zinc-200 kapalı"
+    }
+  },
+  "design_style": {
+    "aesthetic": {
+      "mood": ["ciddi", "güvenilir", "sakin", "düzenli", "hafif oyuncu (yalnızca maskotta)"],
+      "visual_metaphor": "Bir mühendislik panosu / işletim sistemi ayarlar ekranı — süsten çok işleve odaklı yüzey",
+      "era_influence": "2023-2025 dönemi 'Vercel/Linear' nesli SaaS kabukları",
+      "genre": "corporate SaaS",
+      "personality_traits": ["güvenilir", "sakin", "titiz", "az konuşan", "tek bir sıcak dokunuşu olan (maskot)"],
+      "adjectives": ["nötr", "temiz", "monokrom", "sistemli", "sessiz"]
+    },
+    "visual_language": {
+      "complexity": "minimal",
+      "ornamentation": "subtle accents — yalnızca durum rozetlerinde (amber/yeşil/kırmızı) ve Kodi maskotunda renk; geri kalan tamamen monokrom",
+      "whitespace_usage": "Bol ama kontrollü — kart içi padding cömert, kartlar arası gap tutarlı; içerik kısa olduğunda sayfa altında kasıtsız boşluk riski var (bu yüzden özet/ipucu kartlarıyla dolduruluyor)",
+      "visual_weight_distribution": "Sol dar sabit rayda düşük ağırlık, orta içerik kolonunda orta ağırlık, sağ canlı önizlemede (varsa) en yüksek görsel ağırlık",
+      "focal_strategy": "distributed interest — tek bir kahraman görsel yok, dikkat kart başlıkları ve durum rozetleriyle yönlendiriliyor",
+      "contrast_level": "düşük-orta (zinc tonları arası), yalnızca semantik rozetlerde ve aktif sekmede yüksek kontrast (siyah dolgu)",
+      "texture_usage": "Yok — düz renk yüzeyler; tek istisna canlı önizleme kanvasındaki noktalı (radial-gradient dot) doku"
+    },
+    "composition": {
+      "hierarchy_method": "typographic hierarchy + spatial isolation (her kart kendi başlığıyla ayrı bir blok)",
+      "balance_type": "asymmetric — sabit dar sidebar + değişken genişlikte ana alan",
+      "flow_direction": "Yukarıdan aşağıya, sol içerikten sağ önizlemeye",
+      "grouping_strategy": "İlgili alanlar tek kart içinde toplanıyor (form + ilgili özet/ipucu aynı bölümde)",
+      "negative_space_role": "Ayraç ve nefes payı sağlıyor; kısa içerikli sekmelerde fazlaya kaçtığında tasarım kusuru olarak algılanıyor (bilinen gerilim noktası)"
+    },
+    "imagery": {
+      "photo_treatment": "GitHub avatarları dairesel/köşeli kırpma, filtre yok",
+      "illustration_style": "Kodi maskotu: gradyanlı, yuvarlak hatlı, chibi-vari tek illüstrasyon; sidebar ikonları ise düz renkli pixel-art stickerlar",
+      "graphic_elements": "İnce nokta ızgara (dot-grid) canlı önizleme zemininde; dekoratif blur daireler yalnızca landing hero'da",
+      "pattern_usage": "Minimal — yalnızca dot-grid ve linear-gradient çizgi ızgarası (hero arka planı)",
+      "image_shape": "Daire (avatarlar) ve rounded-rect (kartlar/ikon çipleri)"
+    },
+    "interaction_feel": {
+      "feedback_style": "Anlık renk/arka plan değişimi (hover), yumuşak spring geçişi (Kodi)",
+      "hover_behavior": "Butonlarda hafif koyulaşma/açılma; Kodi'de kulak kalkışı + kuyruk sallanışı",
+      "transition_personality": "fade-subtle (çoğu UI) + bouncy elastic (yalnızca Kodi)",
+      "loading_style": "Adım adım ilerleyen metin + dönen kesikli halka + maskot (FetchingOverlay)",
+      "microinteraction_density": "düşük — bilinçli olarak seyrek, yalnızca anlamlı noktalarda (kaydetme, maskotu sevme, konfeti)"
+    },
+    "brand_voice_in_ui": {
+      "tone": "Doğrudan, teknik ama sıcak Türkçe ('Henüz eklemedin', 'tamamlayınca yeşile döner')",
+      "formality": "Yarı-resmi — sen/siz ayrımında 'sen' dili, samimi ama gösterişsiz",
+      "cta_style": "direct imperative — 'Kaydet', 'Portfolyomu Çek', 'Tümünü aç'",
+      "empty_state_approach": "İkon + tek cümle açıklama + (varsa) hemen altında aksiyon formu",
+      "error_tone": "Açıklayıcı ve çözüm odaklı, suçlamasız ('...bulunamadı', 'Doğrulanamadı')"
+    }
+  },
+  "visual_effects": {
+    "overview": {
+      "effect_intensity": "subtle-accent",
+      "performance_tier": "lightweight",
+      "fallback_strategy": "reduce to CSS — hiçbir efekt kritik değil, JS engellenirse arayüz sorunsuz çalışır",
+      "primary_technology": "CSS only (+ küçük ölçekli React state ile SVG manipülasyonu)"
+    },
+    "background_effects": {
+      "type": "none",
+      "description": "Sabit düz zemin renkleri; tek istisna canlı önizleme panelindeki statik nokta ızgarası (animasyonsuz)",
+      "technology": "CSS radial-gradient (statik)",
+      "params": { "color_palette": ["#F9FAFB", "#E4E4E7"], "speed": "n/a", "density": "16px aralıklı nokta", "opacity": 1, "blend_mode": "normal" }
+    },
+    "particle_systems": {
+      "enabled": true,
+      "type": "confetti",
+      "description": "Yayın kutlama ekranında bir kerelik düşen konfeti patlaması — 90 renkli parça, CSS keyframe ile düşüp dönerek kayboluyor",
+      "technology": "CSS animation (React ile mount-sonrası rastgele üretim)",
+      "params": {
+        "count": 90,
+        "shape": "karışık (dikdörtgen + daire)",
+        "size_range": "6-12px",
+        "movement_pattern": "yukarıdan aşağı düşme + yanal sürüklenme + 540° dönüş",
+        "color_behavior": "5 renkli sabit palet (mavi/yeşil/amber/kırmızı/açık mavi) döngüsel atanıyor",
+        "interaction": "none — tetiklenince otomatik oynar, kullanıcı etkileşimi yok",
+        "spawn_area": "Ekranın üst kenarı boyunca rastgele X"
+      }
+    },
+    "3d_elements": { "enabled": false, "type": "none", "description": "", "technology": "", "params": {} },
+    "shader_effects": { "enabled": false, "type": "none", "description": "", "technology": "", "params": {} },
+    "scroll_effects": {
+      "parallax": { "enabled": false, "layers": 0, "depth_range": "n/a", "speed_curve": "n/a" },
+      "scroll_triggered_animations": { "enabled": false, "trigger_points": [], "animation_type": "none", "scrub_behavior": "none" },
+      "scroll_morphing": { "enabled": false, "description": "Yok — landing sayfası tek ekranlık bölümler halinde, scroll-driven animasyon kullanılmıyor" }
+    },
+    "text_effects": { "type": "none", "description": "Statik tipografi, split/animasyonlu metin yok", "technology": "n/a", "params": {} },
+    "cursor_effects": { "enabled": false, "type": "none", "description": "", "params": {} },
+    "image_effects": { "type": "none", "description": "Avatar/ikon görsellerinde hover distortion veya reveal animasyonu yok", "technology": "n/a", "params": {} },
+    "glassmorphism_neumorphism": {
+      "enabled": true,
+      "style": "frosted-layers",
+      "params": { "blur_radius": "16px", "transparency": "theme.bg + CC (~80%) alfa", "border_treatment": "yok/çok ince", "shadow_type": "yok", "light_source_angle": "n/a" }
+    },
+    "canvas_drawings": { "enabled": false, "type": "none", "description": "", "technology": "", "params": {} },
+    "svg_animations": {
+      "enabled": true,
+      "type": "decorative-loop",
+      "description": "Kodi maskotu: SVG içinde inline style ile kulak/kuyruk/göz pozisyonu React state'ine bağlı geçişler (CSS transition), göz kırpma için sürekli keyframe döngüsü, sevilince kalp path'lerinin yükselip solması",
+      "params": { "animation_method": "CSS transition + @keyframes (React state tetikli)", "path_morphing": "Gözler için evet (normal ↔ mutlu ^‿^ path değişimi)", "stroke_animation": "Hayır", "filter_effects": "grayscale() filtresi (navbar'daki sade Kodi için)" }
+    },
+    "composite_notes": "Sitede genel olarak 'sessiz' bir motion dili var: neredeyse tüm hareket ya durum geri bildirimi (hover/kayıt) ya da Kodi maskotu etrafında toplanmış. Landing hero ve yayın kutlama ekranında hafif dekoratif blur daireler (radial-gradient, statik, animasyonsuz) var — bunlar parallax/scroll ile bağlı değil, sabit konumlu arka plan süsü. Confetti ve Kodi'nin pet-etkileşimi, sitedeki TEK göze çarpan 'efekt' anları; kasıtlı olarak nadir tutuluyor (bkz. design_style.interaction_feel.microinteraction_density: düşük)."
+  }
+}

@@ -8,7 +8,7 @@ interface AnalyticsPanelProps {
   username: string;
 }
 
-const cardStyle: React.CSSProperties = { background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12 };
+const cardStyle: React.CSSProperties = { background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)' };
 
 export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
@@ -27,7 +27,7 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
   if (isLoading) {
     return (
       <div style={{ ...cardStyle, padding: '13px 14px' }}>
-        <div style={{ fontSize: 13, color: '#6B6675' }}>Analytics yükleniyor...</div>
+        <div style={{ fontSize: 13, color: '#71717A' }}>Analytics yükleniyor...</div>
       </div>
     );
   }
@@ -51,11 +51,11 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
           const Icon = m.icon;
           return (
             <div key={m.label} style={{ ...cardStyle, padding: '13px 14px' }}>
-              <span style={{ display: 'grid', placeItems: 'center', width: 26, height: 26, borderRadius: 7, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.09)', color: '#56515F' }}>
+              <span style={{ display: 'grid', placeItems: 'center', width: 26, height: 26, borderRadius: 7, background: '#FAFAFA', border: '1px solid rgba(228,228,231,.09)', color: '#52525B' }}>
                 <Icon className="w-3.5 h-3.5" />
               </span>
               <div style={{ marginTop: 11, fontSize: 20, fontWeight: 600, letterSpacing: '-.03em' }}>{m.value.toLocaleString('tr-TR')}</div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.06em', textTransform: 'uppercase', color: '#8C8797', marginTop: 3 }}>{m.label}</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.06em', textTransform: 'uppercase', color: '#A1A1AA', marginTop: 3 }}>{m.label}</div>
             </div>
           );
         })}
@@ -64,7 +64,7 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
       <div style={{ ...cardStyle, padding: '15px 16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 12.5, fontWeight: 600 }}>Görüntülenme</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#8C8797' }}>son 30 gün</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: '#A1A1AA' }}>son 30 gün</span>
         </div>
         <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-end', gap: 4, height: 110 }}>
           {summary.dailyViews.map((d, i) => (
@@ -72,7 +72,7 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
               key={d.date}
               title={`${d.date}: ${d.count}`}
               style={{
-                flex: 1, borderRadius: 3, background: i >= total - 5 ? '#1F3AE8' : 'rgba(31,58,232,.22)',
+                flex: 1, borderRadius: 3, background: i >= total - 5 ? '#18181B' : 'rgba(24,24,27,.22)',
                 height: `${Math.max(3, (d.count / maxDaily) * 100)}%`,
               }}
             />
@@ -82,13 +82,13 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
         <div style={{ ...cardStyle, overflow: 'hidden' }}>
-          <div style={{ padding: '11px 14px', borderBottom: '1px solid rgba(25,23,32,.09)', fontSize: 12.5, fontWeight: 600 }}>Trafik kaynağı</div>
+          <div style={{ padding: '11px 14px', borderBottom: '1px solid rgba(228,228,231,.09)', fontSize: 12.5, fontWeight: 600 }}>Trafik kaynağı</div>
           {summary.topReferrers.length === 0 ? (
-            <div style={{ padding: '11px 14px', fontSize: 12.5, color: '#8C8797' }}>Henüz veri yok.</div>
+            <div style={{ padding: '11px 14px', fontSize: 12.5, color: '#A1A1AA' }}>Henüz veri yok.</div>
           ) : (
             summary.topReferrers.map((r) => (
-              <div key={r.host} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 14px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#56515F' }}>{r.host}</span>
+              <div key={r.host} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 14px', borderBottom: '1px solid rgba(228,228,231,.06)' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#52525B' }}>{r.host}</span>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5 }}>{r.count}</span>
               </div>
             ))
@@ -96,13 +96,13 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
         </div>
 
         <div style={{ ...cardStyle, overflow: 'hidden' }}>
-          <div style={{ padding: '11px 14px', borderBottom: '1px solid rgba(25,23,32,.09)', fontSize: 12.5, fontWeight: 600 }}>En çok tıklanan</div>
+          <div style={{ padding: '11px 14px', borderBottom: '1px solid rgba(228,228,231,.09)', fontSize: 12.5, fontWeight: 600 }}>En çok tıklanan</div>
           {summary.topLinks.length === 0 ? (
-            <div style={{ padding: '11px 14px', fontSize: 12.5, color: '#8C8797' }}>Henüz veri yok.</div>
+            <div style={{ padding: '11px 14px', fontSize: 12.5, color: '#A1A1AA' }}>Henüz veri yok.</div>
           ) : (
             summary.topLinks.map((l) => (
-              <div key={l.url} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 14px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#56515F', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.label}</span>
+              <div key={l.url} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 14px', borderBottom: '1px solid rgba(228,228,231,.06)' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#52525B', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{l.label}</span>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, flexShrink: 0 }}>{l.count}</span>
               </div>
             ))

@@ -64,27 +64,27 @@ function SettingsContent() {
 
   if (isLoading || !profile) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ width: 22, height: 22, border: '2px solid #1F3AE8', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
+      <div style={{ minHeight: '100vh', background: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 22, height: 22, border: '2px solid #18181B', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F4F1EA', fontFamily: 'var(--font-sans)' }}>
+    <div style={{ minHeight: '100vh', background: '#F9FAFB', fontFamily: 'var(--font-sans)' }}>
       <div style={{ maxWidth: 660, margin: '0 auto', padding: '26px 20px 90px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
           <KodfolyoLogo size={24} />
-          <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
+          <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: '-.03em', color: '#18181B' }}>Kodfolyo</span>
         </div>
         <Link
           href={`/dashboard?username=${encodeURIComponent(activeUsername)}`}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#6B6675', textDecoration: 'none', marginBottom: 22 }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#71717A', textDecoration: 'none', marginBottom: 22 }}
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Panele dön
         </Link>
 
-        <h1 style={{ margin: '0 0 18px', fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Ayarlar</h1>
+        <h1 className="text-zinc-900 font-semibold" style={{ margin: '0 0 18px', fontSize: 24, letterSpacing: '-.03em' }}>Ayarlar</h1>
 
         <SettingsPanel profile={profile} onTogglePublish={handleTogglePublish} onDeleteAccount={handleDeleteAccount} />
       </div>
@@ -94,7 +94,7 @@ function SettingsContent() {
 
 export default function SettingsPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F4F1EA' }} />}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F9FAFB' }} />}>
       <SettingsContent />
     </Suspense>
   );
