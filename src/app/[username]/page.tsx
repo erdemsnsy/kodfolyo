@@ -11,6 +11,8 @@ import TechStack from '@/components/portfolio/TechStack';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
+import ManualProjectsGrid from '@/components/portfolio/ManualProjectsGrid';
+import CertificatesList from '@/components/portfolio/CertificatesList';
 import ExternalContributions from '@/components/portfolio/ExternalContributions';
 import BlogFeed from '@/components/portfolio/BlogFeed';
 import AnalyticsBeacon from '@/components/portfolio/AnalyticsBeacon';
@@ -36,11 +38,11 @@ export async function generateMetadata({ params }: PortfolioPageProps): Promise<
     };
   }
 
-  const title = profile.name
+  const title = profile.seo_title || (profile.name
     ? `${profile.name} (@${profile.username}) - Kodfolyo`
-    : `@${profile.username} Portfolyosu - Kodfolyo`;
+    : `@${profile.username} Portfolyosu - Kodfolyo`);
 
-  const description = profile.custom_bio || profile.bio || `${profile.username} GitHub portfolyosu ve projeleri.`;
+  const description = profile.seo_description || profile.custom_bio || profile.bio || `${profile.username} GitHub portfolyosu ve projeleri.`;
 
   return {
     title,
@@ -139,7 +141,9 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
         {visibility.techStack !== false && <TechStack repos={repos} themeType={profile.theme} />}
         {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
         {visibility.projects !== false && <ProjectGrid repos={gridRepos} themeType={profile.theme} />}
+        {visibility.manualProjects !== false && <ManualProjectsGrid projects={profile.manual_projects} themeType={profile.theme} />}
         {visibility.experience !== false && <ExperienceTimeline entries={profile.experience} themeType={profile.theme} />}
+        {visibility.certificates !== false && <CertificatesList certificates={profile.certificates} themeType={profile.theme} />}
         {visibility.externalContributions !== false && <ExternalContributions contributions={externalContributions} themeType={profile.theme} />}
         {visibility.blogPosts !== false && <BlogFeed posts={blogPosts} themeType={profile.theme} />}
       </main>

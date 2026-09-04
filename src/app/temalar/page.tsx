@@ -56,7 +56,7 @@ function TemalarContent() {
           Portfolyona uygun temayı seç.
         </h1>
         <p style={{ margin: '0 0 34px', fontSize: 15.5, color: '#56515F', maxWidth: 560 }}>
-          Dört tema, aynı bileşen dili üzerinde farklı renk paletleri. Gerçek portfolyo önizlemesi üstünde nasıl göründüğünü gör.
+          {Object.keys(themes).length} tema, aynı bileşen dili üzerinde farklı renk paletleri. Gerçek portfolyo önizlemesi üstünde nasıl göründüğünü gör.
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24 }}>
@@ -76,6 +76,8 @@ function TemalarContent() {
               theme: t.id,
               custom_links: [],
               experience: [],
+              manual_projects: [],
+              certificates: [],
               section_visibility: DEFAULT_SECTION_VISIBILITY,
             };
             const isApplying = applyingTheme === t.id;

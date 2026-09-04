@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Check, Link2 } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
-import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
+import Kodi from '@/components/mascot/Kodi';
+import FetchingOverlay from '@/components/landing/FetchingOverlay';
 import { useState, useEffect } from 'react';
 
 import { ThemeType } from '@/types';
@@ -16,10 +17,18 @@ interface NavbarProps {
   currentUsername?: string;
 }
 
+const LANDING_LINKS = [
+  { label: 'Ana Sayfa', href: '#hero' },
+  { label: 'Çıktı', href: '#onizleme' },
+  { label: 'Özellikler', href: '#ozellikler' },
+  { label: 'Sıkça Sorulanlar', href: '#sss' },
+];
+
 export default function Navbar({ themeType, currentUsername }: NavbarProps = {}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isLanding = pathname === '/';
   const { data: session, status } = useSession();
-  const [showConsent, setShowConsent] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +42,13 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
     }
   }, []);
 
+  // themeType sadece bir portfolyo görüntülenirken gelir (ziyaretçinin seçtiği
+  // temayla uyumlu çerçeve için). Kodfolyo'nun kendi sayfalarında (landing,
+  // panel girişleri...) her zaman nötr kurumsal kabuk kullanılır.
   const theme = getTheme(themeType);
+  const isPortfolioContext = !!themeType;
+  const chromeBg = isPortfolioContext ? theme.bg : '#F9FAFB';
+  const chromeMuted = isPortfolioContext ? theme.muted : '#71717A';
 
   const handleQuickLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,25 +91,42 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
   const username = (session?.user as { username?: string })?.username || session?.user?.name || activeTargetUser || 'demo';
 
   return (
-    <header
+    <header style={{ position: 'sticky', top: 0, zIndex: 60, padding: '14px clamp(12px, 3vw, 28px) 0' }}>
+    <div
       style={{
-        position: 'sticky', top: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        flexWrap: 'wrap', rowGap: 8,
-        padding: '16px clamp(16px, 4vw, 40px)', background: `${theme.bg}CC`, backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(25,23,32,.07)',
+        maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: isLanding ? 'auto 1fr auto' : 'auto 1fr',
+        alignItems: 'center', columnGap: 16, rowGap: 8,
+        padding: '13px 20px', borderRadius: 18, border: '1px solid rgba(228,228,231,.7)',
+        background: `${chromeBg}E6`, backdropFilter: 'blur(16px)', boxShadow: '0 12px 32px -16px rgba(20,18,30,.25)',
       }}
     >
-      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 11, textDecoration: 'none' }}>
-        <KodfolyoLogo size={30} />
-        <span style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-.03em', color: '#191720' }}>Kodfolyo</span>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+        <Kodi size={46} float={false} grayscale />
+        <span style={{ fontSize: 19, fontWeight: 800, letterSpacing: '-.03em', color: '#18181B' }}>Kodfolyo</span>
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+      {isLanding && (
+        <nav className="nav-links-mid" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+          {LANDING_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+              style={{ fontSize: 13.5, fontWeight: 500, color: chromeMuted, textDecoration: 'none', padding: '8px 14px', borderRadius: 8 }}
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', justifySelf: 'end' }}>
         {status === 'authenticated' && session?.user ? (
           <>
             <Link
               href={`/${username}`}
-              className="nav-hide-narrow"
-              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: theme.muted, textDecoration: 'none' }}
+              className="nav-hide-narrow hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: chromeMuted, textDecoration: 'none', padding: '7px 10px', borderRadius: 8 }}
             >
               <User className="h-3.5 w-3.5" />
               <span>/{username}</span>
@@ -103,9 +135,10 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
 
             <Link
               href={editDashboardUrl}
+              className="hover:bg-zinc-800 transition-colors"
               style={{
                 display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600,
-                color: '#F4F1EA', background: '#191720', border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
+                color: '#F9FAFB', background: '#18181B', border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
               }}
             >
               <LayoutDashboard className="h-3.5 w-3.5" />
@@ -114,7 +147,8 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
 
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, color: theme.muted, background: 'transparent', border: 0, cursor: 'pointer' }}
+              className="hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, borderRadius: 9, color: chromeMuted, background: 'transparent', border: 0, cursor: 'pointer' }}
               title="Çıkış Yap"
             >
               <LogOut className="h-4 w-4" />
@@ -122,15 +156,20 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
           </>
         ) : (
           <>
-            <Link href="/ornek-ogrenci" className="nav-hide-narrow" style={{ fontSize: 14, color: theme.muted, textDecoration: 'none' }}>
+            <Link
+              href="/ornek-ogrenci"
+              className="nav-hide-narrow hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+              style={{ fontSize: 14, color: chromeMuted, textDecoration: 'none', padding: '8px 12px', borderRadius: 8 }}
+            >
               Örnek Portfolyo
             </Link>
 
             {activeTargetUser && activeTargetUser !== 'ornek-ogrenci' && activeTargetUser !== 'demo' ? (
               <Link
                 href={editDashboardUrl}
+                className="hover:bg-zinc-800 transition-colors"
                 style={{
-                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F1EA', background: '#191720',
+                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F9FAFB', background: '#18181B',
                   border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
                 }}
               >
@@ -138,104 +177,54 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
               </Link>
             ) : (
               <button
-                onClick={() => setShowConsent(true)}
+                onClick={() => setShowPrompt(true)}
+                className="hover:bg-zinc-800 transition-colors"
                 style={{
-                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F4F1EA', background: '#191720',
+                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F9FAFB', background: '#18181B',
                   border: 0, borderRadius: 9, padding: '9px 16px', cursor: 'pointer',
                 }}
               >
-                GitHub ile Giriş
+                Portfolyo Oluştur
               </button>
             )}
           </>
         )}
       </div>
-
-      {/* GitHub izin ekranı (kozmetik) */}
-      {showConsent && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: 'rgba(25,23,32,.55)', backdropFilter: 'blur(6px)' }}>
-          <div style={{ width: '100%', maxWidth: 420, padding: 28, borderRadius: 22, background: '#F4F1EA', border: '1px solid rgba(25,23,32,.12)', boxShadow: '0 40px 90px rgba(25,23,32,.35)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 20 }}>
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <KodfolyoLogo size={26} />
-              </div>
-              <Link2 className="w-4 h-4" style={{ color: '#8C8797' }} />
-              <div style={{ width: 52, height: 52, borderRadius: 14, background: '#191720', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <GithubIcon className="w-6 h-6" style={{ color: '#F4F1EA' }} />
-              </div>
-            </div>
-
-            <h3 style={{ margin: '0 0 6px', fontSize: 17, fontWeight: 800, textAlign: 'center', color: '#191720' }}>Kodfolyo, GitHub hesabına erişmek istiyor</h3>
-            <p style={{ margin: '0 0 18px', fontSize: 13, color: '#6B6675', textAlign: 'center' }}>
-              Devam edersen aşağıdaki verilere salt-okunur erişim verilmiş olur:
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 20 }}>
-              {[
-                'Herkese açık profil bilgileri (isim, avatar, biyografi)',
-                'Herkese açık repo listesi',
-                'Yıldız ve fork sayıları',
-              ].map((item) => (
-                <div key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 9, padding: '10px 12px', borderRadius: 11, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.08)' }}>
-                  <Check className="w-3.5 h-3.5" style={{ color: '#00845E', marginTop: 2, flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#3A3644', lineHeight: 1.4 }}>{item}</span>
-                </div>
-              ))}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9, padding: '10px 12px', borderRadius: 11, background: 'rgba(198,49,78,.06)', border: '1px solid rgba(198,49,78,.15)' }}>
-                <AlertCircle className="w-3.5 h-3.5" style={{ color: '#C6314E', marginTop: 2, flexShrink: 0 }} />
-                <span style={{ fontSize: 13, color: '#3A3644', lineHeight: 1.4 }}>Yazma izni yok — hiçbir repona veya ayarına dokunulmaz.</span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: 10 }}>
-              <button
-                onClick={() => setShowConsent(false)}
-                style={{ flex: 1, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#3A3644', background: 'transparent', border: '1px solid rgba(25,23,32,.16)', borderRadius: 13, padding: '12px 16px', cursor: 'pointer' }}
-              >
-                Vazgeç
-              </button>
-              <button
-                onClick={() => { setShowConsent(false); setShowPrompt(true); }}
-                style={{ flex: 1.4, fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 13, padding: '12px 16px', cursor: 'pointer' }}
-              >
-                İzin ver
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+    </div>
 
       {/* Hızlı Kullanıcı Adı Prompt Modalı */}
-      {showPrompt && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: 'rgba(25,23,32,.55)', backdropFilter: 'blur(6px)' }}>
-          <div style={{ width: '100%', maxWidth: 420, padding: 24, borderRadius: 22, background: '#F4F1EA', border: '1px solid rgba(25,23,32,.12)', boxShadow: '0 40px 90px rgba(25,23,32,.35)' }}>
+      {showPrompt && isLoading && <FetchingOverlay />}
+      {showPrompt && !isLoading && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 120, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 32, background: 'rgba(228,228,231,.55)', backdropFilter: 'blur(6px)' }}>
+          <div style={{ width: '100%', maxWidth: 420, padding: 24, borderRadius: 22, background: '#F9FAFB', border: '1px solid rgba(228,228,231,.12)', boxShadow: '0 40px 90px rgba(228,228,231,.35)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 800, color: '#191720' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 15, fontWeight: 800, color: '#18181B' }}>
                 <GithubIcon className="w-4 h-4" />
                 <span>GitHub Kullanıcı Adını Gir</span>
               </div>
               <button
                 onClick={() => { setShowPrompt(false); setErrorMsg(null); }}
-                style={{ fontSize: 18, lineHeight: 1, color: '#6B6675', background: 'transparent', border: 0, cursor: 'pointer' }}
+                style={{ fontSize: 18, lineHeight: 1, color: '#71717A', background: 'transparent', border: 0, cursor: 'pointer' }}
               >
                 ×
               </button>
             </div>
 
-            <p style={{ fontSize: 13, color: '#56515F', margin: '0 0 16px' }}>
+            <p style={{ fontSize: 13, color: '#52525B', margin: '0 0 16px' }}>
               Kendi GitHub kullanıcı adını yaz, profilini ve projelerini anında çekip portfolyonu hazırlayalım:
             </p>
 
             <form onSubmit={handleQuickLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.14)', borderRadius: 13, padding: '5px 5px 5px 16px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, color: '#8C8797' }}>github.com/</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 2, background: '#FFFFFF', border: '1px solid rgba(228,228,231,.14)', borderRadius: 13, padding: '5px 5px 5px 16px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, color: '#A1A1AA' }}>github.com/</span>
                 <input
                   type="text"
                   value={usernameInput}
                   onChange={(e) => { setUsernameInput(e.target.value); if (errorMsg) setErrorMsg(null); }}
                   placeholder="kullaniciadi"
                   autoFocus
-                  style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', color: '#191720', fontFamily: 'var(--font-mono)', fontSize: 15, padding: '11px 4px' }}
+                  className="focus:ring-1 focus:ring-zinc-900 rounded-md"
+                  style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', color: '#18181B', fontFamily: 'var(--font-mono)', fontSize: 15, padding: '11px 4px' }}
                 />
               </div>
 
@@ -251,7 +240,7 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
                 disabled={isLoading || !usernameInput.trim()}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, fontFamily: 'var(--font-sans)',
-                  fontSize: 15, fontWeight: 700, color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 13,
+                  fontSize: 15, fontWeight: 700, color: '#F9FAFB', background: '#18181B', border: 0, borderRadius: 13,
                   padding: '13px 24px', cursor: 'pointer', opacity: isLoading || !usernameInput.trim() ? 0.5 : 1,
                 }}
               >

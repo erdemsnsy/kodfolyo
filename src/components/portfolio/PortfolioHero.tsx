@@ -2,19 +2,27 @@
 
 import { UserProfile } from '@/types';
 import { getTheme } from '@/lib/theme';
-import { MapPin, Building, Globe, Mail, ExternalLink, FileText, Printer, Share2, X } from 'lucide-react';
+import { MapPin, Building, Globe, Mail, ExternalLink, FileText, Printer, Share2, X, Phone } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
 import { LinkedinIcon } from '@/components/icons/LinkedinIcon';
+import { DiscordIcon } from '@/components/icons/DiscordIcon';
+import { StackOverflowIcon } from '@/components/icons/StackOverflowIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import ShareModal from './ShareModal';
+import KodiAvatar from './KodiAvatar';
 
 interface PortfolioHeroProps {
   profile: UserProfile;
   repoCount?: number;
   starCount?: number;
   isDemo?: boolean;
+  /** Landing sayfasındaki salt-görsel önizleme gibi yerlerde aksiyon butonları gereksiz — tamamen gizler. */
+  hideActions?: boolean;
+  /** Landing'in "Böyle görünüyor" demo kartı için: statik avatar_url yerine fareyi
+   * takip eden gözlü canlı Kodi maskotu göster. Gerçek kullanıcı avatarlarını etkilemez. */
+  interactiveMascotAvatar?: boolean;
 }
 
 function renderLinkIcon(iconName?: string) {
@@ -23,10 +31,13 @@ function renderLinkIcon(iconName?: string) {
   if (iconName === 'email') return <Mail className="w-3.5 h-3.5" />;
   if (iconName === 'linkedin') return <LinkedinIcon className="w-3.5 h-3.5" />;
   if (iconName === 'twitter') return <X className="w-3.5 h-3.5" />;
+  if (iconName === 'phone') return <Phone className="w-3.5 h-3.5" />;
+  if (iconName === 'discord') return <DiscordIcon className="w-3.5 h-3.5" />;
+  if (iconName === 'stackoverflow') return <StackOverflowIcon className="w-3.5 h-3.5" />;
   return <ExternalLink className="w-3.5 h-3.5" />;
 }
 
-export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, isDemo: isDemoProp }: PortfolioHeroProps) {
+export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, isDemo: isDemoProp, hideActions, interactiveMascotAvatar }: PortfolioHeroProps) {
   const [showShareModal, setShowShareModal] = useState(false);
   const theme = getTheme(profile.theme);
   const displayBio = profile.custom_bio || profile.bio || 'Yazılım geliştirme tutkunu geliştirici.';
@@ -46,7 +57,11 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
       <div style={{ position: 'relative', maxWidth: 1020, margin: '0 auto' }}>
         <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', width: 112, height: 112, borderRadius: 28, overflow: 'hidden', flexShrink: 0, background: theme.gradient }}>
-            <Image src={profile.avatar_url} alt={profile.name || profile.username} fill className="object-cover" priority />
+            {interactiveMascotAvatar ? (
+              <KodiAvatar />
+            ) : (
+              <Image src={profile.avatar_url} alt={profile.name || profile.username} fill className="object-cover" priority />
+            )}
           </div>
 
           <div style={{ flex: 1, minWidth: 280 }}>
@@ -85,6 +100,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
               )}
             </div>
 
+            {!hideActions && (
             <div className="no-print" style={{ display: 'flex', gap: 9, flexWrap: 'wrap' }}>
               <a
                 href={`https://github.com/${profile.username}`} target="_blank" rel="noopener noreferrer"
@@ -124,6 +140,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
                 </a>
               ))}
             </div>
+            )}
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>

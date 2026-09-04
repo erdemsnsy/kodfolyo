@@ -5,7 +5,9 @@ import PortfolioHero from '@/components/portfolio/PortfolioHero';
 import TechStack from '@/components/portfolio/TechStack';
 import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import ProjectGrid from '@/components/portfolio/ProjectGrid';
+import ManualProjectsGrid from '@/components/portfolio/ManualProjectsGrid';
 import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
+import CertificatesList from '@/components/portfolio/CertificatesList';
 
 interface LivePortfolioPreviewProps {
   profile: UserProfile;
@@ -35,22 +37,22 @@ export default function LivePortfolioPreview({ profile, repos, frameWidth, frame
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
+      <div className="text-zinc-400" style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', gap: 8, padding: '12px 24px', background: '#FAFAFA', borderBottom: '1px solid rgba(228,228,231,.7)' }}>
         <span style={{ display: 'flex', gap: 5, flex: '0 0 auto' }}>
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#C6314E' }} />
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#B4531F' }} />
-          <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#00A676' }} />
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#E4E4E7' }} />
         </span>
-        <span style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 7, background: '#FBF9F4', border: '1px solid rgba(25,23,32,.09)', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#6B6675', overflow: 'hidden' }}>
+        <span className="text-xs" style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 7, padding: '4px 11px', borderRadius: 999, background: '#FFFFFF', border: '1px solid rgba(228,228,231,.7)', fontFamily: 'var(--font-mono)', overflow: 'hidden' }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', flex: '0 0 auto', background: '#00A676' }} />
           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{previewUrl}</span>
         </span>
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', padding: '18px 0 0' }}>
-        <div style={{ borderRadius: '10px 10px 0 0', overflow: 'hidden', background: '#FFFFFF', boxShadow: '0 24px 50px -30px rgba(25,23,32,.6)', border: '1px solid rgba(25,23,32,.09)', borderBottom: 0, width: frameWidth, height: frameHeight }}>
+      <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', justifyContent: 'center', padding: '28px 28px 0' }}>
+        <div style={{ borderRadius: 16, overflow: 'hidden', background: '#FFFFFF', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)', width: frameWidth, height: frameHeight }}>
           {badgeMode ? (
-            <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', background: '#FBF9F4', padding: 24 }}>
+            <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', background: '#FAFAFA', padding: 24 }}>
               <img key={badgeUrl} src={badgeUrl} alt="Rozet önizleme" style={{ display: 'block', maxWidth: '100%' }} />
             </div>
           ) : (
@@ -59,7 +61,9 @@ export default function LivePortfolioPreview({ profile, repos, frameWidth, frame
               {visibility.techStack !== false && <TechStack repos={repos} themeType={profile.theme} />}
               {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
               {visibility.projects !== false && <ProjectGrid repos={gridRepos} themeType={profile.theme} />}
+              {visibility.manualProjects !== false && <ManualProjectsGrid projects={profile.manual_projects} themeType={profile.theme} />}
               {visibility.experience !== false && <ExperienceTimeline entries={profile.experience} themeType={profile.theme} />}
+              {visibility.certificates !== false && <CertificatesList certificates={profile.certificates} themeType={profile.theme} />}
             </div>
           )}
         </div>

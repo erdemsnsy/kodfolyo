@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
 import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo, setProfilePublished, deleteProfile, setCustomDomain } from '../../../../lib/supabase/server';
-import { CustomLink, ThemeType, ExperienceEntry, SectionVisibility } from '../../../../types';
+import { CustomLink, ThemeType, ExperienceEntry, ManualProject, Certificate, SectionVisibility } from '../../../../types';
 
 export async function POST(request: Request) {
   try {
@@ -61,12 +61,16 @@ export async function POST(request: Request) {
     const theme: ThemeType = body.theme || currentProfile.theme;
     const customLinks: CustomLink[] = body.custom_links || currentProfile.custom_links;
     const experience: ExperienceEntry[] = body.experience || currentProfile.experience;
+    const manualProjects: ManualProject[] = body.manual_projects || currentProfile.manual_projects;
+    const certificates: Certificate[] = body.certificates || currentProfile.certificates;
     const sectionVisibility: SectionVisibility = body.section_visibility || currentProfile.section_visibility;
     const name: string | null = typeof body.name !== 'undefined' ? body.name : currentProfile.name;
     const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
     const location: string | null = typeof body.location !== 'undefined' ? body.location : currentProfile.location;
     const blog: string | null = typeof body.blog !== 'undefined' ? body.blog : currentProfile.blog;
     const rssUrl: string | null = typeof body.rss_url !== 'undefined' ? body.rss_url : (currentProfile.rss_url ?? null);
+    const seoTitle: string | null = typeof body.seo_title !== 'undefined' ? body.seo_title : (currentProfile.seo_title ?? null);
+    const seoDescription: string | null = typeof body.seo_description !== 'undefined' ? body.seo_description : (currentProfile.seo_description ?? null);
 
     const updated = await upsertProfile({
       github_id: currentProfile.github_id,
@@ -82,8 +86,12 @@ export async function POST(request: Request) {
       theme,
       custom_links: customLinks,
       experience,
+      manual_projects: manualProjects,
+      certificates,
       section_visibility: sectionVisibility,
       rss_url: rssUrl,
+      seo_title: seoTitle,
+      seo_description: seoDescription,
     });
 
     return NextResponse.json({

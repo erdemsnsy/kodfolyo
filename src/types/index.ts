@@ -1,4 +1,4 @@
-export type ThemeType = 'gece' | 'kagit' | 'neon' | 'mercan';
+export type ThemeType = 'gece' | 'kagit' | 'neon' | 'mercan' | 'zeytin' | 'lavanta' | 'bordo' | 'turkuaz' | 'hardal' | 'karbon';
 
 export interface CustomLink {
   id: string;
@@ -15,11 +15,29 @@ export interface ExperienceEntry {
   description: string;
 }
 
+export interface ManualProject {
+  id: string;
+  title: string;
+  description: string;
+  url?: string;
+  imageUrl?: string;
+}
+
+export interface Certificate {
+  id: string;
+  name: string;
+  issuer: string;
+  date: string;
+  url?: string;
+}
+
 export interface SectionVisibility {
   techStack: boolean;
   featuredProject: boolean;
   projects: boolean;
+  manualProjects: boolean;
   experience: boolean;
+  certificates: boolean;
   externalContributions: boolean;
   blogPosts: boolean;
 }
@@ -28,7 +46,9 @@ export const DEFAULT_SECTION_VISIBILITY: SectionVisibility = {
   techStack: true,
   featuredProject: true,
   projects: true,
+  manualProjects: true,
   experience: true,
+  certificates: true,
   externalContributions: true,
   blogPosts: true,
 };
@@ -48,11 +68,15 @@ export interface UserProfile {
   theme: ThemeType;
   custom_links: CustomLink[];
   experience: ExperienceEntry[];
+  manual_projects: ManualProject[];
+  certificates: Certificate[];
   section_visibility: SectionVisibility;
   is_published?: boolean;
   custom_domain?: string | null;
   custom_domain_verified?: boolean;
   rss_url?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
   created_at?: string;
   updated_at?: string;
 }

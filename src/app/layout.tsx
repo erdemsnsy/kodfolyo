@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Archivo, DM_Mono } from 'next/font/google';
 import './globals.css';
 import SessionProvider from '@/components/providers/SessionProvider';
@@ -28,6 +28,18 @@ export const metadata: Metadata = {
     siteName: 'Kodfolyo',
     type: 'website',
   },
+  // PWA: iOS'ta "Ana ekrana ekle" ile açılınca Safari çerçevesi olmadan,
+  // durum çubuğu markaya uygun renkte (koyu) açılsın diye.
+  appleWebApp: {
+    title: 'Kodfolyo',
+    statusBarStyle: 'black-translucent',
+  },
+};
+
+// themeColor eskiden `metadata` içindeydi, Next 13.2'den beri ayrı `viewport`
+// export'una taşındı (bkz. node_modules/next/dist/docs/.../generate-viewport.md).
+export const viewport: Viewport = {
+  themeColor: '#18181B',
 };
 
 export default function RootLayout({

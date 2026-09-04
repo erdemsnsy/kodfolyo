@@ -48,6 +48,8 @@ function normalizeProfile(data: Record<string, unknown>): UserProfile {
     ...data,
     custom_links: typeof data.custom_links === 'string' ? JSON.parse(data.custom_links) : (data.custom_links || []),
     experience: typeof data.experience === 'string' ? JSON.parse(data.experience) : (data.experience || []),
+    manual_projects: typeof data.manual_projects === 'string' ? JSON.parse(data.manual_projects) : (data.manual_projects || []),
+    certificates: typeof data.certificates === 'string' ? JSON.parse(data.certificates) : (data.certificates || []),
     section_visibility: typeof data.section_visibility === 'string'
       ? JSON.parse(data.section_visibility)
       : (data.section_visibility || DEFAULT_SECTION_VISIBILITY),
@@ -101,6 +103,8 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       theme: 'gece',
       custom_links: [],
       experience: [],
+      manual_projects: [],
+      certificates: [],
       section_visibility: DEFAULT_SECTION_VISIBILITY,
     };
     memoryProfilesStore.set(normalizedUser, mockProfile);
@@ -130,6 +134,8 @@ export async function getProfileByUsername(username: string): Promise<UserProfil
       theme: 'gece',
       custom_links: [],
       experience: [],
+      manual_projects: [],
+      certificates: [],
       section_visibility: DEFAULT_SECTION_VISIBILITY,
     };
     memoryProfilesStore.set(normalizedUser, profile);
@@ -163,8 +169,12 @@ export async function upsertProfile(profile: Partial<UserProfile> & { username: 
     theme: profile.theme || existing?.theme || 'gece',
     custom_links: profile.custom_links ?? existing?.custom_links ?? [],
     experience: profile.experience ?? existing?.experience ?? [],
+    manual_projects: profile.manual_projects ?? existing?.manual_projects ?? [],
+    certificates: profile.certificates ?? existing?.certificates ?? [],
     section_visibility: profile.section_visibility ?? existing?.section_visibility ?? DEFAULT_SECTION_VISIBILITY,
     rss_url: profile.rss_url !== undefined ? profile.rss_url : (existing?.rss_url ?? null),
+    seo_title: profile.seo_title !== undefined ? profile.seo_title : (existing?.seo_title ?? null),
+    seo_description: profile.seo_description !== undefined ? profile.seo_description : (existing?.seo_description ?? null),
   };
 
   if (supabaseAdmin) {

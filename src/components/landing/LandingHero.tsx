@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation';
 import { ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 import Kodi from '@/components/mascot/Kodi';
 import PublishCelebration from './PublishCelebration';
+import FetchingOverlay from './FetchingOverlay';
 
 const DEMOS = ['torvalds', 'sindresorhus', 'gaearon'];
+// FetchingOverlay'in 4 adımını (STEP_DURATION_MS=700 * 4) en az bir kez göster —
+// gerçek fetch bunun altında bitse bile ekran "adım adım" hissi vermeden akıp gitmesin.
+const MIN_LOADING_DURATION_MS = 2800;
 
 export default function LandingHero() {
   const router = useRouter();
@@ -22,6 +26,16 @@ export default function LandingHero() {
 
     setIsLoading(true);
     setErrorMsg(null);
+    const startedAt = Date.now();
+
+    // Gerçek istek ne kadar sürerse sürsün en az MIN_LOADING_DURATION_MS bekle —
+    // adım adım yükleme ekranı yarıda kesilip "aşırı kısa" akıp gitmesin.
+    const waitForMinDuration = async () => {
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_LOADING_DURATION_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_LOADING_DURATION_MS - elapsed));
+      }
+    };
 
     try {
       const res = await fetch('/api/github/sync', {
@@ -33,6 +47,7 @@ export default function LandingHero() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
+        await waitForMinDuration();
         setErrorMsg(`"${cleanUser}" adında geçerli bir GitHub kullanıcısı bulunamadı.`);
         setIsLoading(false);
         return;
@@ -41,14 +56,20 @@ export default function LandingHero() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('kodfolyo_active_username', cleanUser);
       }
+      await waitForMinDuration();
       setPublishedUsername(cleanUser);
     } catch (err) {
       console.error(err);
+      await waitForMinDuration();
       router.push(`/${cleanUser}`);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <FetchingOverlay />;
+  }
 
   if (publishedUsername) {
     return (
@@ -61,47 +82,48 @@ export default function LandingHero() {
   }
 
   return (
-    <div style={{ position: 'relative', padding: '78px clamp(16px, 5vw, 40px) 30px', overflow: 'hidden' }}>
+    <div id="hero" style={{ position: 'relative', padding: '78px clamp(16px, 5vw, 40px) 30px', overflow: 'hidden' }}>
       <div style={{
         position: 'absolute', inset: 0,
-        backgroundImage: 'linear-gradient(rgba(25,23,32,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(25,23,32,.045) 1px,transparent 1px)',
+        backgroundImage: 'linear-gradient(rgba(228,228,231,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(228,228,231,.045) 1px,transparent 1px)',
         backgroundSize: '60px 60px',
         maskImage: 'radial-gradient(ellipse 90% 70% at 50% 0%, #000 20%, transparent 78%)',
       }} />
-      <div style={{ position: 'absolute', top: -180, left: '12%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle, rgba(31,58,232,.22), transparent 68%)', filter: 'blur(30px)' }} />
+      <div style={{ position: 'absolute', top: -180, left: '12%', width: 520, height: 520, borderRadius: '50%', background: 'radial-gradient(circle, rgba(24,24,27,.22), transparent 68%)', filter: 'blur(30px)' }} />
       <div style={{ position: 'absolute', top: -120, right: '8%', width: 460, height: 460, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0,166,118,.24), transparent 68%)', filter: 'blur(30px)' }} />
 
       <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.15fr .85fr', gap: 48, alignItems: 'center' }} className="hero-grid">
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 12, padding: '6px 12px', borderRadius: 999, background: 'rgba(25,23,32,.05)', border: '1px solid rgba(25,23,32,.12)', color: '#3A3644', marginBottom: 22 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#1F3AE8', boxShadow: '0 0 10px #1F3AE8' }} />
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 12, padding: '6px 12px', borderRadius: 999, background: 'rgba(228,228,231,.05)', border: '1px solid rgba(228,228,231,.12)', color: '#3F3F46', marginBottom: 22 }}>
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#18181B', boxShadow: '0 0 10px #18181B' }} />
             GitHub profilinden saniyeler içinde portfolyo
           </div>
 
-          <h1 style={{ margin: 0, fontSize: 'clamp(32px, 7vw, 56px)', lineHeight: 1.02, fontWeight: 900, letterSpacing: '-.045em', color: '#191720' }}>
+          <h1 style={{ margin: 0, fontSize: 'clamp(32px, 7vw, 56px)', lineHeight: 1.02, fontWeight: 900, letterSpacing: '-.045em', color: '#18181B' }}>
             Commit&apos;lerin<br />zaten portfolyon.<br />
-            <span style={{ background: 'linear-gradient(100deg,#1F3AE8,#00A676)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>
+            <span style={{ color: '#71717A' }}>
               Biz sadece yayına alıyoruz.
             </span>
           </h1>
 
           {/* Mobilde: küçük maskot başlığın hemen altında (masaüstünde gizli) */}
           <div className="mascot-mobile-only" style={{ display: 'none', justifyContent: 'center', margin: '18px 0' }}>
-            <Kodi size={110} />
+            <Kodi size={150} grayscale />
           </div>
 
-          <p style={{ margin: '22px 0 30px', fontSize: 17, lineHeight: 1.55, color: '#56515F', maxWidth: 520 }}>
+          <p style={{ margin: '22px 0 30px', fontSize: 17, lineHeight: 1.55, color: '#52525B', maxWidth: 520 }}>
             GitHub kullanıcı adını yaz; profilin, biyografin, en çok yıldız alan projelerin ve dil dağılımın canlı bir portfolyo sayfasına dönüşsün. Kod yazmadan, tasarım yapmadan.
           </p>
 
           <form onSubmit={handleGeneratePortfolio} style={{ display: 'flex', gap: 10, maxWidth: 560, flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: 220, display: 'flex', alignItems: 'center', gap: 2, background: '#FFFFFF', border: '1px solid rgba(25,23,32,.14)', borderRadius: 13, padding: '5px 5px 5px 16px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, color: '#8C8797' }}>github.com/</span>
+            <div style={{ flex: 1, minWidth: 220, display: 'flex', alignItems: 'center', gap: 2, background: '#FFFFFF', border: '1px solid rgba(228,228,231,.14)', borderRadius: 13, padding: '5px 5px 5px 16px' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, color: '#A1A1AA' }}>github.com/</span>
               <input
                 value={usernameInput}
                 onChange={(e) => { setUsernameInput(e.target.value); if (errorMsg) setErrorMsg(null); }}
                 placeholder="kullaniciadi"
-                style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', color: '#191720', fontFamily: 'var(--font-mono)', fontSize: 15, padding: '11px 4px' }}
+                className="focus:ring-1 focus:ring-zinc-900 rounded-md"
+                style={{ flex: 1, minWidth: 0, background: 'transparent', border: 0, outline: 'none', color: '#18181B', fontFamily: 'var(--font-mono)', fontSize: 15, padding: '11px 4px' }}
               />
             </div>
             <button
@@ -109,8 +131,8 @@ export default function LandingHero() {
               disabled={isLoading || !usernameInput.trim()}
               style={{
                 display: 'flex', alignItems: 'center', gap: 9, fontFamily: 'var(--font-sans)', fontSize: 15, fontWeight: 700,
-                color: '#F4F1EA', background: '#1F3AE8', border: 0, borderRadius: 13, padding: '0 24px', cursor: 'pointer',
-                boxShadow: '0 10px 28px rgba(31,58,232,.32)', opacity: isLoading || !usernameInput.trim() ? 0.6 : 1,
+                color: '#F9FAFB', background: '#18181B', border: 0, borderRadius: 13, padding: '0 24px', cursor: 'pointer',
+                boxShadow: '0 10px 28px rgba(24,24,27,.32)', opacity: isLoading || !usernameInput.trim() ? 0.6 : 1,
               }}
             >
               {isLoading ? (
@@ -128,12 +150,12 @@ export default function LandingHero() {
           )}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 20, flexWrap: 'wrap' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#8C8797' }}>ÖRNEKLER</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#A1A1AA' }}>ÖRNEKLER</span>
             {DEMOS.map((name) => (
               <button
                 key={name}
                 onClick={() => router.push(`/${name}`)}
-                style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#3A3644', background: 'rgba(25,23,32,.05)', border: '1px solid rgba(25,23,32,.1)', borderRadius: 999, padding: '6px 13px', cursor: 'pointer' }}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#3F3F46', background: 'rgba(228,228,231,.05)', border: '1px solid rgba(228,228,231,.1)', borderRadius: 999, padding: '6px 13px', cursor: 'pointer' }}
               >
                 /{name}
               </button>
@@ -142,16 +164,10 @@ export default function LandingHero() {
         </div>
 
         {/* Maskot — masaüstü versiyonu */}
-        <div className="mascot-desktop-only" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 380 }}>
-          <div style={{ position: 'absolute', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(31,58,232,.18), transparent 70%)' }} />
-          <div style={{ position: 'absolute', width: 340, height: 340, border: '1px dashed rgba(25,23,32,.12)', borderRadius: '50%' }} />
-          <Kodi size={220} />
-          <div style={{ position: 'absolute', top: 30, right: 0, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#F4F1EA', background: '#1F3AE8', padding: '6px 12px', borderRadius: 10, fontWeight: 500, transform: 'rotate(6deg)' }}>
-            merhaba, ben Kodi 👋
-          </div>
-          <div style={{ position: 'absolute', bottom: 40, left: 0, fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#00845E', background: 'rgba(0,166,118,.12)', border: '1px solid rgba(0,166,118,.3)', padding: '6px 11px', borderRadius: 9, transform: 'rotate(-5deg)' }}>
-            git fetch --portfolyo
-          </div>
+        <div className="mascot-desktop-only" style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', height: 420 }}>
+          <div style={{ position: 'absolute', width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(24,24,27,.18), transparent 70%)' }} />
+          <div style={{ position: 'absolute', width: 380, height: 380, border: '1px dashed rgba(228,228,231,.12)', borderRadius: '50%' }} />
+          <Kodi size={280} grayscale />
         </div>
       </div>
 

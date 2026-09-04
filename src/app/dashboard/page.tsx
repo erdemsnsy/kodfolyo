@@ -10,6 +10,8 @@ import CustomLinksManager from '@/components/dashboard/CustomLinksManager';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
 import SyncButton from '@/components/dashboard/SyncButton';
 import ExperienceManager from '@/components/dashboard/ExperienceManager';
+import ManualProjectsManager from '@/components/dashboard/ManualProjectsManager';
+import CertificatesManager from '@/components/dashboard/CertificatesManager';
 import SectionVisibilityManager from '@/components/dashboard/SectionVisibilityManager';
 import BadgeGenerator from '@/components/dashboard/BadgeGenerator';
 import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
@@ -17,27 +19,53 @@ import CustomDomainManager from '@/components/dashboard/CustomDomainManager';
 import SettingsPanel from '@/components/dashboard/SettingsPanel';
 import LivePortfolioPreview from '@/components/dashboard/LivePortfolioPreview';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
-import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, SectionVisibility } from '@/types';
+import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, ManualProject, Certificate, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
+import { themes } from '@/lib/theme';
 import {
-  Save, LayoutGrid, User, FolderGit2, Palette, Link2, Briefcase, Layers, BadgeCheck, Settings,
-  BarChart3, Globe2, Star, ExternalLink, Check, Minus, RefreshCw,
+  Save, Star, ExternalLink, Check, Minus, FolderGit2, Award,
 } from 'lucide-react';
 
-type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'bolumler' | 'tema' | 'baglantilar' | 'rozet' | 'analytics' | 'alanadi';
+type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'projeler' | 'sertifikalar' | 'bolumler' | 'tema' | 'baglantilar' | 'rozet' | 'analytics' | 'alanadi';
 
-const TABS: { id: TabId; label: string; title: string; description: string; icon: typeof LayoutGrid }[] = [
-  { id: 'genel', label: 'Genel', title: 'Genel bakış', description: 'Portfolyonun mevcut durumu ve hızlı geçişler.', icon: LayoutGrid },
-  { id: 'profil', label: 'Profil', title: 'Profil', description: 'Portfolyonun üstünde görünen temel bilgiler.', icon: User },
-  { id: 'repolar', label: 'Repolar', title: 'Repolar', description: 'Yayınlanacak depolar ve vitrin projesi.', icon: FolderGit2 },
-  { id: 'deneyim', label: 'Deneyim', title: 'Deneyim', description: 'İş ve eğitim geçmişi.', icon: Briefcase },
-  { id: 'bolumler', label: 'Bölümler', title: 'Bölümler', description: 'Portfolyo sayfasındaki blokları aç veya kapat.', icon: Layers },
-  { id: 'tema', label: 'Tema', title: 'Tema', description: 'Portfolyonun renk şeması.', icon: Palette },
-  { id: 'baglantilar', label: 'Linkler', title: 'Bağlantılar', description: 'Profilinin altında görünecek bağlantılar.', icon: Link2 },
-  { id: 'rozet', label: 'Rozet', title: 'Rozet', description: "README'ne gömülebilen canlı rozet.", icon: BadgeCheck },
-  { id: 'analytics', label: 'Analiz', title: 'Analytics', description: 'Son 30 günün trafik ve etkileşim özeti.', icon: BarChart3 },
-  { id: 'alanadi', label: 'Alan adı', title: 'Alan Adı', description: 'Portfolyonu kendi alan adında yayınla.', icon: Globe2 },
+// Elle çizilmiş pixel-art ikonlar (public/icons) — dashboard'un tamamında
+// lucide yerine bunlar kullanılıyor.
+const TABS: { id: TabId; label: string; title: string; description: string; iconSrc?: string; icon?: typeof FolderGit2 }[] = [
+  { id: 'genel', label: 'Genel', title: 'Genel bakış', description: 'Portfolyonun mevcut durumu ve hızlı geçişler.', iconSrc: '/icons/genel.png' },
+  { id: 'profil', label: 'Profil', title: 'Profil', description: 'Portfolyonun üstünde görünen temel bilgiler.', iconSrc: '/icons/profil.png' },
+  { id: 'repolar', label: 'Repolar', title: 'Repolar', description: 'Yayınlanacak depolar ve vitrin projesi.', iconSrc: '/icons/repolar.png' },
+  { id: 'deneyim', label: 'Deneyim', title: 'Deneyim', description: 'İş ve eğitim geçmişi.', iconSrc: '/icons/deneyim.png' },
+  // Not: bu ikisinin piksel-art ikonu henüz yok (public/icons setinde karşılığı yok),
+  // geçici olarak lucide ikonu kullanılıyor — set tamamlanınca iconSrc'ye geçirilebilir.
+  { id: 'projeler', label: 'Projeler', title: 'Diğer Projeler', description: 'GitHub dışı, elle eklediğin projeler.', icon: FolderGit2 },
+  { id: 'sertifikalar', label: 'Sertifika', title: 'Sertifikalar', description: 'Eklediğin sertifikaların listesi.', icon: Award },
+  { id: 'bolumler', label: 'Bölümler', title: 'Bölümler', description: 'Portfolyo sayfasındaki blokları aç veya kapat.', iconSrc: '/icons/bolumler.png' },
+  { id: 'tema', label: 'Tema', title: 'Tema', description: 'Portfolyonun renk şeması.', iconSrc: '/icons/tema.png' },
+  { id: 'baglantilar', label: 'Linkler', title: 'Bağlantılar', description: 'Profilinin altında görünecek bağlantılar.', iconSrc: '/icons/linkler.png' },
+  { id: 'rozet', label: 'Rozet', title: 'Rozet', description: "README'ne gömülebilen canlı rozet.", iconSrc: '/icons/rozet.png' },
+  { id: 'analytics', label: 'Analiz', title: 'Analytics', description: 'Son 30 günün trafik ve etkileşim özeti.', iconSrc: '/icons/analiz.png' },
+  { id: 'alanadi', label: 'Alan adı', title: 'Alan Adı', description: 'Portfolyonu kendi alan adında yayınla.', iconSrc: '/icons/alanadi.png' },
 ];
+
+const AYARLAR_ICON = '/icons/ayarlar.png';
+const SENKRON_ICON = '/icons/senkron.png';
+const SIDEBAR_W = 86; // ikon rayı genişliği — küçük/sıkışık durmasın diye 74'ten büyütüldü
+
+function TabIcon({ tab, size, opacity }: { tab: { iconSrc?: string; icon?: typeof FolderGit2 }; size: number; opacity?: number }) {
+  if (!tab.iconSrc && tab.icon) {
+    const Icon = tab.icon;
+    return (
+      <span style={{ display: 'inline-flex', width: size, height: size, flexShrink: 0, opacity }}>
+        <Icon style={{ width: size * 0.72, height: size * 0.72, margin: 'auto' }} />
+      </span>
+    );
+  }
+  return (
+    <span style={{ position: 'relative', display: 'inline-block', width: size, height: size, flexShrink: 0, opacity }}>
+      <Image src={tab.iconSrc!} alt="" fill sizes={`${size}px`} style={{ objectFit: 'contain' }} />
+    </span>
+  );
+}
 
 const NO_PREVIEW_TABS: TabId[] = ['analytics', 'alanadi'];
 
@@ -61,8 +89,12 @@ function DashboardContent() {
   const [pendingCompany, setPendingCompany] = useState<string | null>(null);
   const [pendingBlog, setPendingBlog] = useState<string | null>(null);
   const [pendingRssUrl, setPendingRssUrl] = useState<string | null>(null);
+  const [pendingSeoTitle, setPendingSeoTitle] = useState<string | null>(null);
+  const [pendingSeoDescription, setPendingSeoDescription] = useState<string | null>(null);
   const [pendingCustomLinks, setPendingCustomLinks] = useState<CustomLink[] | null>(null);
   const [pendingExperience, setPendingExperience] = useState<ExperienceEntry[] | null>(null);
+  const [pendingManualProjects, setPendingManualProjects] = useState<ManualProject[] | null>(null);
+  const [pendingCertificates, setPendingCertificates] = useState<Certificate[] | null>(null);
   const [pendingSectionVisibility, setPendingSectionVisibility] = useState<SectionVisibility | null>(null);
 
   const [isSavingAll, setIsSavingAll] = useState(false);
@@ -81,8 +113,12 @@ function DashboardContent() {
     pendingCompany !== null ||
     pendingBlog !== null ||
     pendingRssUrl !== null ||
+    pendingSeoTitle !== null ||
+    pendingSeoDescription !== null ||
     pendingCustomLinks !== null ||
     pendingExperience !== null ||
+    pendingManualProjects !== null ||
+    pendingCertificates !== null ||
     pendingSectionVisibility !== null;
 
   const status: 'saved' | 'dirty' | 'justSaved' = hasPendingChanges ? 'dirty' : saveStatus;
@@ -197,8 +233,12 @@ function DashboardContent() {
     if (pendingCompany !== null) payload.company = pendingCompany;
     if (pendingBlog !== null) payload.blog = pendingBlog;
     if (pendingRssUrl !== null) payload.rss_url = pendingRssUrl;
+    if (pendingSeoTitle !== null) payload.seo_title = pendingSeoTitle;
+    if (pendingSeoDescription !== null) payload.seo_description = pendingSeoDescription;
     if (pendingCustomLinks !== null) payload.custom_links = pendingCustomLinks;
     if (pendingExperience !== null) payload.experience = pendingExperience;
+    if (pendingManualProjects !== null) payload.manual_projects = pendingManualProjects;
+    if (pendingCertificates !== null) payload.certificates = pendingCertificates;
     if (pendingSectionVisibility !== null) payload.section_visibility = pendingSectionVisibility;
 
     try {
@@ -222,8 +262,12 @@ function DashboardContent() {
             ...(pendingCompany !== null && { company: pendingCompany }),
             ...(pendingBlog !== null && { blog: pendingBlog }),
             ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
+            ...(pendingSeoTitle !== null && { seo_title: pendingSeoTitle }),
+            ...(pendingSeoDescription !== null && { seo_description: pendingSeoDescription }),
             ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
             ...(pendingExperience !== null && { experience: pendingExperience }),
+            ...(pendingManualProjects !== null && { manual_projects: pendingManualProjects }),
+            ...(pendingCertificates !== null && { certificates: pendingCertificates }),
             ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
           }));
         }
@@ -235,8 +279,12 @@ function DashboardContent() {
         setPendingCompany(null);
         setPendingBlog(null);
         setPendingRssUrl(null);
+        setPendingSeoTitle(null);
+        setPendingSeoDescription(null);
         setPendingCustomLinks(null);
         setPendingExperience(null);
+        setPendingManualProjects(null);
+        setPendingCertificates(null);
         setPendingSectionVisibility(null);
         setSaveStatus('justSaved');
         clearTimeout(savedTimer.current);
@@ -336,10 +384,10 @@ function DashboardContent() {
 
   if (isLoading || !profile) {
     return (
-      <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 22, height: 22, border: '2px solid #1F3AE8', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
-          <p style={{ fontSize: 13, color: '#6B6675' }}>@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
+          <div style={{ width: 22, height: 22, border: '2px solid #18181B', borderTopColor: 'transparent', borderRadius: '50%' }} className="animate-spin" />
+          <p style={{ fontSize: 13, color: '#71717A' }}>@{activeUsername || 'erdemsnsy'} profil verileri yükleniyor...</p>
         </div>
       </div>
     );
@@ -354,8 +402,12 @@ function DashboardContent() {
     ...(pendingCompany !== null && { company: pendingCompany }),
     ...(pendingBlog !== null && { blog: pendingBlog }),
     ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
+    ...(pendingSeoTitle !== null && { seo_title: pendingSeoTitle }),
+    ...(pendingSeoDescription !== null && { seo_description: pendingSeoDescription }),
     ...(pendingCustomLinks !== null && { custom_links: pendingCustomLinks }),
     ...(pendingExperience !== null && { experience: pendingExperience }),
+    ...(pendingManualProjects !== null && { manual_projects: pendingManualProjects }),
+    ...(pendingCertificates !== null && { certificates: pendingCertificates }),
     ...(pendingSectionVisibility !== null && { section_visibility: pendingSectionVisibility }),
   };
 
@@ -372,9 +424,13 @@ function DashboardContent() {
   const wide = viewport.w >= 1180;
   const inline = !wide && viewport.w >= 640;
   const showPreview = activeTab !== 'ayarlar' && !NO_PREVIEW_TABS.includes(activeTab as TabId) && (wide || inline);
-  const paneW = Math.round(Math.min(760, Math.max(430, (viewport.w - 74) * 0.46)));
-  const colW = Math.min(660, viewport.w - (desktop ? 74 : 0) - 44);
-  const frameW = wide ? paneW - 34 : colW;
+  // 38/62 split: sol düzenleme kolonu ~%38, sağ canlı önizleme ~%62.
+  const paneW = Math.round(Math.min(900, Math.max(460, (viewport.w - SIDEBAR_W) * 0.62)));
+  const colW = Math.min(576, viewport.w - (desktop ? SIDEBAR_W : 0) - 44);
+  const frameW = wide ? paneW - 90 : colW; // 90 = önizleme mockup'ın yanal iç boşluğu (28px*2 + kenarlık payı)
+  // Önizleme yoksa (Analiz, Alan adı, Ayarlar) içerik kolonu 576px'e sıkışmasın —
+  // sağda dolduracak panel olmadığı için tüm genişliği kullansın.
+  const contentMaxW = showPreview ? colW : Math.min(1040, viewport.w - (desktop ? SIDEBAR_W : 0) - 44);
   const headerH = 62;
   const frameH = wide ? Math.max(320, viewport.h - headerH - 60) : 520;
 
@@ -390,16 +446,17 @@ function DashboardContent() {
         ];
         const doneCount = setupItems.filter((c) => c.ok).length;
 
+        const portfolioUrl = `kodfolyo.dev/${displayProfile.username}`;
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 14 }}>
-              <div style={{ position: 'relative', width: 46, height: 46, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#EBE7DD' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ position: 'relative', width: 58, height: 58, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#F4F4F5' }}>
                 <Image src={displayProfile.avatar_url} alt={displayProfile.username} fill className="object-cover" />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-.015em' }}>{displayProfile.name || displayProfile.username}</div>
-                <a href={`/${displayProfile.username}`} target="_blank" style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5 }}>
-                  kodfolyo.dev/{displayProfile.username}
+                <div style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-.015em' }}>{displayProfile.name || displayProfile.username}</div>
+                <a href={`/${displayProfile.username}`} target="_blank" style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5 }}>
+                  {portfolioUrl}
                 </a>
               </div>
               {displayProfile.is_published === false && (
@@ -407,35 +464,41 @@ function DashboardContent() {
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Görünür repo</div>
-                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Görünür repo</div>
+                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Toplam yıldız</div>
-                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Toplam yıldız</div>
+                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '13px 14px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Aktif tema</div>
-                <div style={{ marginTop: 6, fontSize: 21, fontWeight: 600, letterSpacing: '-.03em', textTransform: 'capitalize' }}>{displayProfile.theme}</div>
+              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Aktif tema</div>
+                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em', textTransform: 'capitalize' }}>{themes[displayProfile.theme]?.name || displayProfile.theme}</div>
               </div>
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '12px 16px', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797' }}>Kurulum</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#6B6675' }}>{doneCount}/{setupItems.length} tamam</span>
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+              <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Kurulum</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#71717A' }}>{doneCount}/{setupItems.length} tamam</span>
+                </div>
+                <p style={{ margin: '6px 0 0', fontSize: 11.5, color: '#A1A1AA' }}>
+                  Bir maddeyi tamamlayınca yanındaki daire <span style={{ color: '#00845E', fontWeight: 600 }}>yeşile</span> döner.
+                </p>
               </div>
               {setupItems.map((c) => (
-                <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '10px 16px', borderBottom: '1px solid rgba(25,23,32,.06)' }}>
-                  <span style={{ display: 'grid', placeItems: 'center', width: 19, height: 19, borderRadius: '50%', flexShrink: 0, background: c.ok ? 'rgba(0,166,118,.14)' : 'rgba(25,23,32,.06)', color: c.ok ? '#00845E' : '#8C8797' }}>
-                    {c.ok ? <Check className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 20px', borderBottom: '1px solid rgba(228,228,231,.06)' }}>
+                  <span style={{ display: 'grid', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', flexShrink: 0, background: c.ok ? 'rgba(0,166,118,.14)' : 'rgba(228,228,231,.5)', color: c.ok ? '#00845E' : '#A1A1AA' }}>
+                    {c.ok ? <Check className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
                   </span>
-                  <span style={{ flex: 1, minWidth: 0, fontSize: 12.5, color: c.ok ? '#56515F' : '#191720' }}>{c.label}</span>
+                  <span style={{ flex: 1, minWidth: 0, fontSize: 13.5, color: c.ok ? '#52525B' : '#18181B' }}>{c.label}</span>
                   <button
                     onClick={() => setActiveTab(c.tab)}
-                    style={{ height: 26, padding: '0 10px', border: '1px solid rgba(25,23,32,.12)', borderRadius: 7, background: '#FBF9F4', fontSize: 11.5, fontWeight: 500, color: '#56515F', cursor: 'pointer', flexShrink: 0 }}
+                    className="hover:bg-zinc-100 transition-colors"
+                    style={{ height: 28, padding: '0 12px', border: '1px solid rgba(228,228,231,.12)', borderRadius: 7, background: '#FAFAFA', fontSize: 12, fontWeight: 500, color: '#52525B', cursor: 'pointer', flexShrink: 0 }}
                   >
                     {TABS.find((t) => t.id === c.tab)!.label}
                   </button>
@@ -443,17 +506,37 @@ function DashboardContent() {
               ))}
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(25,23,32,.09)', borderRadius: 12, padding: '15px 16px' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#8C8797', marginBottom: 10 }}>Hızlı geçiş</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {TABS.filter((t) => t.id !== 'genel').concat([{ id: 'ayarlar' as TabId, label: 'Ayarlar', title: '', description: '', icon: Settings }]).map((t) => (
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA', marginBottom: 12 }}>Portfolyonu paylaş</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 6, borderRadius: 10, border: '1px solid #E4E4E7', background: '#FAFAFA' }}>
+                <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-mono)', fontSize: 13, color: '#18181B', padding: '0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{portfolioUrl}</span>
+                <button
+                  onClick={() => { if (typeof navigator !== 'undefined') navigator.clipboard.writeText(`https://${portfolioUrl}`); }}
+                  className="hover:bg-zinc-800 transition-colors"
+                  style={{ flexShrink: 0, height: 32, padding: '0 14px', borderRadius: 8, background: '#18181B', color: '#FFFFFF', fontSize: 12.5, fontWeight: 500, border: 0, cursor: 'pointer' }}
+                >
+                  Kopyala
+                </button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginTop: 10 }}>
+                <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`https://${portfolioUrl}`)}`} target="_blank" rel="noopener noreferrer" className="hover:bg-zinc-50 transition-colors" style={{ textAlign: 'center', padding: '9px 0', borderRadius: 9, border: '1px solid #E4E4E7', fontSize: 12.5, fontWeight: 500, color: '#52525B', textDecoration: 'none' }}>WhatsApp</a>
+                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(`https://${portfolioUrl}`)}`} target="_blank" rel="noopener noreferrer" className="hover:bg-zinc-50 transition-colors" style={{ textAlign: 'center', padding: '9px 0', borderRadius: 9, border: '1px solid #E4E4E7', fontSize: 12.5, fontWeight: 500, color: '#52525B', textDecoration: 'none' }}>X</a>
+                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://${portfolioUrl}`)}`} target="_blank" rel="noopener noreferrer" className="hover:bg-zinc-50 transition-colors" style={{ textAlign: 'center', padding: '9px 0', borderRadius: 9, border: '1px solid #E4E4E7', fontSize: 12.5, fontWeight: 500, color: '#52525B', textDecoration: 'none' }}>LinkedIn</a>
+              </div>
+            </div>
+
+            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA', marginBottom: 12 }}>Hızlı geçiş</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {TABS.filter((t) => t.id !== 'genel').concat([{ id: 'ayarlar' as TabId, label: 'Ayarlar', title: '', description: '', iconSrc: AYARLAR_ICON }]).map((t) => (
                   <button
                     key={t.id}
                     type="button"
                     onClick={() => setActiveTab(t.id)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 11px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 8, background: '#FBF9F4', color: '#56515F', fontSize: 12, fontWeight: 500, cursor: 'pointer' }}
+                    className="hover:bg-zinc-100 transition-colors"
+                    style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '8px 13px', border: '1px solid rgba(228,228,231,.09)', borderRadius: 9, background: '#FAFAFA', color: '#52525B', fontSize: 12.5, fontWeight: 500, cursor: 'pointer' }}
                   >
-                    <t.icon className="w-3.5 h-3.5" style={{ opacity: 0.7 }} /> {t.label}
+                    <TabIcon tab={t} size={16} opacity={0.8} /> {t.label}
                   </button>
                 ))}
               </div>
@@ -472,6 +555,8 @@ function DashboardContent() {
               if (fields.company !== undefined) setPendingCompany(fields.company ?? '');
               if (fields.blog !== undefined) setPendingBlog(fields.blog ?? '');
               if (fields.rss_url !== undefined) setPendingRssUrl(fields.rss_url ?? '');
+              if (fields.seo_title !== undefined) setPendingSeoTitle(fields.seo_title ?? '');
+              if (fields.seo_description !== undefined) setPendingSeoDescription(fields.seo_description ?? '');
               return Promise.resolve();
             }}
           />
@@ -484,6 +569,26 @@ function DashboardContent() {
             entries={displayProfile.experience}
             onSaveEntries={(entries) => {
               setPendingExperience(entries);
+              return Promise.resolve();
+            }}
+          />
+        );
+      case 'projeler':
+        return (
+          <ManualProjectsManager
+            projects={displayProfile.manual_projects}
+            onSaveProjects={(projects) => {
+              setPendingManualProjects(projects);
+              return Promise.resolve();
+            }}
+          />
+        );
+      case 'sertifikalar':
+        return (
+          <CertificatesManager
+            certificates={displayProfile.certificates}
+            onSaveCertificates={(certificates) => {
+              setPendingCertificates(certificates);
               return Promise.resolve();
             }}
           />
@@ -532,18 +637,18 @@ function DashboardContent() {
   };
 
   const statusMap = {
-    saved: { text: 'Güncel', bg: 'rgba(25,23,32,.055)', fg: '#6B6675' },
-    dirty: { text: 'Kaydedilmemiş', bg: 'rgba(180,83,31,.12)', fg: '#B4531F' },
-    justSaved: { text: '✓ Kaydedildi', bg: 'rgba(0,166,118,.12)', fg: '#00845E' },
+    saved: { text: 'Güncel', bg: '#FAFAFA', fg: '#71717A', border: '#E4E4E7', dot: '#A1A1AA' },
+    dirty: { text: 'Kaydedilmemiş', bg: '#FFFBEB', fg: '#D97706', border: '#FDE68A', dot: '#D97706' },
+    justSaved: { text: 'Kaydedildi', bg: '#ECFDF5', fg: '#00845E', border: '#A7F3D0', dot: '#00845E' },
   } as const;
   const st = statusMap[status];
 
   return (
-    <div className="dash-root" style={{ height: '100vh', display: 'flex', overflow: 'hidden', background: '#F4F1EA', color: '#191720', fontFamily: 'var(--font-sans)' }}>
+    <div className="dash-root" style={{ height: '100vh', display: 'flex', overflow: 'hidden', background: '#F9FAFB', color: '#18181B', fontFamily: 'var(--font-sans)' }}>
       {/* İkon rayı — mobilde gizlenir, alt tab bar devreye girer */}
-      <nav className="dash-sidebar" style={{ flex: '0 0 74px', width: 74, height: '100vh', background: '#EBE7DD', borderRight: '1px solid rgba(25,23,32,.09)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '14px 0 12px', gap: 2 }}>
-        <div style={{ marginBottom: 14 }}>
-          <KodfolyoLogo size={32} />
+      <nav className="dash-sidebar" style={{ flex: `0 0 ${SIDEBAR_W}px`, width: SIDEBAR_W, height: '100vh', background: '#FFFFFF', borderRight: '1px solid #E4E4E7', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0 12px', gap: 4 }}>
+        <div style={{ marginBottom: 16 }}>
+          <KodfolyoLogo size={34} />
         </div>
         {TABS.map((t) => {
           const isActive = activeTab === t.id;
@@ -553,14 +658,11 @@ function DashboardContent() {
               type="button"
               title={t.title}
               onClick={() => setActiveTab(t.id)}
-              style={{
-                width: 62, padding: '7px 2px 6px', border: 0, borderRadius: 10, cursor: 'pointer',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                background: isActive ? '#FFFFFF' : 'transparent', color: isActive ? '#191720' : '#6B6675',
-              }}
+              className={`flex flex-col items-center gap-1 rounded-xl cursor-pointer transition-colors ${isActive ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/80'}`}
+              style={{ width: 72, padding: '9px 2px 7px', border: 0 }}
             >
-              <t.icon className="w-[18px] h-[18px]" />
-              <span style={{ fontSize: 9.5, fontWeight: 500, letterSpacing: '-.01em', lineHeight: 1.1, textAlign: 'center' }}>{t.label}</span>
+              <TabIcon tab={t} size={25} />
+              <span className="font-medium" style={{ fontSize: 10.5, letterSpacing: '-.005em', lineHeight: 1.1, textAlign: 'center' }}>{t.label}</span>
             </button>
           );
         })}
@@ -568,10 +670,11 @@ function DashboardContent() {
         <button
           onClick={() => loadData(activeUsername)}
           title="Senkronize et"
-          style={{ width: 62, padding: '8px 2px', border: '1px solid rgba(25,23,32,.09)', borderRadius: 10, background: '#FBF9F4', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, color: '#56515F' }}
+          className="rounded-xl cursor-pointer flex flex-col items-center text-zinc-600 hover:bg-zinc-100/80 transition-colors"
+          style={{ width: 72, padding: '9px 2px', border: '1px solid #E4E4E7', background: '#FAFAFA', gap: 5 }}
         >
-          <RefreshCw className="w-4 h-4" />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: '#8C8797' }}>
+          <TabIcon tab={{ iconSrc: SENKRON_ICON }} size={20} />
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, color: '#A1A1AA' }}>
             {profile.updated_at ? new Date(profile.updated_at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—'}
           </span>
         </button>
@@ -579,33 +682,33 @@ function DashboardContent() {
           type="button"
           title="Ayarlar"
           onClick={() => setActiveTab('ayarlar')}
-          style={{
-            width: 62, marginTop: 6, padding: '7px 2px 6px', border: 0, borderRadius: 10, cursor: 'pointer',
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-            background: activeTab === 'ayarlar' ? '#FFFFFF' : 'transparent', color: activeTab === 'ayarlar' ? '#191720' : '#6B6675',
-          }}
+          className={`flex flex-col items-center gap-1 rounded-xl cursor-pointer transition-colors ${activeTab === 'ayarlar' ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/80'}`}
+          style={{ width: 72, marginTop: 6, padding: '9px 2px 7px', border: 0 }}
         >
-          <Settings className="w-[18px] h-[18px]" />
-          <span style={{ fontSize: 9.5, fontWeight: 500 }}>Ayarlar</span>
+          <TabIcon tab={{ iconSrc: AYARLAR_ICON }} size={25} />
+          <span className="font-medium" style={{ fontSize: 10.5 }}>Ayarlar</span>
         </button>
       </nav>
 
       <section style={{ flex: 1, minWidth: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid rgba(25,23,32,.09)', background: '#F4F1EA' }}>
+        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid #E4E4E7', background: '#FFFFFF' }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <h1 style={{ margin: 0, fontSize: 17, fontWeight: 600, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 8px', borderRadius: 6, background: st.bg, color: st.fg }}>{st.text}</span>
+              <h1 className="text-zinc-900 font-semibold" style={{ margin: 0, fontSize: 17, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full text-xs" style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 9px', background: st.bg, color: st.fg, border: `1px solid ${st.border}` }}>
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
+                {st.text}
+              </span>
             </div>
-            <p style={{ margin: '3px 0 0', fontSize: 12, color: '#8C8797', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeTabDef.description}</p>
+            <p className="text-zinc-500" style={{ margin: '3px 0 0', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeTabDef.description}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: '0 0 auto' }}>
             <a
               href={`/${displayProfile.username}`}
               target="_blank"
               rel="noreferrer"
-              className="dash-open-btn"
-              style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 12px', border: '1px solid rgba(25,23,32,.16)', borderRadius: 8, background: '#FFFFFF', color: '#191720', fontSize: 12.5, fontWeight: 500, textDecoration: 'none' }}
+              className="dash-open-btn hover:bg-zinc-50 transition-colors"
+              style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 12px', border: '1px solid #E4E4E7', borderRadius: 8, background: '#FFFFFF', color: '#18181B', fontSize: 12.5, fontWeight: 500, textDecoration: 'none' }}
             >
               <ExternalLink className="w-3.5 h-3.5" /> Aç
             </a>
@@ -613,8 +716,8 @@ function DashboardContent() {
               type="button"
               onClick={handleSaveAll}
               disabled={isSavingAll || !hasPendingChanges}
-              className="dash-save-btn"
-              style={{ height: 34, padding: '0 16px', border: 0, borderRadius: 8, background: '#1F3AE8', color: '#FFFFFF', fontSize: 12.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1 }}
+              className="dash-save-btn hover:bg-zinc-800 transition-colors shadow-sm"
+              style={{ height: 34, padding: '0 16px', border: 0, borderRadius: 8, background: '#18181B', color: '#FFFFFF', fontSize: 12.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll || !hasPendingChanges ? 0.5 : 1 }}
             >
               Kaydet
             </button>
@@ -623,17 +726,18 @@ function DashboardContent() {
 
         <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: wide ? 'row' : 'column', overflowY: wide ? 'hidden' : 'auto' }}>
           <div style={{ flex: wide ? '1' : '0 0 auto', minWidth: 0, minHeight: 0, overflowY: wide ? 'auto' : 'visible', padding: '20px 22px 24px' }}>
-            <div style={{ maxWidth: colW }}>{renderTabContent()}</div>
+            <div style={{ maxWidth: contentMaxW }}>{renderTabContent()}</div>
           </div>
 
           {showPreview && (
             <aside
               className="dash-preview"
               style={{
-                flex: '0 0 auto', display: 'flex', flexDirection: 'column', background: '#EBE7DD',
+                flex: '0 0 auto', display: 'flex', flexDirection: 'column',
+                background: '#F9FAFB', backgroundImage: 'radial-gradient(#E4E4E7 1px, transparent 1px)', backgroundSize: '16px 16px',
                 width: wide ? paneW : '100%', height: wide ? '100%' : 620,
-                borderLeft: wide ? '1px solid rgba(25,23,32,.09)' : 0,
-                borderTop: wide ? 0 : '1px solid rgba(25,23,32,.09)',
+                borderLeft: wide ? '1px solid #E4E4E7' : 0,
+                borderTop: wide ? 0 : '1px solid #E4E4E7',
               }}
             >
               <LivePortfolioPreview
@@ -653,11 +757,11 @@ function DashboardContent() {
       {/* Mobil alt tab bar */}
       <nav className="dash-tabbar" style={{ display: 'none' }}>
         {hasPendingChanges && (
-          <div className="dash-savebar" style={{ padding: '9px 12px', background: '#FBF9F4', borderBottom: '1px solid rgba(25,23,32,.09)' }}>
+          <div className="dash-savebar" style={{ padding: '9px 12px', background: '#FAFAFA', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
             <button
               onClick={handleSaveAll}
               disabled={isSavingAll}
-              style={{ width: '100%', height: 40, border: 0, borderRadius: 9, background: '#1F3AE8', color: '#FFFFFF', fontSize: 13.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
+              style={{ width: '100%', height: 40, border: 0, borderRadius: 9, background: '#18181B', color: '#FFFFFF', fontSize: 13.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
             >
               Kaydet
             </button>
@@ -669,18 +773,18 @@ function DashboardContent() {
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === t.id ? '#1F3AE8' : '#8C8797' }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === t.id ? '#18181B' : '#A1A1AA' }}
             >
-              <t.icon className="w-[18px] h-[18px]" />
+              <TabIcon tab={t} size={18} />
               <span style={{ fontSize: 10, fontWeight: 500, whiteSpace: 'nowrap' }}>{t.label}</span>
             </button>
           ))}
           <button
             type="button"
             onClick={() => setActiveTab('ayarlar')}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === 'ayarlar' ? '#1F3AE8' : '#8C8797' }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === 'ayarlar' ? '#18181B' : '#A1A1AA' }}
           >
-            <Settings className="w-[18px] h-[18px]" />
+            <TabIcon tab={{ iconSrc: AYARLAR_ICON }} size={18} />
             <span style={{ fontSize: 10, fontWeight: 500 }}>Ayarlar</span>
           </button>
         </div>
@@ -690,7 +794,7 @@ function DashboardContent() {
         @media (max-width: 1023px) {
           .dash-sidebar { display: none !important; }
           .dash-root { flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; }
-          .dash-tabbar { display: block !important; position: sticky; bottom: 0; background: #EBE7DD; border-top: 1px solid rgba(25,23,32,.09); z-index: 50; }
+          .dash-tabbar { display: block !important; position: sticky; bottom: 0; background: #FFFFFF; border-top: 1px solid #E4E4E7; z-index: 50; }
         }
       `}</style>
     </div>
@@ -699,7 +803,7 @@ function DashboardContent() {
 
 export default function DashboardPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F4F1EA' }} />}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', background: '#F9FAFB' }} />}>
       <DashboardContent />
     </Suspense>
   );

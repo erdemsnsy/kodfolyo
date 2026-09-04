@@ -6,7 +6,7 @@ import { ThemeType } from '@/types';
 export const dynamic = 'force-dynamic';
 
 const VALID_SIZES: BadgeSize[] = ['sm', 'md', 'lg'];
-const VALID_THEMES: ThemeType[] = ['gece', 'kagit', 'neon', 'mercan'];
+const VALID_THEMES: ThemeType[] = ['gece', 'kagit', 'neon', 'mercan', 'zeytin', 'lavanta', 'bordo', 'turkuaz', 'hardal', 'karbon'];
 
 // Gömülebilir rozet — gerçek profil/repo verisinden SVG üretir. README'lere
 // <img> veya markdown ile eklenebilir; her istekte güncel veri okunur.
