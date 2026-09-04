@@ -122,3 +122,21 @@ CREATE POLICY "Public cached repos read policy" ON public.cached_repos FOR SELEC
 -- Service Role veya Yetkili Kullanıcı Yazabilsin
 CREATE POLICY "Service role full access on profiles" ON public.profiles FOR ALL USING (true);
 CREATE POLICY "Service role full access on cached_repos" ON public.cached_repos FOR ALL USING (true);
+
+-- ─── Tablo düzeyi GRANT'lar ─────────────────────────────────────────────────
+-- ÖNEMLİ: Proje oluşturulurken "Automatically expose new tables" seçeneği
+-- kapatılırsa (güvenlik için önerilir), Supabase yeni tablolara service_role
+-- dahil HİÇBİR role otomatik GRANT vermez. RLS politikaları (yukarıda) bu
+-- GRANT'ların YERİNE geçmez — GRANT olmadan policy hiç devreye girmeden
+-- "permission denied for table ..." hatası alınır. Bu yüzden service_role'e
+-- (ve public okuma için anon/authenticated'e) açıkça grant veriyoruz.
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+
+GRANT ALL ON public.profiles TO service_role;
+GRANT ALL ON public.cached_repos TO service_role;
+GRANT ALL ON public.page_views TO service_role;
+GRANT ALL ON public.link_clicks TO service_role;
+GRANT ALL ON public.pdf_downloads TO service_role;
+
+GRANT SELECT ON public.profiles TO anon, authenticated;
+GRANT SELECT ON public.cached_repos TO anon, authenticated;
