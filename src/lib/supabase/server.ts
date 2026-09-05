@@ -272,9 +272,27 @@ export async function getCachedReposByUsername(username: string): Promise<Reposi
 export async function saveCachedRepos(userProfile: UserProfile, repos: Repository[]): Promise<Repository[]> {
   const normalizedUser = sanitizeUsername(userProfile.username);
 
+  // ÖNEMLİ (bkz. upsertProfile'daki aynı sınıf hata): repos parametresi GitHub'dan
+  // TAZE çekilir; fetchTopStarredRepos HER repoya sabit is_visible:true,
+  // is_featured:false basar (undefined değil!) — bu yüzden her sync (dashboard
+  // her açıldığında/yenilendiğinde tetiklenir) kullanıcının seçtiği vitrin
+  // projesini ve gizlenmiş repoları sessizce sıfırlıyordu. Zaten kayıtlı bir
+  // repo varsa bu iki bayrak için taze veri yerine HER ZAMAN mevcut kayıtlı
+  // değeri kullanıyoruz — taze değer sadece o repo hiç kaydedilmemişse geçerli.
+  const existingRepos = await getCachedReposByUsername(normalizedUser);
+  const existingById = new Map(existingRepos.map((r) => [r.github_repo_id, r]));
+  const repos_ = repos.map((repo) => {
+    const existing = existingById.get(repo.github_repo_id);
+    return {
+      ...repo,
+      is_visible: existing ? existing.is_visible !== false : true,
+      is_featured: existing ? existing.is_featured === true : false,
+    };
+  });
+
   if (supabaseAdmin) {
     try {
-      const reposToSave = repos.map((repo) => ({
+      const reposToSave = repos_.map((repo) => ({
         user_id: userProfile.id,
         github_repo_id: repo.github_repo_id,
         name: repo.name,
@@ -305,8 +323,8 @@ export async function saveCachedRepos(userProfile: UserProfile, repos: Repositor
     }
   }
 
-  memoryReposStore.set(normalizedUser, repos);
-  return repos;
+  memoryReposStore.set(normalizedUser, repos_);
+  return repos_;
 }
 
 /**
