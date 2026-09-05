@@ -51,7 +51,7 @@ function TemalarContent() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#F4F1EA' }}>
-      <Navbar currentUsername={activeUsername || undefined} />
+      <Navbar />
 
       <div style={{ maxWidth: 1180, margin: '0 auto', padding: '40px clamp(16px, 5vw, 40px) 90px' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: '#1F3AE8' }}>TEMALAR</span>

@@ -134,7 +134,7 @@ export default async function PublicPortfolioPage({ params }: PortfolioPageProps
   return (
     <div style={{ minHeight: '100vh', background: '#F4F1EA', display: 'flex', flexDirection: 'column' }}>
       <AnalyticsBeacon username={profile.username} />
-      <Navbar themeType={profile.theme} currentUsername={profile.username} />
+      <Navbar themeType={profile.theme} />
 
       <main style={{ flex: 1 }}>
         <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} />

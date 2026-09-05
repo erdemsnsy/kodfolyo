@@ -14,7 +14,6 @@ import { getTheme } from '@/lib/theme';
 
 interface NavbarProps {
   themeType?: ThemeType;
-  currentUsername?: string;
 }
 
 const LANDING_LINKS = [
@@ -24,7 +23,7 @@ const LANDING_LINKS = [
   { label: 'Sıkça Sorulanlar', href: '#sss' },
 ];
 
-export default function Navbar({ themeType, currentUsername }: NavbarProps = {}) {
+export default function Navbar({ themeType }: NavbarProps = {}) {
   const router = useRouter();
   const pathname = usePathname();
   const isLanding = pathname === '/';
@@ -105,7 +104,11 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
     }
   };
 
-  const activeTargetUser = currentUsername || storedUsername;
+  // Bilerek SADECE storedUsername (kendi tarayıcında ürettiğin/kayıtlı olduğun kimlik)
+  // kullanılıyor — sayfada o an görüntülenen profilin sahibi (viewed page owner) DEĞİL.
+  // Yoksa başkasının portfolyosuna bakarken bile "Düzenle (@onlar)" butonu çıkıyordu;
+  // backend zaten böyle bir kaydı 403 ile reddediyor ama buton yanıltıcıydı.
+  const activeTargetUser = storedUsername;
   const editDashboardUrl = activeTargetUser ? `/dashboard?username=${encodeURIComponent(activeTargetUser)}` : '/dashboard';
   const username = (session?.user as { username?: string })?.username || session?.user?.name || activeTargetUser || 'demo';
 
