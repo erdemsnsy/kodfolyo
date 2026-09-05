@@ -18,7 +18,10 @@ function TemalarContent() {
   const [appliedTheme, setAppliedTheme] = useState<ThemeType | null>(null);
 
   useEffect(() => {
+    // localStorage bilerek effect'te okunuyor (bkz. Navbar.tsx) — hydration mismatch
+    // yaşamamak için sunucu/ilk boyama her zaman boş, gerçek değer mount sonrası gelir.
     const stored = typeof window !== 'undefined' ? localStorage.getItem('kodfolyo_active_username') : null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (stored) setActiveUsername(sanitizeUsername(stored));
   }, []);
 

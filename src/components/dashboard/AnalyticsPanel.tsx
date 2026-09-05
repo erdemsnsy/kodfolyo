@@ -16,6 +16,9 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
 
   useEffect(() => {
     if (!username) return;
+    // username değişince (aynı panel açıkken başka bir kullanıcıya geçilince) eski
+    // özeti göstermeye devam etmemek için loading'e geri dönülüyor.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     fetch(`/api/analytics/${encodeURIComponent(username)}`)
       .then((res) => res.json())

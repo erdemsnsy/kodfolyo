@@ -32,7 +32,7 @@ export default function FetchingOverlay() {
     >
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ position: 'absolute', width: 190, height: 190, borderRadius: '50%', border: '2px dashed rgba(228,228,231,.15)', animation: 'kf-spin-slow 8s linear infinite' }} />
-        <Kodi size={150} interactive={false} />
+        <Kodi size={150} interactive={false} grayscale />
       </div>
 
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13.5, color: '#3F3F46', minHeight: 20 }}>{STEPS[step]}</div>

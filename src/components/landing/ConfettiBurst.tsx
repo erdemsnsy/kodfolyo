@@ -29,6 +29,9 @@ export default function ConfettiBurst({ count = 90 }: ConfettiBurstProps) {
   const [pieces, setPieces] = useState<Piece[]>([]);
 
   useEffect(() => {
+    // Math.random bilerek effect'te üretiliyor (render'da değil) — sunucu/ilk client
+    // render'ı hep boş dizi ile eşleşsin, hydration mismatch olmasın.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPieces(
       Array.from({ length: count }).map((_, i) => ({
         id: i,

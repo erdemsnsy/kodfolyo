@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Star } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
 import Kodi from '@/components/mascot/Kodi';
 import FetchingOverlay from '@/components/landing/FetchingOverlay';
@@ -34,12 +34,31 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [storedUsername, setStoredUsername] = useState<string | null>(null);
+  const [githubStars, setGithubStars] = useState<number | null>(null);
 
   useEffect(() => {
+    // localStorage'ı bilerek effect içinde okuyoruz (lazy useState initializer değil):
+    // bu değer "Düzenle (@kullanici)" gibi görünür metni değiştiriyor, sunucu her zaman
+    // null render eder — client ilk boyamada da null ile eşleşsin ki hydration mismatch
+    // olmasın, gerçek değer mount sonrası (bu effect'te) uygulanır.
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('kodfolyo_active_username');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (stored) setStoredUsername(stored);
     }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('https://api.github.com/repos/erdemsnsy/kodfolyo')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data && typeof data.stargazers_count === 'number') {
+          setGithubStars(data.stargazers_count);
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   // themeType sadece bir portfolyo görüntülenirken gelir (ziyaretçinin seçtiği
@@ -112,7 +131,7 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
               key={l.href}
               href={l.href}
               className="hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
-              style={{ fontSize: 13.5, fontWeight: 500, color: chromeMuted, textDecoration: 'none', padding: '8px 14px', borderRadius: 8 }}
+              style={{ fontSize: 15, fontWeight: 600, color: chromeMuted, textDecoration: 'none', padding: '10px 16px', borderRadius: 8 }}
             >
               {l.label}
             </a>
@@ -156,25 +175,35 @@ export default function Navbar({ themeType, currentUsername }: NavbarProps = {})
           </>
         ) : (
           <>
-            <Link
-              href="/ornek-ogrenci"
-              className="nav-hide-narrow hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
-              style={{ fontSize: 14, color: chromeMuted, textDecoration: 'none', padding: '8px 12px', borderRadius: 8 }}
-            >
-              Örnek Portfolyo
-            </Link>
-
             {activeTargetUser && activeTargetUser !== 'ornek-ogrenci' && activeTargetUser !== 'demo' ? (
-              <Link
-                href={editDashboardUrl}
-                className="hover:bg-zinc-800 transition-colors"
-                style={{
-                  fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F9FAFB', background: '#18181B',
-                  border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
-                }}
-              >
-                Düzenle (@{activeTargetUser})
-              </Link>
+              <>
+                {githubStars !== null && (
+                  <a
+                    href="https://github.com/erdemsnsy/kodfolyo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="nav-hide-narrow hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, fontWeight: 600, color: chromeMuted,
+                      textDecoration: 'none', padding: '7px 12px', borderRadius: 8,
+                      border: '1px solid rgba(228,228,231,.7)',
+                    }}
+                  >
+                    <Star className="h-3.5 w-3.5" />
+                    <span>{githubStars}</span>
+                  </a>
+                )}
+                <Link
+                  href={editDashboardUrl}
+                  className="hover:bg-zinc-800 transition-colors"
+                  style={{
+                    fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 600, color: '#F9FAFB', background: '#18181B',
+                    border: 0, borderRadius: 9, padding: '9px 16px', textDecoration: 'none',
+                  }}
+                >
+                  Düzenle (@{activeTargetUser})
+                </Link>
+              </>
             ) : (
               <button
                 onClick={() => setShowPrompt(true)}

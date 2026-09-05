@@ -8,7 +8,6 @@ import ProfileEditor from '@/components/dashboard/ProfileEditor';
 import RepoSelector from '@/components/dashboard/RepoSelector';
 import CustomLinksManager from '@/components/dashboard/CustomLinksManager';
 import ThemeSelector from '@/components/dashboard/ThemeSelector';
-import SyncButton from '@/components/dashboard/SyncButton';
 import ExperienceManager from '@/components/dashboard/ExperienceManager';
 import ManualProjectsManager from '@/components/dashboard/ManualProjectsManager';
 import CertificatesManager from '@/components/dashboard/CertificatesManager';
@@ -23,7 +22,7 @@ import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, Manual
 import { sanitizeUsername } from '@/lib/github/fetcher';
 import { themes } from '@/lib/theme';
 import {
-  Save, Star, ExternalLink, Check, Minus, FolderGit2, Award,
+  Star, ExternalLink, Check, Minus, FolderGit2, Award,
 } from 'lucide-react';
 
 type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'projeler' | 'sertifikalar' | 'bolumler' | 'tema' | 'baglantilar' | 'rozet' | 'analytics' | 'alanadi';

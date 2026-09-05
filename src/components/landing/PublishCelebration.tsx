@@ -26,7 +26,7 @@ export default function PublishCelebration({ username, onGoToPortfolio, onEdit }
 
       <div style={{ position: 'relative', width: '100%', maxWidth: 480, textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
-          <Kodi size={140} />
+          <Kodi size={140} grayscale />
         </div>
 
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-mono)', fontSize: 12, padding: '6px 12px', borderRadius: 999, background: 'rgba(0,166,118,.12)', border: '1px solid rgba(0,166,118,.3)', color: '#00845E', marginBottom: 14 }}>
