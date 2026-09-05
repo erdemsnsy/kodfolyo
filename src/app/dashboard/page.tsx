@@ -159,7 +159,11 @@ function DashboardContent() {
     const queryUser = searchParams.get('username');
     const storedUser = typeof window !== 'undefined' ? localStorage.getItem('kodfolyo_active_username') : null;
     const sessionUser = (session?.user as { username?: string })?.username || session?.user?.name;
-    const targetUser = sanitizeUsername(queryUser || storedUser || sessionUser || 'erdemsnsy');
+    // Giriş yapmış kullanıcının kimliği her zaman öncelikli olmalı; storedUser sadece
+    // oturum yokken (herkese açık gezinme) devreye girer. Aksi halde başka bir kullanıcı
+    // adını denedikten sonra dashboard'a dönmek, kendi hesabın yerine o kullanıcının
+    // verisini açıp üzerine kaydetmene yol açabiliyordu.
+    const targetUser = sanitizeUsername(queryUser || sessionUser || storedUser || 'erdemsnsy');
 
     const initData = async () => {
       setIsLoading(true);
@@ -424,9 +428,12 @@ function DashboardContent() {
   const wide = viewport.w >= 1180;
   const inline = !wide && viewport.w >= 640;
   const showPreview = activeTab !== 'ayarlar' && !NO_PREVIEW_TABS.includes(activeTab as TabId) && (wide || inline);
-  // 38/62 split: sol düzenleme kolonu ~%38, sağ canlı önizleme ~%62.
-  const paneW = Math.round(Math.min(900, Math.max(460, (viewport.w - SIDEBAR_W) * 0.62)));
+  // Form ile önizleme arasındaki sabit boşluk — kolonlar bunun dışında birbirine bitişik durur.
+  const PANEL_GAP = 28;
+  // Form sütunu okunabilir bir genişlikte tavanlanır (576px); önizleme paneli kalan TÜM genişliği
+  // devralır (flex ile doldurur) — böylece ne kolonlar arasında ne de önizlemenin sağında boşluk kalır.
   const colW = Math.min(576, viewport.w - (desktop ? SIDEBAR_W : 0) - 44);
+  const paneW = Math.min(1400, Math.max(460, viewport.w - SIDEBAR_W - 44 - colW - PANEL_GAP));
   const frameW = wide ? paneW - 90 : colW; // 90 = önizleme mockup'ın yanal iç boşluğu (28px*2 + kenarlık payı)
   // Önizleme yoksa (Analiz, Alan adı, Ayarlar) içerik kolonu 576px'e sıkışmasın —
   // sağda dolduracak panel olmadığı için tüm genişliği kullansın.
@@ -464,18 +471,34 @@ function DashboardContent() {
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Görünür repo</div>
-                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
+                <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, borderRadius: 10, background: '#FAFAFA', color: '#71717A', flexShrink: 0 }}>
+                  <FolderGit2 className="w-4 h-4" />
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Görünür repo</div>
+                  <div style={{ marginTop: 2, fontSize: 22, fontWeight: 700, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
+                </div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Toplam yıldız</div>
-                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
+              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
+                <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, borderRadius: 10, background: '#FAFAFA', color: '#71717A', flexShrink: 0 }}>
+                  <Star className="w-4 h-4" />
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Toplam yıldız</div>
+                  <div style={{ marginTop: 2, fontSize: 22, fontWeight: 700, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
+                </div>
               </div>
-              <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 18px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Aktif tema</div>
-                <div style={{ marginTop: 8, fontSize: 28, fontWeight: 700, letterSpacing: '-.03em', textTransform: 'capitalize' }}>{themes[displayProfile.theme]?.name || displayProfile.theme}</div>
+              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px' }}>
+                <span style={{ display: 'flex', flexShrink: 0 }}>
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', background: themes[displayProfile.theme]?.a }} />
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', marginLeft: -6, background: themes[displayProfile.theme]?.b }} />
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Aktif tema</div>
+                  <div style={{ marginTop: 2, fontSize: 22, fontWeight: 700, letterSpacing: '-.03em', textTransform: 'capitalize' }}>{themes[displayProfile.theme]?.name || displayProfile.theme}</div>
+                </div>
               </div>
             </div>
 
@@ -724,8 +747,28 @@ function DashboardContent() {
           </div>
         </header>
 
-        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: wide ? 'row' : 'column', overflowY: wide ? 'hidden' : 'auto' }}>
-          <div style={{ flex: wide ? '1' : '0 0 auto', minWidth: 0, minHeight: 0, overflowY: wide ? 'auto' : 'visible', padding: '20px 22px 24px' }}>
+        <div
+          style={{
+            flex: 1, minHeight: 0, display: 'flex', flexDirection: wide ? 'row' : 'column',
+            gap: wide && showPreview ? PANEL_GAP : 0,
+            alignItems: wide ? 'flex-start' : 'stretch',
+            overflowY: wide ? 'hidden' : 'auto',
+          }}
+        >
+          <div
+            style={{
+              // Önizleme varsa form kendi sütununu (colW) tam dolduran sabit genişlikte durur — aradaki
+              // boşluğu yalnızca `gap` verir, ekstra "ölü alan" kalmaz. Önizleme yoksa tüm genişliği kullanır.
+              flex: wide && showPreview ? '0 0 auto' : (wide ? '1' : '0 0 auto'),
+              width: wide && showPreview ? colW : undefined,
+              minWidth: 0,
+              // İçerik az olduğunda paneli tam yükseklikte germek yerine kendi boyunda bırakır (dead space yok);
+              // uzun içerikte ise maxHeight + overflow ile satır yüksekliğinde iç kaydırma sağlar.
+              maxHeight: wide ? '100%' : undefined,
+              overflowY: wide ? 'auto' : 'visible',
+              padding: wide && showPreview ? '20px 0 24px 22px' : '20px 22px 24px',
+            }}
+          >
             <div style={{ maxWidth: contentMaxW }}>{renderTabContent()}</div>
           </div>
 
@@ -733,9 +776,10 @@ function DashboardContent() {
             <aside
               className="dash-preview"
               style={{
-                flex: '0 0 auto', display: 'flex', flexDirection: 'column',
+                // Sabit genişlik yerine kalan satırın tamamını doldurur (flex) — sağda boşluk kalmaz.
+                flex: wide ? '1 1 auto' : '0 0 auto', minWidth: 0, display: 'flex', flexDirection: 'column',
                 background: '#F9FAFB', backgroundImage: 'radial-gradient(#E4E4E7 1px, transparent 1px)', backgroundSize: '16px 16px',
-                width: wide ? paneW : '100%', height: wide ? '100%' : 620,
+                width: wide ? undefined : '100%', height: wide ? '100%' : 620,
                 borderLeft: wide ? '1px solid #E4E4E7' : 0,
                 borderTop: wide ? 0 : '1px solid #E4E4E7',
               }}

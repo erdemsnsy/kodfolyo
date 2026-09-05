@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Suspense, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
@@ -12,6 +13,7 @@ import { ArrowLeft } from 'lucide-react';
 function SettingsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: session } = useSession();
   const [activeUsername, setActiveUsername] = useState('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +21,10 @@ function SettingsContent() {
   useEffect(() => {
     const queryUser = searchParams.get('username');
     const storedUser = typeof window !== 'undefined' ? localStorage.getItem('kodfolyo_active_username') : null;
-    const targetUser = sanitizeUsername(queryUser || storedUser || 'erdemsnsy');
+    const sessionUser = (session?.user as { username?: string })?.username || session?.user?.name;
+    // Bkz. dashboard/page.tsx: oturum kimliği localStorage'daki son gezilen
+    // kullanıcıdan önce gelmeli, yoksa başka birinin ayarlarını düzenleyebilirsin.
+    const targetUser = sanitizeUsername(queryUser || sessionUser || storedUser || 'erdemsnsy');
 
     fetch('/api/github/sync', {
       method: 'POST',
@@ -33,7 +38,7 @@ function SettingsContent() {
       })
       .catch((err) => console.error(err))
       .finally(() => setIsLoading(false));
-  }, [searchParams]);
+  }, [searchParams, session]);
 
   const handleTogglePublish = async (nextPublished: boolean) => {
     try {

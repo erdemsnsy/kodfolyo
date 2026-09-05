@@ -8,14 +8,26 @@ export async function POST(request: Request) {
     const session = await auth();
     const body = await request.json();
 
-    const username = body.username || session?.user?.username;
+    const sessionUsername = session?.user?.username;
 
-    if (!username) {
+    if (!sessionUsername) {
       return NextResponse.json(
         { success: false, error: 'Kullanıcı oturumu açılmamış.' },
         { status: 401 }
       );
     }
+
+    // body.username istemciden geliyor; oturumdaki kullanıcıyla eşleşmiyorsa
+    // isteği reddet — aksi halde herhangi biri başka bir kullanıcının
+    // profilini (hesap silme dahil) düzenleyebilirdi.
+    if (body.username && body.username !== sessionUsername) {
+      return NextResponse.json(
+        { success: false, error: 'Bu profili düzenleme yetkiniz yok.' },
+        { status: 403 }
+      );
+    }
+
+    const username = sessionUsername;
 
     const currentProfile = await getProfileByUsername(username);
     if (!currentProfile) {
