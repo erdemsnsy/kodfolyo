@@ -42,3 +42,7 @@ yarn-error.log*
 next-env.d.ts
 testsprite_tests/tmp/
 testsprite_tests/tmp/config.json
+
+# tasarım ham dosyaları — çalışma zamanında kullanılmıyor, repoyu şişirmesin
+/ikon/
+/*.zip
