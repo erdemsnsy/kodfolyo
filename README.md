@@ -42,59 +42,11 @@
 
 ---
 
-## 🚀 Hızlı Başlangıç
+## 🌐 Canlı Demo
 
-### 1. Depoyu klonlayın ve bağımlılıkları yükleyin
+Bu proje kişisel kullanım/portföy amaçlı yayındadır, kaynak kodu kurulum talimatıyla birlikte paylaşılmıyor:
 
-```bash
-git clone https://github.com/erdemsnsy/kodfolyo.git
-cd kodfolyo
-npm install
-```
-
-### 2. Ortam değişkenlerini tanımlayın
-
-`.env.example` dosyasını kopyalayarak `.env.local` oluşturun:
-
-```bash
-cp .env.example .env.local
-```
-
-Gerekli/opsiyonel anahtarlar:
-
-```env
-# Zorunlu
-NEXTAUTH_SECRET=kodfolyo_super_secret_key
-NEXTAUTH_URL=http://localhost:3005
-
-# Opsiyonel: GitHub OAuth girişi için (yoksa kullanıcı adıyla misafir modu çalışır)
-# Callback URL (GitHub OAuth App ayarlarında): http://localhost:3005/api/auth/callback/github
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-
-# Opsiyonel: Supabase kalıcılığı için (yoksa bellek içi önbelleğe düşer)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-```
-
-### 3. Geliştirme sunucusunu başlatın
-
-```bash
-npm run dev
-```
-
-Tarayıcınızda [http://localhost:3005](http://localhost:3005) adresini açın.
-
----
-
-## 🗄️ Supabase Veritabanı Kurulumu (Opsiyonel)
-
-Verileri kalıcı olarak PostgreSQL'de saklamak isterseniz, [`supabase/schema.sql`](./supabase/schema.sql) dosyasının tamamını Supabase projenizin **SQL Editor**'ünde çalıştırın. Dosya, aşağıdaki tabloları ve gerekli index/RLS ayarlarını oluşturur:
-
-- `profiles` — kullanıcı profili, tema, özel bağlantılar, deneyim, sertifikalar, bölüm görünürlüğü, özel alan adı
-- `cached_repos` — GitHub repo önbelleği (görünürlük ve vitrin seçimiyle birlikte)
-- `page_views`, `link_clicks`, `pdf_downloads` — analiz paneli için gerçek olay kayıtları
+**[kodfolyo.vercel.app](https://kodfolyo.vercel.app)**
 
 ---
 
