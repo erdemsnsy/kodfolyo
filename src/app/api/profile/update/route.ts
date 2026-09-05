@@ -9,25 +9,36 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const sessionUsername = session?.user?.username;
+    // Kodfolyo girişsiz (misafir) modda da çalışacak şekilde tasarlandı: kullanıcı
+    // GitHub OAuth ile giriş yapmadan da kendi kullanıcı adını girip panelini
+    // düzenleyebiliyor. Bu yüzden gerçek oturum şart koşulmuyor — ama gerçek bir
+    // oturum VARSA, o oturum sadece kendi kullanıcı adını düzenleyebilir (başka
+    // birinin hesabına yazamaz).
+    const username: string | undefined = body.username || sessionUsername;
 
-    if (!sessionUsername) {
+    if (!username) {
       return NextResponse.json(
-        { success: false, error: 'Kullanıcı oturumu açılmamış.' },
-        { status: 401 }
+        { success: false, error: 'Kullanıcı adı eksik.' },
+        { status: 400 }
       );
     }
 
-    // body.username istemciden geliyor; oturumdaki kullanıcıyla eşleşmiyorsa
-    // isteği reddet — aksi halde herhangi biri başka bir kullanıcının
-    // profilini (hesap silme dahil) düzenleyebilirdi.
-    if (body.username && body.username !== sessionUsername) {
+    if (sessionUsername && username !== sessionUsername) {
       return NextResponse.json(
         { success: false, error: 'Bu profili düzenleme yetkiniz yok.' },
         { status: 403 }
       );
     }
 
-    const username = sessionUsername;
+    // Hesabı kalıcı olarak silmek en yıkıcı işlem — misafir modda (gerçek oturum
+    // olmadan) izin verilmiyor, aksi halde herhangi biri sadece kullanıcı adını
+    // bilerek başkasının hesabını silebilirdi.
+    if (body.deleteAccount === true && username !== sessionUsername) {
+      return NextResponse.json(
+        { success: false, error: 'Hesabını silmek için GitHub ile giriş yapmalısın.' },
+        { status: 401 }
+      );
+    }
 
     const currentProfile = await getProfileByUsername(username);
     if (!currentProfile) {

@@ -8,10 +8,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
   const { username } = await params;
   const decodedUsername = decodeURIComponent(username);
 
-  // Analiz verisi (trafik, referrer, link tıklamaları) sadece profil sahibine
-  // özel — girişsiz veya başka birinin oturumuyla istek atılırsa reddedilir.
+  // Kodfolyo girişsiz (misafir) modda da çalışıyor, bu yüzden gerçek oturum şart
+  // koşulmuyor — ama gerçek bir oturum VARSA, o oturum sadece kendi analiz
+  // verisini görebilir (başkasınınkini değil).
   const session = await auth();
-  if (session?.user?.username !== decodedUsername) {
+  if (session?.user?.username && session.user.username !== decodedUsername) {
     return NextResponse.json({ success: false, error: 'Bu analiz verisini görüntüleme yetkiniz yok.' }, { status: 403 });
   }
 
