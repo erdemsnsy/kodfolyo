@@ -2,13 +2,20 @@
 
 > **GitHub verilerinizi (biyografi, repolar, diller, yıldızlar) anında profesyonel, sade ve kurumsal bir tek sayfa portfolyoya dönüştürün.**
 
-![Kodfolyo Banner](https://raw.githubusercontent.com/swind/kodfolyo/main/public/favicon.ico)
+<p align="left">
+  <a href="https://kodfolyo.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🌐_Canlı_Demo-kodfolyo.vercel.app-blue?style=for-the-badge" alt="Canlı Demo" />
+  </a>
+  <img src="https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS_v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+</p>
 
 ---
 
 ## ✨ Öne Çıkan Özellikler
 
-- ⚡ **Otomatik GitHub API Senkronizasyonu**: Kullanıcı adınızı girin; biyografiniz, konumuz, şirketiniz, en çok yıldız alan 6 reponuz ve dil kullanım oranlarınız canlı çekilsin.
+- ⚡ **Otomatik GitHub API Senkronizasyonu**: Kullanıcı adınızı girin; biyografiniz, konumunuz, şirketiniz, en çok yıldız alan 6 reponuz ve dil kullanım oranlarınız canlı çekilsin.
 - 🎨 **Kurumsal & Modern Temalar**: Executive Dark, Cyber Indigo, Terminal Amber, Matrix Mint, Dracula Slate, Paper Cream, Executive Light gibi 9 farklı renk ve stil seçeneği.
 - 🖨️ **Tek Tıkla PDF İndirme & Print Desteği**: Özelleştirilmiş baskı CSS kuralları ile portfolyonuzu doğrudan PDF formatında dışa aktarın.
 - 📱 **Canlı QR Kod & Sosyal Paylaşım Modalı**: Dahili saf TypeScript QR kod üreticisi ve WhatsApp, Twitter/X, LinkedIn hızlı paylaşım butonları.
@@ -30,53 +37,37 @@
 
 ## 🚀 Hızlı Başlangıç
 
-### 1. Depoyu klonlayın ve bağımlılıkları yükleyin:
-
 ```bash
-git clone https://github.com/kullaniciadi/kodfolyo.git
+git clone [https://github.com/erdemsnsy/kodfolyo.git](https://github.com/erdemsnsy/kodfolyo.git)
 cd kodfolyo
 npm install
-```
-
-### 2. Ortam Değişkenlerini Tanımlayın (`.env.local`):
-
-`.env.example` dosyasını kopyalayarak `.env.local` oluşturun:
-
-```bash
 cp .env.example .env.local
-```
-
-Gerekli anahtarlar:
-```env
-NEXTAUTH_SECRET=kodfolyo_super_secret_key
-NEXTAUTH_URL=http://localhost:3005
-
-# Opsiyonel: Supabase veritabanı kullanmak isterseniz
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# Opsiyonel: GitHub OAuth Girişi için
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-```
-
-### 3. Geliştirme Sunucusunu Başlatın:
-
-```bash
 npm run dev
 ```
 
 Tarayıcınızda [http://localhost:3005](http://localhost:3005) adresini açın.
 
+### Ortam Değişkenleri (`.env.local`):
+
+```env
+NEXTAUTH_SECRET=kodfolyo_super_secret_key
+NEXTAUTH_URL=http://localhost:3005
+
+# Supabase (Opsiyonel)
+NEXT_PUBLIC_SUPABASE_URL=[https://your-project.supabase.co](https://your-project.supabase.co)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# GitHub OAuth (Opsiyonel)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+
 ---
 
 ## 🗄️ Supabase Veritabanı Kurulumu (Opsiyonel)
 
-Verileri kalıcı olarak PostgreSQL'de saklamak isterseniz, `supabase/schema.sql` dosyasındaki SQL sorgusunu Supabase SQL Editor alanında çalıştırabilirsiniz:
-
 ```sql
--- Profiles ve Cached Repositories tabloları
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     github_id TEXT UNIQUE NOT NULL,
@@ -98,6 +89,6 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 ---
 
-## 📄 Lisans
+📄 Telif Hakkı
 
-Bu proje [MIT Lisansı](LICENSE) ile lisanslanmıştır.
+Tüm hakları saklıdır. Bu projenin kodları ve içeriği izinsiz kopyalanamaz veya ticari amaçla kullanılamaz.
