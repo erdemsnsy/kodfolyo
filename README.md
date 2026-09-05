@@ -1,4 +1,4 @@
-# 🚀 Kodfolyo - Developer Executive & Minimalist Portfolyo Üreteci
+# 🚀 Kodfolyo — Developer Executive & Minimalist Portfolyo Üreteci
 
 > **GitHub verilerinizi (biyografi, repolar, diller, yıldızlar) anında profesyonel, sade ve kurumsal bir tek sayfa portfolyoya dönüştürün.**
 
@@ -16,19 +16,26 @@
 ## ✨ Öne Çıkan Özellikler
 
 - ⚡ **Otomatik GitHub API Senkronizasyonu**: Kullanıcı adınızı girin; biyografiniz, konumunuz, şirketiniz, en çok yıldız alan 6 reponuz ve dil kullanım oranlarınız canlı çekilsin.
-- 🎨 **Kurumsal & Modern Temalar**: Executive Dark, Cyber Indigo, Terminal Amber, Matrix Mint, Dracula Slate, Paper Cream, Executive Light gibi 9 farklı renk ve stil seçeneği.
-- 🖨️ **Tek Tıkla PDF İndirme & Print Desteği**: Özelleştirilmiş baskı CSS kuralları ile portfolyonuzu doğrudan PDF formatında dışa aktarın.
-- 📱 **Canlı QR Kod & Sosyal Paylaşım Modalı**: Dahili saf TypeScript QR kod üreticisi ve WhatsApp, Twitter/X, LinkedIn hızlı paylaşım butonları.
+- 🎨 **10 Kurumsal Tema + Canlı Galeri**: Herkese açık `/temalar` sayfasında, siteye hiç girmeden tüm temaları canlı önizlemeyle gezin ve seçin.
+- 🧑‍💼 **Tam Kapsamlı Panel (Dashboard)**: Profil/biyografi (AI destekli öneri dahil), öne çıkan repo seçimi, deneyim geçmişi, elle proje/sertifika ekleme, bölüm görünürlüğü, rozet üretici, analiz paneli ve özel alan adı — hepsi tek panelde, canlı önizlemeyle.
 - 🤖 **AI Destekli Biyografi Üreteci**: Profesyonel, yaratıcı veya minimalist tarzlarda yapay zeka biyografi önerileri.
-- 🔗 **Özel Bağlantılar & CV Ekleme**: LinkedIn, Twitter veya Özgeçmiş (CV) PDF bağlantılarınızı özelleştirilebilir ikonlar ile portfolyonuza ekleyin.
-- 💾 **Supabase Persistence & Akıllı Önbellek**: GitHub REST API rate limit sorunlarına karşı Supabase PostgreSQL veritabanı senkronizasyonu ve bellek içi önbellek fallback sistemi.
+- 🖨️ **Tek Tıkla PDF İndirme & Print Desteği**: Özelleştirilmiş baskı CSS kurallarıyla portfolyonuzu doğrudan PDF olarak dışa aktarın.
+- 📱 **Canlı QR Kod & Sosyal Paylaşım Modalı**: Dahili saf TypeScript QR kod üreticisi ve WhatsApp, X (Twitter), LinkedIn hızlı paylaşım butonları.
+- 🌐 **Özel Alan Adı Bağlama**: Kendi domain'inizi TXT kaydı ile doğrulayıp portfolyonuzu o adreste yayınlayın.
+- 🏷️ **Gömülebilir Rozet**: README'lere eklenebilen, gerçek profil verisinden üretilen SVG rozet.
+- 📊 **Gerçek Analiz Paneli**: Sayfa görüntülenme, referrer, link tıklama ve PDF indirme istatistikleri (sahte veri yok, Supabase'e gerçek olay kaydı).
+- 🔎 **Keşfet Sayfası**: `/kesfet` üzerinden yayınlanan diğer portfolyoları keşfedin.
+- 🔗 **Özel Bağlantılar, Dış Katkılar & Blog Akışı**: LinkedIn/X/CV bağlantıları, GitHub dışı katkı listesi ve RSS blog akışı entegrasyonu.
+- 🔍 **SEO & PWA Desteği**: Sayfa başına dinamik meta etiketleri, kurulabilir PWA (manifest + ikonlar).
+- 🔐 **GitHub OAuth Girişi**: NextAuth.js ile giriş yapıp kendi panelinizi düzenleyin.
+- 💾 **Supabase Persistence & Akıllı Önbellek**: GitHub REST API rate limit sorunlarına karşı Supabase PostgreSQL senkronizasyonu ve bellek içi önbellek fallback sistemi.
 
 ---
 
 ## 🛠️ Teknoloji Yığını (Tech Stack)
 
 - **Framework**: [Next.js 16 (App Router & Turbopack)](https://nextjs.org/)
-- **UI & Styling**: [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/)
+- **UI & Styling**: [React 19](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/), [Framer Motion](https://www.framer.com/motion/)
 - **Veritabanı**: [Supabase PostgreSQL](https://supabase.com/) & `@supabase/supabase-js`
 - **Kimlik Doğrulama**: [NextAuth.js v5 (Beta)](https://next-auth.js.org/) & GitHub OAuth Provider
 - **Dil**: [TypeScript](https://www.typescriptlang.org/)
@@ -37,58 +44,60 @@
 
 ## 🚀 Hızlı Başlangıç
 
+### 1. Depoyu klonlayın ve bağımlılıkları yükleyin
+
 ```bash
-git clone [https://github.com/erdemsnsy/kodfolyo.git](https://github.com/erdemsnsy/kodfolyo.git)
+git clone https://github.com/erdemsnsy/kodfolyo.git
 cd kodfolyo
 npm install
+```
+
+### 2. Ortam değişkenlerini tanımlayın
+
+`.env.example` dosyasını kopyalayarak `.env.local` oluşturun:
+
+```bash
 cp .env.example .env.local
+```
+
+Gerekli/opsiyonel anahtarlar:
+
+```env
+# Zorunlu
+NEXTAUTH_SECRET=kodfolyo_super_secret_key
+NEXTAUTH_URL=http://localhost:3005
+
+# Opsiyonel: GitHub OAuth girişi için (yoksa kullanıcı adıyla misafir modu çalışır)
+# Callback URL (GitHub OAuth App ayarlarında): http://localhost:3005/api/auth/callback/github
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# Opsiyonel: Supabase kalıcılığı için (yoksa bellek içi önbelleğe düşer)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+```
+
+### 3. Geliştirme sunucusunu başlatın
+
+```bash
 npm run dev
 ```
 
 Tarayıcınızda [http://localhost:3005](http://localhost:3005) adresini açın.
 
-### Ortam Değişkenleri (`.env.local`):
-
-```env
-NEXTAUTH_SECRET=kodfolyo_super_secret_key
-NEXTAUTH_URL=http://localhost:3005
-
-# Supabase (Opsiyonel)
-NEXT_PUBLIC_SUPABASE_URL=[https://your-project.supabase.co](https://your-project.supabase.co)
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# GitHub OAuth (Opsiyonel)
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-```
-
 ---
 
 ## 🗄️ Supabase Veritabanı Kurulumu (Opsiyonel)
 
-```sql
-CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    github_id TEXT UNIQUE NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    name TEXT,
-    avatar_url TEXT NOT NULL,
-    bio TEXT,
-    custom_bio TEXT,
-    company TEXT,
-    location TEXT,
-    email TEXT,
-    blog TEXT,
-    theme TEXT DEFAULT 'corporate-dark',
-    custom_links JSONB DEFAULT '[]'::jsonb,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+Verileri kalıcı olarak PostgreSQL'de saklamak isterseniz, [`supabase/schema.sql`](./supabase/schema.sql) dosyasının tamamını Supabase projenizin **SQL Editor**'ünde çalıştırın. Dosya, aşağıdaki tabloları ve gerekli index/RLS ayarlarını oluşturur:
+
+- `profiles` — kullanıcı profili, tema, özel bağlantılar, deneyim, sertifikalar, bölüm görünürlüğü, özel alan adı
+- `cached_repos` — GitHub repo önbelleği (görünürlük ve vitrin seçimiyle birlikte)
+- `page_views`, `link_clicks`, `pdf_downloads` — analiz paneli için gerçek olay kayıtları
 
 ---
 
-📄 Telif Hakkı
+## 📄 Telif Hakkı
 
 Tüm hakları saklıdır. Bu projenin kodları ve içeriği izinsiz kopyalanamaz veya ticari amaçla kullanılamaz.
