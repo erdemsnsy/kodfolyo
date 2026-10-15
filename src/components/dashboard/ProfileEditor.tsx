@@ -60,16 +60,6 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
     { label: 'RSS', value: rssUrl, set: (v) => { setRssUrl(v); notifyChange({ rss_url: v }); }, placeholder: 'dev.to/feed/kullanici', icon: Rss },
   ];
 
-  const completion = [
-    { label: 'İsim', ok: !!name.trim() },
-    { label: 'Konum', ok: !!location.trim() },
-    { label: 'Şirket', ok: !!company.trim() },
-    { label: 'Web sitesi', ok: !!blog.trim() },
-    { label: 'RSS', ok: !!rssUrl.trim() },
-    { label: 'Biyografi', ok: !!customBio.trim() },
-  ];
-  const completeCount = completion.filter((c) => c.ok).length;
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
     <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)' }}>
@@ -129,30 +119,6 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
         </div>
       </div>
     </div>
-
-      <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '16px 18px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Profil tamamlanma</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#71717A' }}>{completeCount}/{completion.length}</span>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {completion.map((c) => (
-            <span
-              key={c.label}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 11px', borderRadius: 999,
-                fontSize: 12, fontWeight: 500,
-                background: c.ok ? 'rgba(0,166,118,.1)' : '#FAFAFA',
-                color: c.ok ? '#00845E' : '#A1A1AA',
-                border: `1px solid ${c.ok ? 'rgba(0,166,118,.25)' : '#E4E4E7'}`,
-              }}
-            >
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.ok ? '#00845E' : '#D4D4D8' }} />
-              {c.label}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '16px 18px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>

@@ -96,13 +96,13 @@ export default function CustomDomainManager({ profile, onSaveDomain, onVerify }:
           <p style={{ margin: '0 0 16px', fontSize: 12, color: '#71717A', lineHeight: 1.55 }}>
             <code style={{ fontFamily: 'var(--font-mono)', background: '#FAFAFA', padding: '1px 5px', borderRadius: 4 }}>kodfolyo.dev/{profile.username}</code> yerine kendi alan adında yayınla, üç adımda:
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <div className="dom-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
             {[
               { n: '1', t: 'Alan adını gir', d: 'Yukarıya sahip olduğun domaini yaz ve kaydet.' },
               { n: '2', t: 'DNS kaydını ekle', d: 'Sağlayıcının panelinde TXT kaydını oluştur.' },
               { n: '3', t: 'Doğrula', d: 'Doğrulanınca yönlendirme kaydını (CNAME/A) ekle.' },
             ].map((s) => (
-              <div key={s.n} style={{ padding: 14, borderRadius: 12, background: '#FAFAFA', border: '1px solid #E4E4E7' }}>
+              <div key={s.n} className="dom-step" style={{ padding: 14, borderRadius: 12, background: '#FAFAFA', border: '1px solid #E4E4E7' }}>
                 <span style={{ display: 'inline-grid', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', background: '#18181B', color: '#FFFFFF', fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{s.n}</span>
                 <div style={{ fontSize: 12.5, fontWeight: 600 }}>{s.t}</div>
                 <div style={{ fontSize: 11.5, color: '#71717A', marginTop: 3, lineHeight: 1.45 }}>{s.d}</div>

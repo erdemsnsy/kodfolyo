@@ -30,16 +30,6 @@ function iconFor(key?: string) {
   return ICON_CHOICES.find((c) => c.key === key)?.icon || Link2;
 }
 
-const QUICK_SUGGESTIONS: { label: string; iconName: string; urlHint: string }[] = [
-  { label: 'LinkedIn', iconName: 'linkedin', urlHint: 'linkedin.com/in/' },
-  { label: 'CV', iconName: 'cv', urlHint: '' },
-  { label: 'Web Sitesi', iconName: 'globe', urlHint: '' },
-  { label: 'E-posta', iconName: 'email', urlHint: 'mailto:' },
-  { label: 'Telefon', iconName: 'phone', urlHint: 'tel:' },
-  { label: 'Discord', iconName: 'discord', urlHint: '' },
-  { label: 'Stack Overflow', iconName: 'stackoverflow', urlHint: 'stackoverflow.com/users/' },
-];
-
 export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomLinksManagerProps) {
   const [links, setLinks] = useState<CustomLink[]>(customLinks || []);
   const [prevCustomLinks, setPrevCustomLinks] = useState<CustomLink[]>(customLinks);
@@ -108,20 +98,6 @@ export default function CustomLinksManager({ customLinks, onSaveLinks }: CustomL
       )}
 
       <div style={{ background: '#FAFAFA', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '14px 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap', marginBottom: 12 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9.5, letterSpacing: '.06em', textTransform: 'uppercase', color: '#A1A1AA', marginRight: 2 }}>Hızlı ekle</span>
-          {QUICK_SUGGESTIONS.map((s) => (
-            <button
-              key={s.label}
-              type="button"
-              onClick={() => { setNewLabel(s.label); setIconName(s.iconName); setNewUrl(s.urlHint); }}
-              className="hover:bg-zinc-100 transition-colors"
-              style={{ fontSize: 11.5, fontWeight: 500, color: '#52525B', background: '#FFFFFF', border: '1px solid #E4E4E7', borderRadius: 999, padding: '4px 11px', cursor: 'pointer' }}
-            >
-              + {s.label}
-            </button>
-          ))}
-        </div>
         <div style={{ display: 'flex', gap: 9, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: '0 0 150px' }}>
             <Tag className="w-3.5 h-3.5" style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', color: '#A1A1AA', pointerEvents: 'none' }} />

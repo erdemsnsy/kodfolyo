@@ -80,6 +80,51 @@
   .landing-cta-card a { padding: 13px 22px !important; font-size: 15px !important; }
 }
 
+/* ===== Telefon (<=640px) sıkılaştırmaları ===== */
+@media (max-width: 640px) {
+  /* Portfolyo hero */
+  .ph-section { padding-top: 22px !important; padding-bottom: 18px !important; }
+  .ph-avatar { width: 64px !important; height: 64px !important; border-radius: 18px !important; }
+  .ph-info { min-width: 0 !important; flex-basis: 100% !important; }
+  .ph-name { font-size: 26px !important; }
+  .ph-bio { font-size: 14px !important; margin: 8px 0 10px !important; line-height: 1.45 !important; }
+  .ph-chips { margin-bottom: 12px !important; gap: 6px !important; }
+  .ph-chips > * { font-size: 11.5px !important; padding: 4px 10px !important; }
+  .ph-actions { gap: 6px !important; }
+  .ph-btn { font-size: 12px !important; padding: 7px 11px !important; border-radius: 9px !important; gap: 5px !important; }
+  .ph-stats { gap: 8px !important; }
+  .ph-stat { min-width: 0 !important; padding: 8px 14px !important; border-radius: 10px !important; }
+  .ph-stat > div:first-child { font-size: 17px !important; }
+  .ph-stat > div:last-child { font-size: 10px !important; margin-top: 1px !important; }
+  /* Proje kartları */
+  .fp-body { padding: 16px !important; gap: 9px !important; }
+  .fp-body h3 { font-size: 16px !important; }
+  .fp-body p { font-size: 13px !important; line-height: 1.5 !important; }
+  .pc-card { padding: 14px !important; border-radius: 12px !important; }
+  .pc-card a { font-size: 14px !important; }
+  /* Dashboard Genel */
+  .dash-stats { flex-wrap: nowrap !important; }
+  .dash-stat { flex: 1 1 0 !important; min-width: 0; flex-direction: column !important; text-align: center; gap: 5px !important; padding: 10px 4px !important; }
+  .dash-stat > span:first-child { width: 28px !important; height: 28px !important; }
+  .dash-stat > div > div:first-child { font-size: 9px !important; letter-spacing: .03em !important; }
+  .dash-stat > div > div:last-child { font-size: 16px !important; margin-top: 1px !important; }
+  .dash-setup-head { padding: 10px 14px 8px !important; }
+  .dash-setup-note { display: none !important; }
+  .dash-setup-row { padding: 7px 14px !important; gap: 9px !important; }
+  .dash-setup-row > span:nth-child(2) { font-size: 12.5px !important; }
+  .dash-setup-row button { height: 24px !important; padding: 0 9px !important; font-size: 11px !important; }
+  .dash-share { padding: 12px 14px !important; }
+  /* Analiz: küçük kare kartlar */
+  .an-grid { gap: 6px !important; }
+  .an-card { aspect-ratio: 1 / 1; padding: 6px 3px !important; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-width: 0; }
+  .an-card > span { width: 22px !important; height: 22px !important; }
+  .an-card > div:nth-of-type(1) { margin-top: 5px !important; font-size: 15px !important; }
+  .an-card > div:nth-of-type(2) { font-size: 7.5px !important; letter-spacing: 0 !important; line-height: 1.15; word-break: break-word; }
+  /* Alan adı: adımlar alt alta */
+  .dom-steps { grid-template-columns: 1fr !important; gap: 8px !important; }
+  .dom-step { padding: 11px 13px !important; }
+}
+
 /* ================= PDF / PRINT STİLLERİ ================= */
 @media print {
   header, footer, nav, .no-print {

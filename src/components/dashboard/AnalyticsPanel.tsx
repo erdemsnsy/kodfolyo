@@ -49,11 +49,11 @@ export default function AnalyticsPanel({ username }: AnalyticsPanelProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+      <div className="an-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {metrics.map((m) => {
           const Icon = m.icon;
           return (
-            <div key={m.label} style={{ ...cardStyle, padding: '13px 14px' }}>
+            <div key={m.label} className="an-card" style={{ ...cardStyle, padding: '13px 14px' }}>
               <span style={{ display: 'grid', placeItems: 'center', width: 26, height: 26, borderRadius: 7, background: '#FAFAFA', border: '1px solid rgba(228,228,231,.09)', color: '#52525B' }}>
                 <Icon className="w-3.5 h-3.5" />
               </span>

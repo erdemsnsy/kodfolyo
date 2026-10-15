@@ -29,7 +29,7 @@ export default function FeaturedProjectCard({ repo, themeType }: FeaturedProject
   return (
     <div style={{ maxWidth: 1020, margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px) 24px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', borderRadius: 18, overflow: 'hidden', border: `1px solid ${theme.border}`, background: theme.card }} className="featured-project-grid">
-        <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="fp-body" style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.a, textTransform: 'uppercase', letterSpacing: '.06em' }}>
             ★ Vitrin Projesi
           </span>

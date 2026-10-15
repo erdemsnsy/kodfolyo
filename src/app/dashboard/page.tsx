@@ -495,8 +495,8 @@ function DashboardContent() {
               )}
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
+            <div className="dash-stats" style={{ display: 'flex', flexWrap: 'wrap', background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+              <div className="dash-stat" style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
                 <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, borderRadius: 10, background: '#FAFAFA', color: '#71717A', flexShrink: 0 }}>
                   <FolderGit2 className="w-4 h-4" />
                 </span>
@@ -505,7 +505,7 @@ function DashboardContent() {
                   <div style={{ marginTop: 2, fontSize: 22, fontWeight: 700, letterSpacing: '-.03em' }}>{visibleRepos.length}</div>
                 </div>
               </div>
-              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
+              <div className="dash-stat" style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px', borderRight: '1px solid rgba(228,228,231,.5)' }}>
                 <span style={{ display: 'grid', placeItems: 'center', width: 36, height: 36, borderRadius: 10, background: '#FAFAFA', color: '#71717A', flexShrink: 0 }}>
                   <Star className="w-4 h-4" />
                 </span>
@@ -514,7 +514,7 @@ function DashboardContent() {
                   <div style={{ marginTop: 2, fontSize: 22, fontWeight: 700, letterSpacing: '-.03em' }}>{starCount.toLocaleString('tr-TR')}</div>
                 </div>
               </div>
-              <div style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px' }}>
+              <div className="dash-stat" style={{ flex: '1 1 180px', display: 'flex', alignItems: 'center', gap: 12, padding: '16px 18px' }}>
                 <span style={{ display: 'flex', flexShrink: 0 }}>
                   <span style={{ width: 18, height: 18, borderRadius: '50%', background: themes[displayProfile.theme]?.a }} />
                   <span style={{ width: 18, height: 18, borderRadius: '50%', marginLeft: -6, background: themes[displayProfile.theme]?.b }} />
@@ -526,18 +526,18 @@ function DashboardContent() {
               </div>
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
+            <div className="dash-setup" style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', overflow: 'hidden' }}>
+              <div className="dash-setup-head" style={{ padding: '16px 20px 12px', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA' }}>Kurulum</span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11.5, color: '#71717A' }}>{doneCount}/{setupItems.length} tamam</span>
                 </div>
-                <p style={{ margin: '6px 0 0', fontSize: 11.5, color: '#A1A1AA' }}>
+                <p className="dash-setup-note" style={{ margin: '6px 0 0', fontSize: 11.5, color: '#A1A1AA' }}>
                   Bir maddeyi tamamlayınca yanındaki daire <span style={{ color: '#00845E', fontWeight: 600 }}>yeşile</span> döner.
                 </p>
               </div>
               {setupItems.map((c) => (
-                <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 20px', borderBottom: '1px solid rgba(228,228,231,.06)' }}>
+                <div key={c.key} className="dash-setup-row" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 20px', borderBottom: '1px solid rgba(228,228,231,.06)' }}>
                   <span style={{ display: 'grid', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', flexShrink: 0, background: c.ok ? 'rgba(0,166,118,.14)' : 'rgba(228,228,231,.5)', color: c.ok ? '#00845E' : '#A1A1AA' }}>
                     {c.ok ? <Check className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
                   </span>
@@ -553,7 +553,7 @@ function DashboardContent() {
               ))}
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
+            <div className="dash-share" style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA', marginBottom: 12 }}>Portfolyonu paylaş</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 6, borderRadius: 10, border: '1px solid #E4E4E7', background: '#FAFAFA' }}>
                 <span style={{ flex: 1, minWidth: 0, fontFamily: 'var(--font-mono)', fontSize: 13, color: '#18181B', padding: '0 8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{portfolioUrl}</span>

@@ -14,7 +14,7 @@ export default function ProjectCard({ repo, themeType }: ProjectCardProps) {
   const theme = getTheme(themeType);
 
   return (
-    <div style={{ padding: 20, borderRadius: 15, background: 'rgba(25,23,32,.035)', border: `1px solid ${theme.border}`, transition: '.18s' }}>
+    <div className="pc-card" style={{ padding: 20, borderRadius: 15, background: 'rgba(25,23,32,.035)', border: `1px solid ${theme.border}`, transition: '.18s' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 14, marginBottom: 9 }}>
         <a
           href={repo.html_url} target="_blank" rel="noopener noreferrer"
