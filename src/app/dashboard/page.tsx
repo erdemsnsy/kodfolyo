@@ -22,7 +22,7 @@ import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, Manual
 import { sanitizeUsername } from '@/lib/github/fetcher';
 import { themes } from '@/lib/theme';
 import {
-  Star, ExternalLink, Check, Minus, FolderGit2, Award,
+  Star, ExternalLink, Check, Minus, FolderGit2, Award, Menu, X,
 } from 'lucide-react';
 
 type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'projeler' | 'sertifikalar' | 'bolumler' | 'tema' | 'baglantilar' | 'rozet' | 'analytics' | 'alanadi';
@@ -74,6 +74,7 @@ function DashboardContent() {
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<TabId | 'ayarlar'>('genel');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [activeUsername, setActiveUsername] = useState<string>('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [repos, setRepos] = useState<Repository[]>([]);
@@ -713,7 +714,7 @@ function DashboardContent() {
       </nav>
 
       <section style={{ flex: 1, minWidth: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid #E4E4E7', background: '#FFFFFF' }}>
+        <header className="dash-header" style={{ position: 'relative', flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid #E4E4E7', background: '#FFFFFF' }}>
           <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <h1 className="text-zinc-900 font-semibold" style={{ margin: 0, fontSize: 17, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
@@ -743,7 +744,31 @@ function DashboardContent() {
             >
               Kaydet
             </button>
+            <button
+              type="button"
+              className="dash-burger"
+              aria-label={menuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((o) => !o)}
+              style={{ alignItems: 'center', justifyContent: 'center', width: 36, height: 34, border: '1px solid #E4E4E7', borderRadius: 8, background: '#FFFFFF', color: '#18181B', cursor: 'pointer' }}
+            >
+              {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </button>
           </div>
+          {menuOpen && (
+            <nav className="dash-menu" style={{ position: 'absolute', top: '100%', left: 0, right: 0, flexDirection: 'column', padding: 8, background: '#FFFFFF', borderBottom: '1px solid #E4E4E7', boxShadow: '0 16px 32px -16px rgba(20,18,30,.25)', maxHeight: '70vh', overflowY: 'auto' }}>
+              {TABS.concat([{ id: 'ayarlar' as TabId, label: 'Ayarlar', title: '', description: '', iconSrc: AYARLAR_ICON }]).map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => { setActiveTab(t.id); setMenuOpen(false); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '11px 12px', border: 0, borderRadius: 8, background: activeTab === t.id ? '#F4F4F5' : 'transparent', color: '#18181B', fontSize: 15, fontWeight: activeTab === t.id ? 600 : 500, textAlign: 'left', cursor: 'pointer' }}
+                >
+                  <TabIcon tab={t} size={20} /> {t.label}
+                </button>
+              ))}
+            </nav>
+          )}
         </header>
 
         <div
@@ -797,47 +822,14 @@ function DashboardContent() {
         </div>
       </section>
 
-      {/* Mobil alt tab bar */}
-      <nav className="dash-tabbar" style={{ display: 'none' }}>
-        {hasPendingChanges && (
-          <div className="dash-savebar" style={{ padding: '9px 12px', background: '#FAFAFA', borderBottom: '1px solid rgba(228,228,231,.09)' }}>
-            <button
-              onClick={handleSaveAll}
-              disabled={isSavingAll}
-              style={{ width: '100%', height: 40, border: 0, borderRadius: 9, background: '#18181B', color: '#FFFFFF', fontSize: 13.5, fontWeight: 500, cursor: 'pointer', opacity: isSavingAll ? 0.6 : 1 }}
-            >
-              Kaydet
-            </button>
-          </div>
-        )}
-        <div style={{ display: 'flex', gap: 2, overflowX: 'auto', padding: '6px 8px' }}>
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setActiveTab(t.id)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === t.id ? '#18181B' : '#A1A1AA' }}
-            >
-              <TabIcon tab={t} size={18} />
-              <span style={{ fontSize: 10, fontWeight: 500, whiteSpace: 'nowrap' }}>{t.label}</span>
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={() => setActiveTab('ayarlar')}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '6px 10px', border: 0, borderRadius: 8, background: 'transparent', cursor: 'pointer', flexShrink: 0, color: activeTab === 'ayarlar' ? '#18181B' : '#A1A1AA' }}
-          >
-            <TabIcon tab={{ iconSrc: AYARLAR_ICON }} size={18} />
-            <span style={{ fontSize: 10, fontWeight: 500 }}>Ayarlar</span>
-          </button>
-        </div>
-      </nav>
-
       <style>{`
+        .dash-burger, .dash-menu { display: none; }
         @media (max-width: 1023px) {
           .dash-sidebar { display: none !important; }
           .dash-root { flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; }
-          .dash-tabbar { display: block !important; position: sticky; bottom: 0; background: #FFFFFF; border-top: 1px solid #E4E4E7; z-index: 50; }
+          .dash-burger { display: flex !important; }
+          .dash-header { position: sticky !important; top: 0; z-index: 55; }
+          .dash-menu { display: flex !important; }
         }
       `}</style>
     </div>

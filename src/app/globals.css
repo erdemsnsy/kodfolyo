@@ -73,8 +73,7 @@
   .landing-hero { padding-top: 28px !important; }
   .mascot-mobile-only { margin: 8px 0 !important; }
   .landing-preview { padding-top: 48px !important; padding-bottom: 40px !important; }
-  .landing-preview-body { max-height: 440px; overflow: hidden; position: relative; }
-  .landing-preview-body::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 90px; background: linear-gradient(transparent, #fff); pointer-events: none; }
+  .landing-preview-body { zoom: 0.72; }
   .landing-cta-card { padding: 28px 22px !important; }
   .landing-cta-card h2 { font-size: 26px !important; }
   .landing-cta-card p { margin-top: 8px !important; font-size: 14px !important; }
