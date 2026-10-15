@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const theme: ThemeType | undefined = themeParam && VALID_THEMES.includes(themeParam) ? themeParam : undefined;
 
   const profile = await getProfileByUsername(decodedUsername);
-  if (!profile) {
+  if (!profile || profile.is_published === false) {
     return new NextResponse('Kullanıcı bulunamadı', { status: 404 });
   }
 
