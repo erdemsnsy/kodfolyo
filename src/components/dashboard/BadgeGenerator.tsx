@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ThemeType } from '@/types';
 import { themes } from '@/lib/theme';
 import { Copy, Check } from 'lucide-react';
+import { SITE_URL } from '@/lib/site';
 
 interface BadgeGeneratorProps {
   username: string;
@@ -42,7 +43,7 @@ function CodeBlock({ label, code }: { label: string; code: string }) {
 }
 
 export default function BadgeGenerator({ username, size, theme, onSizeChange, onThemeChange }: BadgeGeneratorProps) {
-  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://kodfolyo.dev';
+  const origin = typeof window !== 'undefined' ? window.location.origin : SITE_URL;
   const badgeUrl = `${origin}/api/badge/${username}?size=${size}&theme=${theme}`;
   const portfolioUrl = `${origin}/${username}`;
 

@@ -22,6 +22,7 @@ import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, ManualProject, Certificate, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
 import { themes } from '@/lib/theme';
+import { SITE_HOST } from '@/lib/site';
 import {
   Star, ExternalLink, Check, Minus, FolderGit2, Award, Menu, X,
 } from 'lucide-react';
@@ -477,7 +478,7 @@ function DashboardContent() {
         ];
         const doneCount = setupItems.filter((c) => c.ok).length;
 
-        const portfolioUrl = `kodfolyo.dev/${displayProfile.username}`;
+        const portfolioUrl = `${SITE_HOST}/${displayProfile.username}`;
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: 20, display: 'flex', alignItems: 'center', gap: 16 }}>

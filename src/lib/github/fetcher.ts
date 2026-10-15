@@ -308,7 +308,7 @@ export function getMockRepositories(username: string): Repository[] {
       full_name: `${user}/kodfolyo-app`,
       description: 'GitHub profil verilerinden otomatik modern tek sayfa portföy oluşturan web uygulaması.',
       html_url: `https://github.com/${user}/kodfolyo-app`,
-      homepage: 'https://kodfolyo.dev',
+      homepage: 'https://kodfolyo.vercel.app',
       stargazers_count: 42,
       forks_count: 8,
       language: 'TypeScript',

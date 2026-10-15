@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { UserProfile } from '@/types';
 import { Copy, Check, RefreshCw, Globe } from 'lucide-react';
+import { SITE_HOST } from '@/lib/site';
 
 interface CustomDomainManagerProps {
   profile: UserProfile;
@@ -94,7 +95,7 @@ export default function CustomDomainManager({ profile, onSaveDomain, onVerify }:
         <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
           <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>Nasıl çalışır?</div>
           <p style={{ margin: '0 0 16px', fontSize: 12, color: '#71717A', lineHeight: 1.55 }}>
-            <code style={{ fontFamily: 'var(--font-mono)', background: '#FAFAFA', padding: '1px 5px', borderRadius: 4 }}>kodfolyo.dev/{profile.username}</code> yerine kendi alan adında yayınla, üç adımda:
+            <code style={{ fontFamily: 'var(--font-mono)', background: '#FAFAFA', padding: '1px 5px', borderRadius: 4 }}>{SITE_HOST}/{profile.username}</code> yerine kendi alan adında yayınla, üç adımda:
           </p>
           <div className="dom-steps" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
             {[

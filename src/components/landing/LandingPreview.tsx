@@ -7,6 +7,7 @@ import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import FeaturedProjectCard from '@/components/portfolio/FeaturedProjectCard';
 import { UserProfile, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { ShieldCheck } from 'lucide-react';
+import { SITE_HOST } from '@/lib/site';
 
 export default function LandingPreview() {
   const mockUser = getMockGitHubUserData('erdemsnsy');
@@ -58,7 +59,7 @@ export default function LandingPreview() {
               <span style={{ width: 11, height: 11, borderRadius: '50%', background: '#28C840' }} />
             </div>
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, background: '#F9FAFB', borderRadius: 8, padding: '7px 12px', fontFamily: 'var(--font-mono)', fontSize: 12.5, color: '#71717A' }}>
-              <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#28C840' }} /> kodfolyo.dev/{demoProfile.username}
+              <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#28C840' }} /> {SITE_HOST}/{demoProfile.username}
             </div>
           </div>
 

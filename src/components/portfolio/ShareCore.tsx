@@ -5,6 +5,7 @@ import { QrCode, Copy, Check } from 'lucide-react';
 import { generateQRCodeSVG } from '@/lib/qr';
 import { ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
+import { SITE_URL } from '@/lib/site';
 
 interface ShareCoreProps {
   username: string;
@@ -19,7 +20,7 @@ export default function ShareCore({ username, themeType }: ShareCoreProps) {
 
   const portfolioUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/${username}`
-    : `https://kodfolyo.dev/${username}`;
+    : `${SITE_URL}/${username}`;
 
   const qrSvg = generateQRCodeSVG(portfolioUrl, 160, '#191720', '#ffffff');
 

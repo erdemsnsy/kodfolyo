@@ -8,6 +8,7 @@ import ProjectGrid from '@/components/portfolio/ProjectGrid';
 import ManualProjectsGrid from '@/components/portfolio/ManualProjectsGrid';
 import ExperienceTimeline from '@/components/portfolio/ExperienceTimeline';
 import CertificatesList from '@/components/portfolio/CertificatesList';
+import { SITE_HOST } from '@/lib/site';
 
 interface LivePortfolioPreviewProps {
   profile: UserProfile;
@@ -32,7 +33,7 @@ export default function LivePortfolioPreview({ profile, repos, frameWidth, frame
   const gridRepos = featuredRepo ? repos.filter((r) => r.github_repo_id !== featuredRepo.github_repo_id) : repos;
   const visibility = profile.section_visibility || DEFAULT_SECTION_VISIBILITY;
   const scale = frameWidth / DESIGN_WIDTH;
-  const previewUrl = `kodfolyo.dev/${profile.username}`;
+  const previewUrl = `${SITE_HOST}/${profile.username}`;
   const badgeUrl = `/api/badge/${profile.username}?theme=${badgeTheme || profile.theme}&size=${badgeSize || 'md'}`;
 
   return (
