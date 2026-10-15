@@ -572,7 +572,7 @@ function DashboardContent() {
               </div>
             </div>
 
-            <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
+            <div className="dash-quick" style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '18px 20px' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.07em', textTransform: 'uppercase', color: '#A1A1AA', marginBottom: 12 }}>Hızlı geçiş</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {TABS.filter((t) => t.id !== 'genel').concat([{ id: 'ayarlar' as TabId, label: 'Ayarlar', title: '', description: '', iconSrc: AYARLAR_ICON }]).map((t) => (
@@ -745,13 +745,13 @@ function DashboardContent() {
           </Link>
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <h1 className="text-zinc-900 font-semibold" style={{ margin: 0, fontSize: 17, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
-              <span className="inline-flex items-center gap-1.5 rounded-full text-xs" style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 9px', background: st.bg, color: st.fg, border: `1px solid ${st.border}` }}>
+              <h1 className="dash-title text-zinc-900 font-semibold" style={{ margin: 0, fontSize: 17, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
+              <span className="dash-status inline-flex items-center gap-1.5 rounded-full text-xs" style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 9px', background: st.bg, color: st.fg, border: `1px solid ${st.border}` }}>
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
                 {st.text}
               </span>
             </div>
-            <p className="text-zinc-500" style={{ margin: '3px 0 0', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeTabDef.description}</p>
+            <p className="dash-desc text-zinc-500" style={{ margin: '3px 0 0', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activeTabDef.description}</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: '0 0 auto' }}>
             <a
@@ -761,7 +761,7 @@ function DashboardContent() {
               className="dash-open-btn hover:bg-zinc-50 transition-colors"
               style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 12px', border: '1px solid #E4E4E7', borderRadius: 8, background: '#FFFFFF', color: '#18181B', fontSize: 12.5, fontWeight: 500, textDecoration: 'none' }}
             >
-              <ExternalLink className="w-3.5 h-3.5" /> Aç
+              <ExternalLink className="w-3.5 h-3.5" /> <span className="dash-open-text">Aç</span>
             </a>
             <button
               type="button"
@@ -856,6 +856,10 @@ function DashboardContent() {
           .dash-sidebar { display: none !important; }
           .dash-root { flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; }
           .dash-burger, .dash-home { display: flex !important; }
+          .dash-quick, .dash-status, .dash-desc, .dash-open-text { display: none !important; }
+          .dash-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px !important; }
+          .dash-header { padding: 10px 12px !important; gap: 10px !important; }
+          .dash-open-btn { padding: 0 10px !important; }
           .dash-header { position: sticky !important; top: 0; z-index: 55; }
           .dash-menu { display: flex !important; }
         }
