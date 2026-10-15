@@ -87,7 +87,7 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setErrorMsg(`"${u}" adında geçerli bir GitHub kullanıcısı bulunamadı.`);
+        setErrorMsg(res.status === 429 ? (data.error || 'GitHub istek limiti doldu. Bir süre sonra tekrar dene.') : `"${u}" adında geçerli bir GitHub kullanıcısı bulunamadı.`);
         setIsLoading(false);
         return;
       }

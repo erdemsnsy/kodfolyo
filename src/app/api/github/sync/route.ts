@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
-import { fetchGitHubUserData, fetchTopStarredRepos, sanitizeUsername } from '../../../../lib/github/fetcher';
+import { fetchGitHubUserData, fetchTopStarredRepos, sanitizeUsername, wasGitHubRateLimited } from '../../../../lib/github/fetcher';
 import { upsertProfile, saveCachedRepos, getProfileByUsername, getCachedReposByUsername } from '../../../../lib/supabase/server';
 
 export async function POST(request: Request) {
@@ -44,6 +44,18 @@ export async function POST(request: Request) {
 
     // 1. GitHub API'den profil verilerini çek (Sadece 404 ise null döner)
     const githubUserData = await fetchGitHubUserData(username, accessToken);
+    if (!githubUserData && wasGitHubRateLimited()) {
+      // GitHub oran limiti: kayıtlı profil varsa onu döndür, yoksa kullanıcıya doğru nedeni söyle.
+      const cachedProfile = await getProfileByUsername(username);
+      if (cachedProfile) {
+        const cachedRepos = await getCachedReposByUsername(username);
+        return NextResponse.json({ success: true, profile: cachedProfile, repos: cachedRepos, message: 'GitHub limiti doldu, kayıtlı veriler gösteriliyor.' });
+      }
+      return NextResponse.json(
+        { success: false, error: 'GitHub istek limiti doldu. Bir süre sonra tekrar dene.' },
+        { status: 429 }
+      );
+    }
     if (!githubUserData) {
       return NextResponse.json(
         { success: false, error: `"${username}" adında bir GitHub kullanıcısı bulunamadı.` },

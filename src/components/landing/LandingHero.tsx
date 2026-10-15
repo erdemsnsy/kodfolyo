@@ -48,7 +48,7 @@ export default function LandingHero() {
 
       if (!res.ok || !data.success) {
         await waitForMinDuration();
-        setErrorMsg(`"${cleanUser}" adında geçerli bir GitHub kullanıcısı bulunamadı.`);
+        setErrorMsg(res.status === 429 ? (data.error || 'GitHub istek limiti doldu. Bir süre sonra tekrar dene.') : `"${cleanUser}" adında geçerli bir GitHub kullanıcısı bulunamadı.`);
         setIsLoading(false);
         return;
       }

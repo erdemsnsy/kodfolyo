@@ -31,10 +31,17 @@ function getHeaders(accessToken?: string): HeadersInit {
     Accept: 'application/vnd.github.v3+json',
     'User-Agent': 'Kodfolyo-App',
   };
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
+  const token = accessToken || process.env.GITHUB_TOKEN;
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
   return headers;
+}
+
+// Son kullanıcı sorgusu GitHub oran limitine (403/429) takıldı mı? "Bulunamadı" ile karışmasın diye ayrı tutulur.
+let githubRateLimited = false;
+export function wasGitHubRateLimited(): boolean {
+  return githubRateLimited;
 }
 
 /**
@@ -60,6 +67,7 @@ export async function fetchGitHubUserData(
       next: { revalidate: 600 },
     });
 
+    githubRateLimited = res.status === 429 || (res.status === 403 && res.headers.get('x-ratelimit-remaining') === '0');
     if (!res.ok) {
       console.warn(`GitHub API HTTP ${res.status} for username: ${username}`);
       return null;
