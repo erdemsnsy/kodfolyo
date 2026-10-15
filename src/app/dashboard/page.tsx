@@ -17,6 +17,7 @@ import AnalyticsPanel from '@/components/dashboard/AnalyticsPanel';
 import CustomDomainManager from '@/components/dashboard/CustomDomainManager';
 import SettingsPanel from '@/components/dashboard/SettingsPanel';
 import LivePortfolioPreview from '@/components/dashboard/LivePortfolioPreview';
+import Link from 'next/link';
 import { KodfolyoLogo } from '@/components/icons/KodfolyoLogo';
 import { UserProfile, Repository, ThemeType, CustomLink, ExperienceEntry, ManualProject, Certificate, SectionVisibility } from '@/types';
 import { sanitizeUsername } from '@/lib/github/fetcher';
@@ -670,9 +671,10 @@ function DashboardContent() {
     <div className="dash-root" style={{ height: '100vh', display: 'flex', overflow: 'hidden', background: '#F9FAFB', color: '#18181B', fontFamily: 'var(--font-sans)' }}>
       {/* İkon rayı — mobilde gizlenir, alt tab bar devreye girer */}
       <nav className="dash-sidebar" style={{ flex: `0 0 ${SIDEBAR_W}px`, width: SIDEBAR_W, height: '100vh', background: '#FFFFFF', borderRight: '1px solid #E4E4E7', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0 12px', gap: 4 }}>
-        <div style={{ marginBottom: 16 }}>
+        <Link href="/" title="Ana sayfaya dön" aria-label="Kodfolyo ana sayfa" className="hover:opacity-70 transition-opacity" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, marginBottom: 16, textDecoration: 'none', color: '#18181B' }}>
           <KodfolyoLogo size={34} />
-        </div>
+          <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '-.01em' }}>Kodfolyo</span>
+        </Link>
         {TABS.map((t) => {
           const isActive = activeTab === t.id;
           return (
@@ -715,7 +717,10 @@ function DashboardContent() {
 
       <section style={{ flex: 1, minWidth: 0, height: '100vh', display: 'flex', flexDirection: 'column' }}>
         <header className="dash-header" style={{ position: 'relative', flex: '0 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, padding: '13px 22px', borderBottom: '1px solid #E4E4E7', background: '#FFFFFF' }}>
-          <div style={{ minWidth: 0 }}>
+          <Link href="/" aria-label="Kodfolyo ana sayfa" title="Ana sayfaya dön" className="dash-home" style={{ flex: '0 0 auto', alignItems: 'center' }}>
+            <KodfolyoLogo size={28} />
+          </Link>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <h1 className="text-zinc-900 font-semibold" style={{ margin: 0, fontSize: 17, letterSpacing: '-.02em' }}>{activeTabDef.title}</h1>
               <span className="inline-flex items-center gap-1.5 rounded-full text-xs" style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 9px', background: st.bg, color: st.fg, border: `1px solid ${st.border}` }}>
@@ -823,11 +828,11 @@ function DashboardContent() {
       </section>
 
       <style>{`
-        .dash-burger, .dash-menu { display: none; }
+        .dash-burger, .dash-menu, .dash-home { display: none; }
         @media (max-width: 1023px) {
           .dash-sidebar { display: none !important; }
           .dash-root { flex-direction: column !important; height: auto !important; min-height: 100vh; overflow: visible !important; }
-          .dash-burger { display: flex !important; }
+          .dash-burger, .dash-home { display: flex !important; }
           .dash-header { position: sticky !important; top: 0; z-index: 55; }
           .dash-menu { display: flex !important; }
         }
