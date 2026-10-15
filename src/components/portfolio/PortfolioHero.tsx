@@ -60,7 +60,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
             {interactiveMascotAvatar ? (
               <KodiAvatar />
             ) : (
-              <Image src={profile.avatar_url} alt={profile.name || profile.username} fill className="object-cover" priority />
+              <Image src={profile.avatar_url} alt={profile.name || profile.username} fill sizes="120px" className="object-cover" priority />
             )}
           </div>
 

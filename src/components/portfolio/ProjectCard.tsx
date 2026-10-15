@@ -24,7 +24,7 @@ export default function ProjectCard({ repo, themeType }: ProjectCardProps) {
         </a>
       </div>
       <div style={{ fontSize: 14, lineHeight: 1.5, color: theme.muted, marginBottom: 18, minHeight: 42 }}>
-        {repo.description || 'Açıklama belirtilmemiş.'}
+        {repo.description}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontFamily: 'var(--font-mono)', fontSize: 12.5, color: theme.mutedLight, flexWrap: 'wrap' }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>

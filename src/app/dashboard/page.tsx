@@ -457,7 +457,7 @@ function DashboardContent() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 18, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
               <div style={{ position: 'relative', width: 58, height: 58, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#F4F4F5' }}>
-                <Image src={displayProfile.avatar_url} alt={displayProfile.username} fill className="object-cover" />
+                <Image src={displayProfile.avatar_url} alt={displayProfile.username} fill sizes="96px" className="object-cover" />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-.015em' }}>{displayProfile.name || displayProfile.username}</div>

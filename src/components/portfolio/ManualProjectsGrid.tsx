@@ -45,9 +45,11 @@ export default function ManualProjectsGrid({ projects, themeType }: ManualProjec
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 500, color: theme.ink }}>{project.title}</span>
                     {project.url && <ExternalLink className="w-3.5 h-3.5" style={{ color: theme.mutedLight, flexShrink: 0 }} />}
                   </div>
+                  {project.description && (
                   <div style={{ fontSize: 14, lineHeight: 1.5, color: theme.muted }}>
-                    {project.description || 'Açıklama belirtilmemiş.'}
+                    {project.description}
                   </div>
+                  )}
                 </div>
               </Wrapper>
             );

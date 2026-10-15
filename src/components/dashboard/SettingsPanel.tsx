@@ -43,6 +43,7 @@ export default function SettingsPanel({ profile, onTogglePublish, onDeleteAccoun
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ background: '#FFFFFF', border: '1px solid rgba(228,228,231,.8)', borderRadius: 16, boxShadow: '0 1px 2px 0 rgba(0,0,0,0.04)', padding: '15px 16px', display: 'flex', alignItems: 'center', gap: 13, flexWrap: 'wrap' }}>
         <div style={{ width: 42, height: 42, borderRadius: '50%', background: '#F4F4F5', display: 'grid', placeItems: 'center', fontFamily: 'var(--font-mono)', fontSize: 14, color: '#52525B', overflow: 'hidden' }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           {profile.avatar_url ? <img src={profile.avatar_url} alt={profile.username} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : initials}
         </div>
         <div style={{ flex: 1, minWidth: 140 }}>

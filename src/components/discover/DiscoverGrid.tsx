@@ -86,7 +86,7 @@ export default function DiscoverGrid({ profiles }: DiscoverGridProps) {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
                 <div style={{ position: 'relative', width: 46, height: 46, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: '#EBE7DD' }}>
-                  <Image src={p.avatarUrl} alt={p.username} fill className="object-cover" />
+                  <Image src={p.avatarUrl} alt={p.username} fill sizes="46px" className="object-cover" />
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontSize: 14.5, fontWeight: 700, color: '#191720', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name || p.username}</div>

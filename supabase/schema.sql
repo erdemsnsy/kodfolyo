@@ -114,14 +114,17 @@ CREATE INDEX IF NOT EXISTS idx_pdf_downloads_profile_id ON public.pdf_downloads(
 -- RLS (Row Level Security) Ayarları
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cached_repos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.link_clicks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pdf_downloads ENABLE ROW LEVEL SECURITY;
 
 -- Herkes okuyabilsin (Public Read Access)
 CREATE POLICY "Public profiles read policy" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "Public cached repos read policy" ON public.cached_repos FOR SELECT USING (true);
 
 -- Service Role veya Yetkili Kullanıcı Yazabilsin
-CREATE POLICY "Service role full access on profiles" ON public.profiles FOR ALL USING (true);
-CREATE POLICY "Service role full access on cached_repos" ON public.cached_repos FOR ALL USING (true);
+CREATE POLICY "Service role full access on profiles" ON public.profiles FOR ALL TO service_role USING (true);
+CREATE POLICY "Service role full access on cached_repos" ON public.cached_repos FOR ALL TO service_role USING (true);
 
 -- ─── Tablo düzeyi GRANT'lar ─────────────────────────────────────────────────
 -- ÖNEMLİ: Proje oluşturulurken "Automatically expose new tables" seçeneği

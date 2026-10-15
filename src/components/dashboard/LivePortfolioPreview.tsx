@@ -53,6 +53,7 @@ export default function LivePortfolioPreview({ profile, repos, frameWidth, frame
         <div style={{ borderRadius: 16, overflow: badgeMode ? 'hidden' : 'auto', background: '#FFFFFF', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.05)', width: frameWidth, maxHeight: frameHeight, height: badgeMode ? frameHeight : undefined }}>
           {badgeMode ? (
             <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', background: '#FAFAFA', padding: 24 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- dinamik rozet URL */}
               <img key={badgeUrl} src={badgeUrl} alt="Rozet önizleme" style={{ display: 'block', maxWidth: '100%' }} />
             </div>
           ) : (

@@ -34,9 +34,11 @@ export default function FeaturedProjectCard({ repo, themeType }: FeaturedProject
             ★ Vitrin Projesi
           </span>
           <h3 style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 500, color: theme.ink }}>{repo.name}</h3>
+          {repo.description && (
           <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: theme.muted }}>
-            {repo.description || 'Açıklama belirtilmemiş.'}
+            {repo.description}
           </p>
+          )}
 
           {repo.topics && repo.topics.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>

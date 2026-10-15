@@ -72,6 +72,7 @@ export default function ManualProjectsManager({ projects, onSaveProjects }: Manu
               <span style={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: 9, background: '#FAFAFA', border: '1px solid rgba(228,228,231,.8)', color: '#52525B', flexShrink: 0, overflow: 'hidden' }}>
                 {/* next/image kullanılmıyor: URL kullanıcıdan geliyor, next.config.ts'nin
                     izinli host listesine (remotePatterns) girmesi garanti değil. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 {project.imageUrl ? <img src={project.imageUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <FolderGit2 className="w-3.5 h-3.5" />}
               </span>
               <div style={{ flex: 1, minWidth: 0 }}>
