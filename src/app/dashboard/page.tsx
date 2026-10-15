@@ -159,6 +159,8 @@ function DashboardContent() {
   };
 
   useEffect(() => {
+    // Oturum durumu netleşmeden veri çekme: aksi halde localStorage'daki eski kullanıcı adı önce yüklenirdi.
+    if (sessionStatus === 'loading') return;
     let isMounted = true;
     const queryUser = searchParams.get('username');
     const storedUser = typeof window !== 'undefined' ? localStorage.getItem('kodfolyo_active_username') : null;
@@ -167,7 +169,8 @@ function DashboardContent() {
     // oturum yokken (herkese açık gezinme) devreye girer. Aksi halde başka bir kullanıcı
     // adını denedikten sonra dashboard'a dönmek, kendi hesabın yerine o kullanıcının
     // verisini açıp üzerine kaydetmene yol açabiliyordu.
-    const targetUser = sanitizeUsername(queryUser || sessionUser || storedUser || 'erdemsnsy');
+    // Oturum açıksa ?username= ve localStorage'daki eski değerler yok sayılır: kendi hesabın her zaman kazanır.
+    const targetUser = sanitizeUsername(sessionUser || queryUser || storedUser || 'erdemsnsy');
 
     const initData = async () => {
       setIsLoading(true);
@@ -226,7 +229,7 @@ function DashboardContent() {
     return () => {
       isMounted = false;
     };
-  }, [searchParams, session]);
+  }, [searchParams, session, sessionStatus]);
 
   // Tüm değişiklikleri tek seferde kaydet
   const handleSaveAll = async () => {

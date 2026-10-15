@@ -109,7 +109,8 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
   // kullanılıyor — sayfada o an görüntülenen profilin sahibi (viewed page owner) DEĞİL.
   // Yoksa başkasının portfolyosuna bakarken bile "Düzenle (@onlar)" butonu çıkıyordu;
   // backend zaten böyle bir kaydı 403 ile reddediyor ama buton yanıltıcıydı.
-  const activeTargetUser = storedUsername;
+  const sessionUsername = (session?.user as { username?: string } | undefined)?.username;
+  const activeTargetUser = sessionUsername || storedUsername;
   const editDashboardUrl = activeTargetUser ? `/dashboard?username=${encodeURIComponent(activeTargetUser)}` : '/dashboard';
   const username = (session?.user as { username?: string })?.username || session?.user?.name || activeTargetUser || 'demo';
 
