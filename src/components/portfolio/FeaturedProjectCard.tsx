@@ -30,7 +30,7 @@ export default function FeaturedProjectCard({ repo, themeType }: FeaturedProject
     <div style={{ maxWidth: 1020, margin: '0 auto', padding: '0 clamp(16px, 5vw, 40px) 24px' }}>
       <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', borderRadius: 18, overflow: 'hidden', border: `1px solid ${theme.border}`, background: theme.card }} className="featured-project-grid">
         <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: theme.a, textTransform: 'uppercase', letterSpacing: '.06em' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.a, textTransform: 'uppercase', letterSpacing: '.06em' }}>
             ★ Vitrin Projesi
           </span>
           <h3 style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 500, color: theme.ink }}>{repo.name}</h3>
@@ -43,7 +43,7 @@ export default function FeaturedProjectCard({ repo, themeType }: FeaturedProject
           {repo.topics && repo.topics.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {repo.topics.slice(0, 5).map((topic) => (
-                <span key={topic} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, padding: '4px 10px', borderRadius: 999, background: 'rgba(25,23,32,.05)', color: theme.dim }}>
+                <span key={topic} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '4px 10px', borderRadius: 999, background: 'rgba(25,23,32,.05)', color: theme.dim }}>
                   #{topic}
                 </span>
               ))}

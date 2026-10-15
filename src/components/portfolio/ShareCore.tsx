@@ -47,7 +47,7 @@ export default function ShareCore({ username, themeType }: ShareCoreProps) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20, borderRadius: 16, border: `1px solid ${theme.border}`, background: '#FFFFFF' }}>
         <div dangerouslySetInnerHTML={{ __html: qrSvg }} style={{ borderRadius: 12, overflow: 'hidden' }} />
-        <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 11, color: theme.mutedLight, margin: 0 }}>
+        <p style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.mutedLight, margin: 0 }}>
           <QrCode className="w-3.5 h-3.5" /> Kamera veya QR okuyucu ile tara
         </p>
       </div>

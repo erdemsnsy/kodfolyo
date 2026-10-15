@@ -39,7 +39,7 @@ export default function CertificatesList({ certificates, themeType }: Certificat
                     {cert.url && <ExternalLink className="w-3 h-3" style={{ color: theme.mutedLight, flexShrink: 0 }} />}
                   </div>
                   <div style={{ fontSize: 12.5, color: theme.muted, marginTop: 2 }}>{cert.issuer}</div>
-                  {cert.date && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: theme.mutedLight, marginTop: 4 }}>{cert.date}</div>}
+                  {cert.date && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.mutedLight, marginTop: 4 }}>{cert.date}</div>}
                 </div>
               </Wrapper>
             );

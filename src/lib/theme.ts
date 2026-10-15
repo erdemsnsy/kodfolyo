@@ -48,8 +48,8 @@ export function getTheme(themeName?: ThemeType): ThemeConfig {
   return {
     ...t,
     ink: '#191720',
-    muted: '#6B6675',
-    mutedLight: '#8C8797',
+    muted: '#5E5968',
+    mutedLight: '#706B7B',
     body: '#56515F',
     dim: '#3A3644',
     faint: '#A09BA8',

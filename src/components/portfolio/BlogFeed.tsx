@@ -37,10 +37,10 @@ export default function BlogFeed({ posts, themeType }: BlogFeedProps) {
               style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 18, borderRadius: 14, border: `1px solid ${theme.border}`, background: theme.card, textDecoration: 'none' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, padding: '3px 9px', borderRadius: 999, background: 'rgba(25,23,32,.05)', color: theme.dim }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '3px 9px', borderRadius: 999, background: 'rgba(25,23,32,.05)', color: theme.dim }}>
                   {post.source}
                 </span>
-                {post.date && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: theme.mutedLight }}>{formatDate(post.date)}</span>}
+                {post.date && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.mutedLight }}>{formatDate(post.date)}</span>}
               </div>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                 <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: theme.ink, lineHeight: 1.35 }}>{post.title}</h3>

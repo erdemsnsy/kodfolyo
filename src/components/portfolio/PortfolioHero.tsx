@@ -147,7 +147,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
             {[{ value: String(starCount), label: 'YILDIZ' }, { value: String(repoCount), label: 'REPO' }].map((s) => (
               <div key={s.label} style={{ minWidth: 96, padding: 15, borderRadius: 14, background: 'rgba(25,23,32,.04)', border: `1px solid ${theme.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', color: theme.ink }}>{s.value}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: theme.mutedLight, marginTop: 3 }}>{s.label}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.mutedLight, marginTop: 3 }}>{s.label}</div>
               </div>
             ))}
           </div>

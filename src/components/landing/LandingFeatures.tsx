@@ -37,7 +37,7 @@ export default function LandingFeatures() {
               </span>
               <div style={{ position: 'relative', fontSize: 17, fontWeight: 700, letterSpacing: '-.02em', marginBottom: 8, color: '#18181B' }}>{f.title}</div>
               <div style={{ position: 'relative', fontSize: 14, lineHeight: 1.55, color: '#71717A' }}>{f.desc}</div>
-              <div style={{ position: 'relative', marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: 11, color: '#A09BA8' }}>{f.tag}</div>
+              <div style={{ position: 'relative', marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: 12, color: '#706B7B' }}>{f.tag}</div>
             </div>
           ))}
         </div>
