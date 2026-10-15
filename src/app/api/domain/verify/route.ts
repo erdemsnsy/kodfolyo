@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
+import { checkProfileAccess } from '@/lib/auth-guard';
 import { getProfileByUsername, verifyCustomDomain } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
@@ -8,6 +10,12 @@ export async function POST(request: Request) {
 
     if (!username) {
       return NextResponse.json({ success: false, error: 'Kullanıcı adı eksik.' }, { status: 400 });
+    }
+
+    const session = await auth();
+    const access = checkProfileAccess(session?.user?.username, username);
+    if (!access.ok) {
+      return NextResponse.json({ success: false, error: access.error }, { status: access.status });
     }
 
     const profile = await getProfileByUsername(username);

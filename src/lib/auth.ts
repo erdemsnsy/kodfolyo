@@ -31,5 +31,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/',
   },
-  secret: process.env.NEXTAUTH_SECRET || 'kodfolyo-secret-key-fallback',
+  // Canlıda sabit/varsayılan bir sır kullanılmaz: NEXTAUTH_SECRET zorunlu (yoksa NextAuth hata verir).
+  secret: process.env.NEXTAUTH_SECRET || (process.env.NODE_ENV === 'production' ? undefined : 'kodfolyo-dev-only-secret'),
 });

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
+import { checkProfileAccess } from '@/lib/auth-guard';
 import { getProfileByUsername, getAnalyticsSummary } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -12,8 +13,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ user
   // koşulmuyor — ama gerçek bir oturum VARSA, o oturum sadece kendi analiz
   // verisini görebilir (başkasınınkini değil).
   const session = await auth();
-  if (session?.user?.username && session.user.username !== decodedUsername) {
-    return NextResponse.json({ success: false, error: 'Bu analiz verisini görüntüleme yetkiniz yok.' }, { status: 403 });
+  const access = checkProfileAccess(session?.user?.username, decodedUsername);
+  if (!access.ok) {
+    return NextResponse.json({ success: false, error: access.error }, { status: access.status });
   }
 
   const profile = await getProfileByUsername(decodedUsername);

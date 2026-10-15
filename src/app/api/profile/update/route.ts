@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '../../../../lib/auth';
 import { upsertProfile, getProfileByUsername, updateRepoVisibility, updateFeaturedRepo, setProfilePublished, deleteProfile, setCustomDomain } from '../../../../lib/supabase/server';
+import { checkProfileAccess } from '../../../../lib/auth-guard';
 import { CustomLink, ThemeType, ExperienceEntry, ManualProject, Certificate, SectionVisibility } from '../../../../types';
 
 export async function POST(request: Request) {
@@ -23,11 +24,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (sessionUsername && username !== sessionUsername) {
-      return NextResponse.json(
-        { success: false, error: 'Bu profili düzenleme yetkiniz yok.' },
-        { status: 403 }
-      );
+    const access = checkProfileAccess(sessionUsername, username);
+    if (!access.ok) {
+      return NextResponse.json({ success: false, error: access.error }, { status: access.status });
     }
 
     // Hesabı kalıcı olarak silmek en yıkıcı işlem — misafir modda (gerçek oturum

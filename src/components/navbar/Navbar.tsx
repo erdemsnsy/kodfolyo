@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut, signIn } from 'next-auth/react';
 import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Star, Menu, X } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
 import Kodi from '@/components/mascot/Kodi';
@@ -179,6 +179,16 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
           </>
         ) : (
           <>
+            {status === 'unauthenticated' && (
+              <button
+                type="button"
+                onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
+                className="nav-hide-narrow hover:bg-zinc-100 hover:text-zinc-900 transition-colors"
+                style={{ fontSize: 14, fontWeight: 600, color: chromeMuted, background: 'transparent', border: 0, padding: '9px 12px', borderRadius: 9, cursor: 'pointer' }}
+              >
+                Giriş yap
+              </button>
+            )}
             {activeTargetUser && activeTargetUser !== 'ornek-ogrenci' && activeTargetUser !== 'demo' ? (
               <>
                 {githubStars !== null && (

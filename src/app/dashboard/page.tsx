@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, Suspense, useEffect, useRef } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ProfileEditor from '@/components/dashboard/ProfileEditor';
@@ -70,7 +70,7 @@ function TabIcon({ tab, size, opacity }: { tab: { iconSrc?: string; icon?: typeo
 const NO_PREVIEW_TABS: TabId[] = ['analytics', 'alanadi'];
 
 function DashboardContent() {
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -386,6 +386,29 @@ function DashboardContent() {
       console.error(err);
     }
   };
+
+  // Canlıda (production) düzenleme için GitHub girişi şart; misafir mod yalnızca geliştirmede.
+  if (process.env.NODE_ENV === 'production' && sessionStatus === 'unauthenticated') {
+    return (
+      <div style={{ minHeight: '100vh', background: '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <div style={{ maxWidth: 380, width: '100%', textAlign: 'center', background: '#FFFFFF', border: '1px solid #E4E4E7', borderRadius: 18, padding: 28 }}>
+          <KodfolyoLogo size={40} />
+          <h1 style={{ margin: '14px 0 6px', fontSize: 20, fontWeight: 700 }}>Giriş yapman gerekiyor</h1>
+          <p style={{ margin: '0 0 20px', fontSize: 14, lineHeight: 1.5, color: '#52525B' }}>
+            Portfolyonu düzenlemek için GitHub hesabınla giriş yap. Yalnızca kendi portfolyonu düzenleyebilirsin.
+          </p>
+          <button
+            type="button"
+            onClick={() => signIn('github', { callbackUrl: '/dashboard' })}
+            style={{ width: '100%', height: 44, border: 0, borderRadius: 10, background: '#18181B', color: '#FFFFFF', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}
+          >
+            GitHub ile giriş yap
+          </button>
+          <Link href="/" style={{ display: 'inline-block', marginTop: 14, fontSize: 13, color: '#71717A' }}>Ana sayfaya dön</Link>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading || !profile) {
     return (
