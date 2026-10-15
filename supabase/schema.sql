@@ -118,9 +118,8 @@ ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.link_clicks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pdf_downloads ENABLE ROW LEVEL SECURITY;
 
--- Herkes okuyabilsin (Public Read Access)
-CREATE POLICY "Public profiles read policy" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Public cached repos read policy" ON public.cached_repos FOR SELECT USING (true);
+-- Okuma/yazma yalnızca sunucudan (service_role) yapılır; tarayıcıdan anon erişim yok.
+-- (Herkese açık okuma politikası bilerek YOK: yayından kaldırılmış profillerin e-postası vb. sızmasın.)
 
 -- Service Role veya Yetkili Kullanıcı Yazabilsin
 CREATE POLICY "Service role full access on profiles" ON public.profiles FOR ALL TO service_role USING (true);
@@ -141,5 +140,4 @@ GRANT ALL ON public.page_views TO service_role;
 GRANT ALL ON public.link_clicks TO service_role;
 GRANT ALL ON public.pdf_downloads TO service_role;
 
-GRANT SELECT ON public.profiles TO anon, authenticated;
-GRANT SELECT ON public.cached_repos TO anon, authenticated;
+-- anon/authenticated için SELECT grant'ı bilerek verilmiyor.
