@@ -18,7 +18,7 @@ const FAQS = [
   },
   {
     q: 'GitHub\'da bir şey değiştirirsem portfolyom otomatik güncellenir mi?',
-    a: 'Repo, yıldız ve dil verisi periyodik olarak senkronize edilir; dashboard\'daki senkron butonuyla da anında tazeleyebilirsin. Biyografi, deneyim gibi kendi yazdığın alanlar GitHub\'dan bağımsız, elle güncelleniyor.',
+    a: 'Repo, yıldız ve dil verisi dashboard\'daki senkron butonuna bastığında GitHub\'dan yeniden çekilir; arka planda otomatik güncelleme yok. Biyografi, deneyim gibi kendi yazdığın alanlar GitHub\'dan bağımsız, elle güncelleniyor.',
   },
   {
     q: 'Kendi alan adımı bağlayabilir miyim?',

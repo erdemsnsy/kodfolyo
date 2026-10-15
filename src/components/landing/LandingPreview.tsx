@@ -47,7 +47,7 @@ export default function LandingPreview() {
             <h2 style={{ margin: '10px 0 0', fontSize: 40, fontWeight: 800, letterSpacing: '-.035em', color: '#18181B' }}>Böyle görünüyor.</h2>
           </div>
           <p style={{ margin: 0, maxWidth: 420, fontSize: 15.5, lineHeight: 1.55, color: '#52525B' }}>
-            Her portfolyo kendi adresinde yayınlanır ve GitHub verisi değiştikçe kendini günceller.
+            Her portfolyo kendi adresinde yayınlanır ve GitHub verini tek tıkla yeniden çekebilirsin.
           </p>
         </div>
 

@@ -32,7 +32,7 @@ type TabId = 'genel' | 'profil' | 'repolar' | 'deneyim' | 'projeler' | 'sertifik
 // Elle çizilmiş pixel-art ikonlar (public/icons) — dashboard'un tamamında
 // lucide yerine bunlar kullanılıyor.
 const TABS: { id: TabId; label: string; title: string; description: string; iconSrc?: string; icon?: typeof FolderGit2 }[] = [
-  { id: 'genel', label: 'Genel', title: 'Genel bakış', description: 'Portfolyonun mevcut durumu ve hızlı geçişler.', iconSrc: '/icons/genel.png' },
+  { id: 'genel', label: 'Genel', title: 'Genel bakış', description: 'Portfolyonun mevcut durumu ve kurulum adımları.', iconSrc: '/icons/genel.png' },
   { id: 'profil', label: 'Profil', title: 'Profil', description: 'Portfolyonun üstünde görünen temel bilgiler.', iconSrc: '/icons/profil.png' },
   { id: 'repolar', label: 'Repolar', title: 'Repolar', description: 'Yayınlanacak depolar ve vitrin projesi.', iconSrc: '/icons/repolar.png' },
   { id: 'deneyim', label: 'Deneyim', title: 'Deneyim', description: 'İş ve eğitim geçmişi.', iconSrc: '/icons/deneyim.png' },
@@ -42,7 +42,7 @@ const TABS: { id: TabId; label: string; title: string; description: string; icon
   { id: 'sertifikalar', label: 'Sertifika', title: 'Sertifikalar', description: 'Eklediğin sertifikaların listesi.', icon: Award },
   { id: 'bolumler', label: 'Bölümler', title: 'Bölümler', description: 'Portfolyo sayfasındaki blokları aç veya kapat.', iconSrc: '/icons/bolumler.png' },
   { id: 'tema', label: 'Tema', title: 'Tema', description: 'Portfolyonun renk şeması.', iconSrc: '/icons/tema.png' },
-  { id: 'baglantilar', label: 'Linkler', title: 'Bağlantılar', description: 'Profilinin altında görünecek bağlantılar.', iconSrc: '/icons/linkler.png' },
+  { id: 'baglantilar', label: 'Linkler', title: 'Bağlantılar', description: 'Profil kartında buton olarak görünecek bağlantılar.', iconSrc: '/icons/linkler.png' },
   { id: 'rozet', label: 'Rozet', title: 'Rozet', description: "README'ne gömülebilen canlı rozet.", iconSrc: '/icons/rozet.png' },
   { id: 'analytics', label: 'Analiz', title: 'Analytics', description: 'Son 30 günün trafik ve etkileşim özeti.', iconSrc: '/icons/analiz.png' },
   { id: 'alanadi', label: 'Alan adı', title: 'Alan Adı', description: 'Portfolyonu kendi alan adında yayınla.', iconSrc: '/icons/alanadi.png' },
@@ -90,6 +90,7 @@ function DashboardContent() {
   const [pendingLocation, setPendingLocation] = useState<string | null>(null);
   const [pendingCompany, setPendingCompany] = useState<string | null>(null);
   const [pendingBlog, setPendingBlog] = useState<string | null>(null);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [pendingRssUrl, setPendingRssUrl] = useState<string | null>(null);
   const [pendingSeoTitle, setPendingSeoTitle] = useState<string | null>(null);
   const [pendingSeoDescription, setPendingSeoDescription] = useState<string | null>(null);
@@ -114,6 +115,7 @@ function DashboardContent() {
     pendingLocation !== null ||
     pendingCompany !== null ||
     pendingBlog !== null ||
+    pendingEmail !== null ||
     pendingRssUrl !== null ||
     pendingSeoTitle !== null ||
     pendingSeoDescription !== null ||
@@ -238,6 +240,7 @@ function DashboardContent() {
     if (pendingLocation !== null) payload.location = pendingLocation;
     if (pendingCompany !== null) payload.company = pendingCompany;
     if (pendingBlog !== null) payload.blog = pendingBlog;
+    if (pendingEmail !== null) payload.email = pendingEmail;
     if (pendingRssUrl !== null) payload.rss_url = pendingRssUrl;
     if (pendingSeoTitle !== null) payload.seo_title = pendingSeoTitle;
     if (pendingSeoDescription !== null) payload.seo_description = pendingSeoDescription;
@@ -267,6 +270,7 @@ function DashboardContent() {
             ...(pendingLocation !== null && { location: pendingLocation }),
             ...(pendingCompany !== null && { company: pendingCompany }),
             ...(pendingBlog !== null && { blog: pendingBlog }),
+            ...(pendingEmail !== null && { email: pendingEmail }),
             ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
             ...(pendingSeoTitle !== null && { seo_title: pendingSeoTitle }),
             ...(pendingSeoDescription !== null && { seo_description: pendingSeoDescription }),
@@ -284,6 +288,7 @@ function DashboardContent() {
         setPendingLocation(null);
         setPendingCompany(null);
         setPendingBlog(null);
+        setPendingEmail(null);
         setPendingRssUrl(null);
         setPendingSeoTitle(null);
         setPendingSeoDescription(null);
@@ -430,6 +435,7 @@ function DashboardContent() {
     ...(pendingLocation !== null && { location: pendingLocation }),
     ...(pendingCompany !== null && { company: pendingCompany }),
     ...(pendingBlog !== null && { blog: pendingBlog }),
+    ...(pendingEmail !== null && { email: pendingEmail }),
     ...(pendingRssUrl !== null && { rss_url: pendingRssUrl }),
     ...(pendingSeoTitle !== null && { seo_title: pendingSeoTitle }),
     ...(pendingSeoDescription !== null && { seo_description: pendingSeoDescription }),
@@ -602,6 +608,7 @@ function DashboardContent() {
               if (fields.location !== undefined) setPendingLocation(fields.location ?? '');
               if (fields.company !== undefined) setPendingCompany(fields.company ?? '');
               if (fields.blog !== undefined) setPendingBlog(fields.blog ?? '');
+              if (fields.email !== undefined) setPendingEmail(fields.email ?? '');
               if (fields.rss_url !== undefined) setPendingRssUrl(fields.rss_url ?? '');
               if (fields.seo_title !== undefined) setPendingSeoTitle(fields.seo_title ?? '');
               if (fields.seo_description !== undefined) setPendingSeoDescription(fields.seo_description ?? '');

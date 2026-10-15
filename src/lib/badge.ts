@@ -1,6 +1,7 @@
 import { Repository, ThemeType } from '@/types';
 import { getTheme } from '@/lib/theme';
 import { languageColor } from '@/lib/languageColors';
+import { SITE_HOST } from '@/lib/site';
 
 export type BadgeSize = 'sm' | 'md' | 'lg';
 
@@ -79,7 +80,7 @@ export function generateBadgeSVG({ username, name, avatarUrl, starCount, repos, 
   <circle cx="${dims.pad + dims.avatar / 2}" cy="${dims.h / 2}" r="${dims.avatar / 2 + 1.5}" fill="none" stroke="${theme.a}" stroke-width="1.5" />
   <image href="${esc(avatarUrl)}" x="${dims.pad}" y="${(dims.h - dims.avatar) / 2}" width="${dims.avatar}" height="${dims.avatar}" clip-path="url(#avatarClip)" />
   <text x="${barX}" y="${dims.pad + dims.nameSize}" font-family="Arial, sans-serif" font-weight="800" font-size="${dims.nameSize}" fill="${theme.ink}">${esc(displayName)}</text>
-  <text x="${barX}" y="${dims.pad + dims.nameSize + dims.metaSize + 6}" font-family="monospace" font-size="${dims.metaSize}" fill="${theme.muted}">@${esc(username)} · ★ ${starCount} · kodfolyo.dev</text>
+  <text x="${barX}" y="${dims.pad + dims.nameSize + dims.metaSize + 6}" font-family="monospace" font-size="${dims.metaSize}" fill="${theme.muted}">@${esc(username)} · ★ ${starCount} · ${SITE_HOST}</text>
   ${barSegments}
 </svg>`;
 }

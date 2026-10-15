@@ -1,14 +1,14 @@
 'use client';
 
 const FEATURES = [
-  { icon: '🔄', title: 'Otomatik GitHub senkronu', desc: 'Biyografin, en çok yıldız alan projelerin ve dil yetkinliklerin canlı çekilsin.', tag: 'GitHub REST API' },
+  { icon: '🔄', title: 'Tek tıkla GitHub senkronu', desc: 'Profilin, en çok yıldız alan projelerin ve dil yetkinliklerin senkron butonuyla GitHub üzerinden çekilir.', tag: 'GitHub REST API' },
   { icon: '🗂️', title: 'Proje kartları', desc: 'Yıldız, fork, dil ve açıklama otomatik gelir. Hangileri görünsün, sen seçersin.', tag: 'aç/kapa yönetimi' },
   { icon: '📊', title: 'Dil ve teknoloji analizi', desc: 'Tüm repolarındaki dil dağılımı tek bir çubukta özetlenir.', tag: 'canlı hesaplanır' },
   { icon: '🎨', title: 'Tema seçenekleri', desc: 'On hazır tema, canlı önizleme. Kod yazmadan tonunu değiştir.', tag: '10 tema' },
-  { icon: '🔗', title: 'Özel bağlantılar', desc: 'CV, LinkedIn, kişisel site: profilinin üstünde buton olarak dursun.', tag: 'sınırsız link' },
+  { icon: '🔗', title: 'Özel bağlantılar', desc: 'CV, LinkedIn, kişisel site: profil kartında buton olarak dursun.', tag: 'sınırsız link' },
   { icon: '⚡', title: 'Akıllı önbellekleme', desc: 'API limitine takılmadan çalışır; sayfa her zaman hızlı açılır.', tag: 'Supabase cache' },
-  { icon: '🌐', title: 'Özel alan adı', desc: 'kodfolyo.vercel.app yerine kendi adını bağla, DNS doğrulaması tek adımda.', tag: 'özel domain' },
-  { icon: '📈', title: 'Ziyaretçi analitiği', desc: 'Görüntülenme, link tıklaması ve CV indirmeleri: kimin baktığını gör.', tag: 'gerçek zamanlı' },
+  { icon: '🌐', title: 'Özel alan adı', desc: 'kodfolyo.vercel.app yerine kendi adını bağla, üç kolay adımda doğrulama.', tag: 'özel domain' },
+  { icon: '📈', title: 'Ziyaretçi analitiği', desc: 'Görüntülenme, link tıklaması ve CV indirmeleri: kimin baktığını gör.', tag: 'son 30 gün' },
 ];
 
 export default function LandingFeatures() {

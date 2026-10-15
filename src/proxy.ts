@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getProfileByCustomDomain } from '@/lib/supabase/server';
+import { SITE_HOST } from '@/lib/site';
 
 // Next.js 16: middleware.ts -> proxy.ts (aynı davranış, yeni isim).
 // Doğrulanmış bir özel alan adından gelen isteği ilgili /[username]
-// portfolyosuna sessizce rewrite eder. Kendi kodfolyo.dev alan adımızda
+// portfolyosuna sessizce rewrite eder. Kendi kodfolyo.vercel.app (SITE_HOST) alan adımızda
 // (veya localhost'ta) hiçbir şey değişmez.
 export async function proxy(request: NextRequest) {
   const host = request.headers.get('host')?.split(':')[0].toLowerCase();
 
-  if (!host || host.endsWith('kodfolyo.dev') || host === 'localhost' || host.endsWith('.vercel.app')) {
+  if (!host || host === SITE_HOST || host === 'localhost' || host.endsWith('.vercel.app')) {
     return NextResponse.next();
   }
 

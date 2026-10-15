@@ -62,7 +62,7 @@ function TemalarContent() {
           {Object.keys(themes).length} tema, aynı bileşen dili üzerinde farklı renk paletleri. Gerçek portfolyo önizlemesi üstünde nasıl göründüğünü gör.
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(420px, 100%), 1fr))', gap: 24 }}>
           {Object.values(themes).map((t) => {
             const demoProfile: UserProfile = {
               id: `demo-${t.id}`,
@@ -90,7 +90,7 @@ function TemalarContent() {
               <div key={t.id} style={{ borderRadius: 18, border: '1px solid rgba(25,23,32,.12)', background: '#FFFFFF', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ height: 340, overflow: 'hidden', position: 'relative', background: t.bg }}>
                   <div style={{ position: 'absolute', top: 0, left: 0, width: '250%', transform: 'scale(0.4)', transformOrigin: 'top left', pointerEvents: 'none' }}>
-                    <PortfolioHero profile={demoProfile} repoCount={mockRepos.length} starCount={starCount} isDemo />
+                    <PortfolioHero profile={demoProfile} repoCount={mockRepos.length} starCount={starCount} isDemo hideCta />
                     <TechStack repos={mockRepos} themeType={t.id} />
                     <ProjectGrid repos={mockRepos.slice(0, 3)} themeType={t.id} />
                   </div>

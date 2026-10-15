@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import type React from 'react';
 import { UserProfile } from '@/types';
-import { Sparkles, RefreshCw, User, MapPin, Building2, Globe, Rss, AlignLeft, Search } from 'lucide-react';
+import { Sparkles, RefreshCw, User, MapPin, Building2, Globe, Rss, AlignLeft, Search, Mail } from 'lucide-react';
 
 interface ProfileEditorProps {
   profile: UserProfile;
@@ -23,6 +23,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
   const [location, setLocation] = useState(profile.location ?? '');
   const [company, setCompany] = useState(profile.company ?? '');
   const [blog, setBlog] = useState(profile.blog ?? '');
+  const [email, setEmail] = useState(profile.email ?? '');
   const [rssUrl, setRssUrl] = useState(profile.rss_url ?? '');
   const [seoTitle, setSeoTitle] = useState(profile.seo_title ?? '');
   const [seoDescription, setSeoDescription] = useState(profile.seo_description ?? '');
@@ -57,6 +58,7 @@ export default function ProfileEditor({ profile, onSave }: ProfileEditorProps) {
     { label: 'Konum', value: location, set: (v) => { setLocation(v); notifyChange({ location: v }); }, placeholder: 'Şehir, Ülke', icon: MapPin },
     { label: 'Şirket', value: company, set: (v) => { setCompany(v); notifyChange({ company: v }); }, placeholder: 'Şirket', icon: Building2 },
     { label: 'Web sitesi', value: blog, set: (v) => { setBlog(v); notifyChange({ blog: v }); }, placeholder: 'site.com', icon: Globe },
+    { label: 'E-posta', value: email, set: (v) => { setEmail(v); notifyChange({ email: v }); }, placeholder: 'ad@site.com', icon: Mail },
     { label: 'RSS', value: rssUrl, set: (v) => { setRssUrl(v); notifyChange({ rss_url: v }); }, placeholder: 'dev.to/feed/kullanici', icon: Rss },
   ];
 

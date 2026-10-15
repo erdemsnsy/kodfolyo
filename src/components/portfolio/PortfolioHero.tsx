@@ -10,6 +10,7 @@ import { StackOverflowIcon } from '@/components/icons/StackOverflowIcon';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import ShareModal from './ShareModal';
 import KodiAvatar from './KodiAvatar';
 
@@ -23,6 +24,8 @@ interface PortfolioHeroProps {
   /** Landing'in "Böyle görünüyor" demo kartı için: statik avatar_url yerine fareyi
    * takip eden gözlü canlı Kodi maskotu göster. Gerçek kullanıcı avatarlarını etkilemez. */
   interactiveMascotAvatar?: boolean;
+  /** Demo/önizleme bağlamlarında "Kendi Siteni Oluştur" butonunu gizler (dashboard önizlemesi, tema galerisi). */
+  hideCta?: boolean;
 }
 
 function renderLinkIcon(iconName?: string) {
@@ -37,10 +40,13 @@ function renderLinkIcon(iconName?: string) {
   return <ExternalLink className="w-3.5 h-3.5" />;
 }
 
-export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, isDemo: isDemoProp, hideActions, interactiveMascotAvatar }: PortfolioHeroProps) {
+export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, isDemo: isDemoProp, hideActions, interactiveMascotAvatar, hideCta }: PortfolioHeroProps) {
   const [showShareModal, setShowShareModal] = useState(false);
+  const { data: session } = useSession();
+  const sessionUser = (session?.user as { username?: string } | undefined)?.username;
+  const isOwner = !!sessionUser && sessionUser.toLowerCase() === profile.username.toLowerCase();
   const theme = getTheme(profile.theme);
-  const displayBio = profile.custom_bio || profile.bio || 'Yazılım geliştirme tutkunu geliştirici.';
+  const displayBio = (profile.custom_bio || profile.bio || '').trim();
   const isDemo = isDemoProp || profile.username === 'ornek-ogrenci' || profile.username === 'demo';
 
   const secondaryBtn: React.CSSProperties = {
@@ -71,7 +77,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
                 @{profile.username}
               </span>
             </div>
-            <p className="ph-bio" style={{ margin: '12px 0 16px', fontSize: 17, lineHeight: 1.55, color: theme.body, maxWidth: 600 }}>{displayBio}</p>
+            {displayBio ? <p className="ph-bio" style={{ margin: '12px 0 16px', fontSize: 17, lineHeight: 1.55, color: theme.body, maxWidth: 600 }}>{displayBio}</p> : <div style={{ height: 14 }} />}
 
             <div className="ph-chips" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
               {profile.location && (
@@ -128,9 +134,9 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
               )}
 
               {isDemo ? (
-                <Link href="/dashboard" className="ph-btn" style={secondaryBtn}>Kendi Siteni Oluştur</Link>
+                hideCta ? null : <Link href="/dashboard" className="ph-btn" style={secondaryBtn}>Kendi Siteni Oluştur</Link>
               ) : (
-                <Link href={`/dashboard?username=${profile.username}`} className="ph-btn" style={secondaryBtn}>Düzenle</Link>
+                isOwner ? <Link href={`/dashboard?username=${profile.username}`} className="ph-btn" style={secondaryBtn}>Düzenle</Link> : <Link href="/" className="ph-btn" style={secondaryBtn}>Kendi portfolyonu oluştur</Link>
               )}
 
               {profile.custom_links && profile.custom_links.map((link) => (
@@ -144,7 +150,7 @@ export default function PortfolioHero({ profile, repoCount = 0, starCount = 0, i
           </div>
 
           <div className="ph-stats" style={{ display: 'flex', gap: 10 }}>
-            {[{ value: String(starCount), label: 'YILDIZ' }, { value: String(repoCount), label: 'REPO' }].map((s) => (
+            {[{ value: starCount.toLocaleString('tr-TR'), label: 'YILDIZ' }, { value: repoCount.toLocaleString('tr-TR'), label: 'REPO' }].map((s) => (
               <div key={s.label} className="ph-stat" style={{ minWidth: 96, padding: 15, borderRadius: 14, background: 'rgba(25,23,32,.04)', border: `1px solid ${theme.border}`, textAlign: 'center' }}>
                 <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', color: theme.ink }}>{s.value}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: theme.mutedLight, marginTop: 3 }}>{s.label}</div>

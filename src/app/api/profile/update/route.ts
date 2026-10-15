@@ -90,6 +90,7 @@ export async function POST(request: Request) {
     const company: string | null = typeof body.company !== 'undefined' ? body.company : currentProfile.company;
     const location: string | null = typeof body.location !== 'undefined' ? body.location : currentProfile.location;
     const blog: string | null = typeof body.blog !== 'undefined' ? body.blog : currentProfile.blog;
+    const email: string | null = typeof body.email !== 'undefined' ? String(body.email).trim() : currentProfile.email;
     const rssUrl: string | null = typeof body.rss_url !== 'undefined' ? body.rss_url : (currentProfile.rss_url ?? null);
     const seoTitle: string | null = typeof body.seo_title !== 'undefined' ? body.seo_title : (currentProfile.seo_title ?? null);
     const seoDescription: string | null = typeof body.seo_description !== 'undefined' ? body.seo_description : (currentProfile.seo_description ?? null);
@@ -103,7 +104,7 @@ export async function POST(request: Request) {
       custom_bio: customBio,
       company,
       location,
-      email: currentProfile.email,
+      email,
       blog,
       theme,
       custom_links: customLinks,

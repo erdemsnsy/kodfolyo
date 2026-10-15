@@ -62,7 +62,7 @@ export default function LivePortfolioPreview({ profile, repos, frameWidth, frame
             // ölçekler, layout/scroll yüksekliği hâlâ ölçeksiz kalır. zoom ile scrollHeight de küçülen boyuta göre
             // hesaplanır — üstteki `overflow:auto` böylece tüm bölümleri (uzun profillerde de) gerçekten kaydırabilir.
             <div style={{ width: DESIGN_WIDTH, zoom: scale } as React.CSSProperties}>
-              <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} isDemo />
+              <PortfolioHero profile={profile} repoCount={visibleRepos.length} starCount={starCount} isDemo hideCta />
               {visibility.techStack !== false && <TechStack repos={repos} themeType={profile.theme} />}
               {visibility.featuredProject !== false && featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType={profile.theme} />}
               {visibility.projects !== false && <ProjectGrid repos={gridRepos} themeType={profile.theme} />}

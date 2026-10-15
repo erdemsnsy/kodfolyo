@@ -72,14 +72,16 @@ export async function POST(request: Request) {
     const profile = await upsertProfile({
       github_id: String(githubUserData.id),
       username: githubUserData.login.toLowerCase(),
-      name: githubUserData.name || githubUserData.login,
+      // Kullanıcının dashboard'da elle düzenlediği alanlar (isim/şirket/konum/web/e-posta) senkronda ezilmez;
+      // yalnızca henüz hiç değer yoksa GitHub'dan doldurulur.
+      name: existingProfile?.name ?? (githubUserData.name || githubUserData.login),
       avatar_url: githubUserData.avatar_url,
       bio: githubUserData.bio,
       custom_bio: existingProfile?.custom_bio || null,
-      company: githubUserData.company,
-      location: githubUserData.location,
-      email: githubUserData.email,
-      blog: githubUserData.blog,
+      company: existingProfile?.company ?? githubUserData.company,
+      location: existingProfile?.location ?? githubUserData.location,
+      email: existingProfile?.email ?? githubUserData.email,
+      blog: existingProfile?.blog ?? githubUserData.blog,
       theme: existingProfile?.theme || 'gece',
       custom_links: existingProfile?.custom_links || [],
     });
