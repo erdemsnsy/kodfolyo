@@ -4,7 +4,8 @@ import { UserProfile, Repository, DEFAULT_SECTION_VISIBILITY } from '@/types';
 import { fetchGitHubUserData, fetchTopStarredRepos, getMockGitHubUserData, getMockRepositories, sanitizeUsername, isValidGitHubUsername } from '@/lib/github/fetcher';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// Anon anahtara bilerek geri düşülmez: anon rolünün veritabanı erişimi kapalı.
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 export const isSupabaseServerConfigured = Boolean(
   supabaseUrl &&
