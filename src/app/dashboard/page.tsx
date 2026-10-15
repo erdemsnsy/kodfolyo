@@ -107,6 +107,13 @@ function DashboardContent() {
   const [badgeTheme, setBadgeTheme] = useState<ThemeType>('gece');
 
   const savedTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [toast, setToast] = useState<{ text: string; kind: 'success' | 'error' } | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const showToast = (text: string, kind: 'success' | 'error') => {
+    clearTimeout(toastTimer.current);
+    setToast({ text, kind });
+    toastTimer.current = setTimeout(() => setToast(null), 2800);
+  };
 
   const hasPendingChanges =
     pendingTheme !== null ||
@@ -303,9 +310,13 @@ function DashboardContent() {
         setSaveStatus('justSaved');
         clearTimeout(savedTimer.current);
         savedTimer.current = setTimeout(() => setSaveStatus('saved'), 1800);
+        showToast('Değişiklikler kaydedildi', 'success');
+      } else {
+        showToast('Kaydedilemedi, tekrar dene', 'error');
       }
     } catch (err) {
       console.error('Save all error:', err);
+      showToast('Kaydedilemedi, tekrar dene', 'error');
     } finally {
       setIsSavingAll(false);
     }
@@ -703,6 +714,23 @@ function DashboardContent() {
 
   return (
     <div className="dash-root" style={{ height: '100vh', display: 'flex', overflow: 'hidden', background: '#F9FAFB', color: '#18181B', fontFamily: 'var(--font-sans)' }}>
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed', top: 18, left: '50%', transform: 'translateX(-50%)', zIndex: 1000,
+            display: 'flex', alignItems: 'center', gap: 8, maxWidth: 'calc(100vw - 32px)', padding: '11px 18px', borderRadius: 12,
+            fontSize: 13.5, fontWeight: 600, boxShadow: '0 8px 28px rgba(24,24,27,.18)',
+            background: toast.kind === 'success' ? '#ECFDF5' : '#FEF2F2',
+            color: toast.kind === 'success' ? '#00845E' : '#C6314E',
+            border: `1px solid ${toast.kind === 'success' ? '#A7F3D0' : '#FECACA'}`,
+          }}
+        >
+          {toast.kind === 'success' ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
+          {toast.text}
+        </div>
+      )}
       {/* İkon rayı — mobilde gizlenir, alt tab bar devreye girer */}
       <nav className="dash-sidebar" style={{ flex: `0 0 ${SIDEBAR_W}px`, width: SIDEBAR_W, height: '100vh', background: '#FFFFFF', borderRight: '1px solid #E4E4E7', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '16px 0 12px', gap: 4 }}>
         <Link href="/" title="Ana sayfaya dön" aria-label="Kodfolyo ana sayfa" className="hover:opacity-70 transition-opacity" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, marginBottom: 16, textDecoration: 'none', color: '#18181B' }}>
