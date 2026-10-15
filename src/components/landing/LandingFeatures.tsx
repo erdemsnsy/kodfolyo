@@ -29,8 +29,8 @@ export default function LandingFeatures() {
               <span
                 aria-hidden
                 style={{
-                  position: 'absolute', right: -10, bottom: -20, fontSize: 92, lineHeight: 1,
-                  opacity: 0.08, filter: 'grayscale(1)', userSelect: 'none', pointerEvents: 'none',
+                  position: 'absolute', right: -6, bottom: -14, fontSize: 84, lineHeight: 1,
+                  opacity: 0.2, filter: 'grayscale(1)', userSelect: 'none', pointerEvents: 'none',
                 }}
               >
                 {f.icon}

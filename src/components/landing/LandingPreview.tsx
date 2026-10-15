@@ -38,7 +38,7 @@ export default function LandingPreview() {
   };
 
   return (
-    <div id="onizleme" style={{ padding: '88px clamp(16px, 5vw, 40px)', position: 'relative' }}>
+    <div id="onizleme" className="landing-preview" style={{ padding: '88px clamp(16px, 5vw, 40px)', position: 'relative' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, marginBottom: 30, flexWrap: 'wrap' }}>
           <div>
@@ -62,7 +62,7 @@ export default function LandingPreview() {
             </div>
           </div>
 
-          <div style={{ background: '#FFFFFF' }}>
+          <div className="landing-preview-body" style={{ background: '#FFFFFF' }}>
             <PortfolioHero profile={demoProfile} repoCount={mockRepos.length} starCount={starCount} isDemo hideActions interactiveMascotAvatar />
             <TechStack repos={mockRepos} themeType="karbon" />
             {featuredRepo && <FeaturedProjectCard repo={featuredRepo} themeType="karbon" />}

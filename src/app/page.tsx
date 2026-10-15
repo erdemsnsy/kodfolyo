@@ -19,10 +19,10 @@ export default function LandingPage() {
 
         {/* Kapanış CTA */}
         <div style={{ padding: '0 clamp(16px, 5vw, 40px) 80px' }}>
-          <div style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', borderRadius: 24, overflow: 'hidden', background: '#18181B', padding: '48px clamp(20px, 5vw, 48px)' }}>
+          <div className="landing-cta-card" style={{ position: 'relative', maxWidth: 1180, margin: '0 auto', borderRadius: 24, overflow: 'hidden', background: '#18181B', padding: '36px clamp(20px, 5vw, 48px)' }}>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 36, flexWrap: 'wrap' }}>
               <div>
-                <h2 style={{ margin: 0, fontSize: 38, fontWeight: 900, letterSpacing: '-.04em', color: '#FFFFFF', maxWidth: 620 }}>
+                <h2 style={{ margin: 0, fontSize: 34, fontWeight: 900, letterSpacing: '-.04em', color: '#FFFFFF', maxWidth: 620 }}>
                   Bir sonraki başvurunda link atacağın bir yerin olsun.
                 </h2>
                 <p style={{ margin: '14px 0 0', fontSize: 16, color: 'rgba(255,255,255,.88)', maxWidth: 520 }}>

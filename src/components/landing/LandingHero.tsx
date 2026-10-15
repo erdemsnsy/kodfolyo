@@ -82,7 +82,7 @@ export default function LandingHero() {
   }
 
   return (
-    <div id="hero" style={{ position: 'relative', padding: '78px clamp(16px, 5vw, 40px) 30px', overflow: 'hidden' }}>
+    <div id="hero" className="landing-hero" style={{ position: 'relative', padding: '78px clamp(16px, 5vw, 40px) 30px', overflow: 'hidden' }}>
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: 'linear-gradient(rgba(228,228,231,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(228,228,231,.045) 1px,transparent 1px)',
@@ -108,7 +108,7 @@ export default function LandingHero() {
 
           {/* Mobilde: küçük maskot başlığın hemen altında (masaüstünde gizli) */}
           <div className="mascot-mobile-only" style={{ display: 'none', justifyContent: 'center', margin: '18px 0' }}>
-            <Kodi size={150} grayscale />
+            <Kodi size={96} grayscale />
           </div>
 
           <p style={{ margin: '22px 0 30px', fontSize: 17, lineHeight: 1.55, color: '#52525B', maxWidth: 520 }}>

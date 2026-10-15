@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Star } from 'lucide-react';
+import { LayoutDashboard, User, LogOut, ExternalLink, ArrowRight, AlertCircle, RefreshCw, Star, Menu, X } from 'lucide-react';
 import { GithubIcon } from '@/components/icons/GithubIcon';
 import Kodi from '@/components/mascot/Kodi';
 import FetchingOverlay from '@/components/landing/FetchingOverlay';
@@ -29,6 +29,7 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
   const isLanding = pathname === '/';
   const { data: session, status } = useSession();
   const [showPrompt, setShowPrompt] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [usernameInput, setUsernameInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -142,7 +143,7 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
         </nav>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', justifySelf: 'end' }}>
+      <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap', justifySelf: 'end' }}>
         {status === 'authenticated' && session?.user ? (
           <>
             <Link
@@ -221,7 +222,34 @@ export default function Navbar({ themeType }: NavbarProps = {}) {
             )}
           </>
         )}
+        {isLanding && (
+          <button
+            type="button"
+            className="nav-burger"
+            aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((o) => !o)}
+            style={{ alignItems: "center", justifyContent: "center", width: 40, height: 40, borderRadius: 9, color: "#18181B", background: "transparent", border: "1px solid rgba(228,228,231,.9)", cursor: "pointer" }}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        )}
       </div>
+
+      {isLanding && menuOpen && (
+        <nav className="nav-mobile-menu" style={{ gridColumn: "1 / -1", flexDirection: "column", gap: 2, paddingTop: 8, borderTop: "1px solid rgba(228,228,231,.7)" }}>
+          {LANDING_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+              style={{ fontSize: 16, fontWeight: 600, color: "#3F3F46", textDecoration: "none", padding: "12px 10px", borderRadius: 8 }}
+            >
+              {l.label}
+            </a>
+          ))}
+        </nav>
+      )}
     </div>
 
       {/* Hızlı Kullanıcı Adı Prompt Modalı */}
